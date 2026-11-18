@@ -1,5 +1,7 @@
 # Culprit
 
+[![ci](https://github.com/BK5102/culprit/actions/workflows/ci.yml/badge.svg)](https://github.com/BK5102/culprit/actions/workflows/ci.yml)
+
 **All data in this project is simulated.** Nothing here is real payment data, and no result here says how any method performs on a real payment system.
 
 When you tap a card, your bank says yes or no. The share of yeses is the approval rate. When it drops, the cause usually hides in one small segment (one bank, one card range, one gateway) among thousands. Culprit learns what "normal" looks like for every segment, flags segments that fall outside it, and works out which segment and cause explain the drop. It grades itself on a simulated payment world where faults are injected and their true causes are sealed in an answer key that the detectors and the investigator cannot read.
@@ -66,7 +68,6 @@ uv run culprit detect configs/full.yaml
 
 ## Manual steps for the owner
 
-- **GitHub repo.** This repository has no remote yet. Create one and push when ready; CI (`.github/workflows/ci.yml`) runs ruff and pytest on Python 3.11 and 3.12.
 - **LLM API key and spend cap** for the agent (H2). Put `ANTHROPIC_API_KEY` in the environment (never in git) and decide a total cap and a per-incident cap. The investigator loop, critic and reporter exist and are tested with a hand-written cassette; no live call has been made.
 - **The false-alarm budget.** On the first development run, 2 alarms per week counted over all series caught few faults (see `docs/explain-the-project.md`, Step 8). Decide before the lock whether to keep it, raise it, or count it per incident.
 - **The sealed test.** Choose test seeds, keep `extra_verification` in the test worlds' fault types, pick a second simulator regime, set `evaluate.role: test`, then `culprit seal`, commit, `culprit run --sealed RUN_ID`, `culprit evaluate --run-id RUN_ID`.
