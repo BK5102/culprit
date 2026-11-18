@@ -11,3 +11,7 @@ The repo is a uv project that installs the shared Cleanroom from the `cleanroom-
 ### D2. The simulator: a payment world with a sealed answer key
 
 The simulator builds an hourly world of leaf segments (BIN range x method x gateway, nested under issuers and countries) with daily and weekly rhythm, binomial approvals, decline reasons and latency, then adds legitimate surges and four kinds of faults, and writes the true causes to a separate sealed file. Real approval data with known causes does not exist publicly, and only a simulator lets attribution be scored, so the honesty work goes into keeping the answer key out of reach: an import-graph test proves no detector, control or agent module can reach the code that writes or reads it. Analogy: a fire drill where only the organizer knows where the fire is, and the firefighters are checked at the door for copies of the plan.
+
+### D3. Measure the simulated world before building on it
+
+`scripts/check_data_fit.py` checks that faults are neither obvious nor invisible at their own segment, that many hide in the overall rate, that promotions fool a naive detector, that a forecaster has room to beat seasonal naive, and that "pick the biggest drop" does not already find the culprit. The first run showed faults were far too easy (88.9% of them over 10 times the noise), so the fault sizes were lowered before any detector existed, and the first run is kept in `docs/data-fit.md` as a negative result. Analogy: before timing runners, check that the track is not downhill.

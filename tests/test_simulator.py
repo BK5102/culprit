@@ -127,7 +127,9 @@ def test_fault_signature_shows_in_decline_reasons():
     sim = simulate(cfg)
     obs = sim.observed
     r = REASONS.index("issuer_unavailable")
-    for f in sim.faults:
+    strong = [f for f in sim.faults if f.severity >= 0.05]
+    assert strong
+    for f in strong:
         rows = obs.segments.mask(f.target)
         inside = obs.declines[rows, f.start : f.end, r].sum()
         before = obs.declines[rows, f.start - 168 : f.end - 168, r].sum()

@@ -2,16 +2,18 @@
 
 Each fault removes a share of approvals (its severity) from every leaf under
 its target segment for a stretch of hours, sends the lost approvals to a
-signature mix of decline reasons, and may slow responses down.
+signature mix of decline reasons, and may slow responses down. Severity is
+drawn log-uniformly, so small faults are as common per factor of two as big
+ones (methodology M14; the ranges were lowered after data-fit run 1).
 
-- issuer_outage: one issuer; severity 0.25 to 0.70; 2 to 8 hours; declines go to
+- issuer_outage: one issuer; severity 0.01 to 0.40; 2 to 8 hours; declines go to
   issuer_unavailable and processing_error; latency x1.2 to 1.6.
-- bin_decline_spike: one BIN range; severity 0.15 to 0.50; 4 to 24 hours;
+- bin_decline_spike: one BIN range; severity 0.01 to 0.30; 4 to 24 hours;
   do_not_honor and suspected_fraud; latency unchanged.
-- gateway_degradation: one gateway; severity 0.05 to 0.25; 1 to 6 hours;
+- gateway_degradation: one gateway; severity 0.01 to 0.15; 1 to 6 hours;
   processing_error and issuer_unavailable; latency x2 to 4.
-- extra_verification: one issuer's card-not-present payments; severity 0.10 to
-  0.30; 12 to 48 hours; authentication_required and do_not_honor; latency x1.1
+- extra_verification: one issuer's card-not-present payments; severity 0.01 to
+  0.20; 12 to 48 hours; authentication_required and do_not_honor; latency x1.1
   to 1.3.
 
 Faults are injected only in the evaluation window, so the context and
@@ -23,6 +25,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Any
+
+import numpy as np
 
 from culprit.segments import Segments
 from culprit.sim.surges import Event
@@ -43,7 +47,7 @@ FAULT_TYPES: dict[str, FaultType] = {
     "issuer_outage": FaultType(
         "issuer_outage",
         "issuer",
-        (0.25, 0.70),
+        (0.01, 0.40),
         (2, 8),
         (1.2, 1.6),
         {"issuer_unavailable": 0.85, "processing_error": 0.15},
@@ -51,7 +55,7 @@ FAULT_TYPES: dict[str, FaultType] = {
     "bin_decline_spike": FaultType(
         "bin_decline_spike",
         "bin",
-        (0.15, 0.50),
+        (0.01, 0.30),
         (4, 24),
         (1.0, 1.0),
         {"do_not_honor": 0.8, "suspected_fraud": 0.2},
@@ -59,7 +63,7 @@ FAULT_TYPES: dict[str, FaultType] = {
     "gateway_degradation": FaultType(
         "gateway_degradation",
         "gateway",
-        (0.05, 0.25),
+        (0.01, 0.15),
         (1, 6),
         (2.0, 4.0),
         {"processing_error": 0.9, "issuer_unavailable": 0.1},
@@ -67,7 +71,7 @@ FAULT_TYPES: dict[str, FaultType] = {
     "extra_verification": FaultType(
         "extra_verification",
         "issuer_method",
-        (0.10, 0.30),
+        (0.01, 0.20),
         (12, 48),
         (1.1, 1.3),
         {"authentication_required": 0.9, "do_not_honor": 0.1},
@@ -109,7 +113,7 @@ def schedule_faults(
                 pick_target(ft, segments, rng),
                 start,
                 start + dur,
-                severity=float(rng.uniform(*ft.severity)),
+                severity=float(np.exp(rng.uniform(*np.log(ft.severity)))),
                 latency_factor=float(rng.uniform(*ft.latency)),
                 signature=dict(ft.signature),
             )

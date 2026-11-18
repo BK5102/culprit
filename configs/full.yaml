@@ -1,0 +1,29 @@
+# Full development world: 1,440 leaf segments, 12 weeks hourly. Simulated data.
+# CPU only. The TSFM detector needs `uv sync --extra tsfm` and is expected to take
+# about 2 to 3 CPU hours, cached (methodology M5, M25). Not run yet.
+name: full
+seed: 17
+world:
+  weeks: {context: 6, calibration: 2, evaluation: 4}
+  hierarchy:
+    countries: 4
+    issuers_per_country: 5
+    bins_per_issuer: 4
+    methods: [card_not_present, card_present, wallet]
+    gateways: 6
+  volume:
+    mean_attempts_per_hour: 150000
+    holidays:
+      - {day: 17, factor: 0.6}
+      - {day: 45, factor: 0.7, countries: [1, 2]}
+  faults:
+    per_week: 6.0
+    types: [issuer_outage, bin_decline_spike, gateway_degradation]
+  holdout_fault_types: [extra_verification]
+detect:
+  detectors: [A, A2, B, TSFM]
+  tsfm:
+    adapter: chronos_bolt
+budget:
+  false_alarms_per_week: 2.0
+  persistence_hours: 2

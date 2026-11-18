@@ -1,0 +1,26 @@
+# Small development world: about 100 leaf segments, 8 weeks hourly. Simulated data.
+# Runs end to end on a laptop CPU in well under a minute (methodology M41).
+# Anything not set here comes from culprit/config.py DEFAULTS; the hash covers both.
+name: small
+seed: 7
+world:
+  weeks: {context: 4, calibration: 2, evaluation: 2}
+  hierarchy:
+    countries: 2
+    issuers_per_country: 3
+    bins_per_issuer: 2
+    methods: [card_not_present, card_present]
+    gateways: 4
+  volume:
+    mean_attempts_per_hour: 20000
+  faults:
+    per_week: 5.0
+    types: [issuer_outage, bin_decline_spike, gateway_degradation]
+  holdout_fault_types: [extra_verification]
+detect:
+  detectors: [A, A2, B]
+  tsfm:
+    adapter: null   # set to chronos_bolt after `uv sync --extra tsfm`
+budget:
+  false_alarms_per_week: 2.0
+  persistence_hours: 2

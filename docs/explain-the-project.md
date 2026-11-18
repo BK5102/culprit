@@ -35,3 +35,11 @@ The technical detail behind each step is in `docs/methodology.md` (numbered M1, 
 - **What else I considered:** real public data with an error column (TabFormer), kept as an optional second world if it passes its own fit check.
 - **Cause and effect:** because the simulator knows the truth, the main risk becomes the truth leaking into the methods. Tests now prove that detector, control and agent code cannot import the code that writes or reads the key, and that the observed files never mention a fault. The extra-verification type is held out of all development worlds.
 - **How to say it:** "I built a fire drill for payments: only the simulator knows where the fault is, and a test proves the detectives can't open the envelope."
+
+### Step 3. Check that the simulated world can answer the question
+
+- **What I did:** wrote `scripts/check_data_fit.py`, which measures signal versus noise for each fault, how many faults hide in the overall rate, whether promotions fool a naive detector, how much room a forecaster has over seasonal naive, and whether "largest drop" already names the culprit. Ran it on five small development worlds and one full one.
+- **Why:** if faults are obvious, every detector ties; if the biggest drop is always the culprit, no agent is needed. Measuring first avoids building on a world that cannot answer anything.
+- **What else I considered:** just building the detectors and seeing. That is how Tells nearly lost time on a dataset with no room for a model to win.
+- **Cause and effect:** run 1 failed in an instructive way: 88.9% of faults were over 10 times the noise. I lowered the fault sizes before any detector existed. Run 2 passes every gate: about a third of faults are hard, about half hide in the total but show at their own segment, the largest drop is the culprit 0.0% of the time, and promotions fire a naive detector 44.4% of the time against 0.4% for quiet windows. It also showed headroom over a simple 4-week average is small at single leaves (oracle error 0.87 of it), so a TSFM can only win on aggregates.
+- **How to say it:** "Before building any detector I measured whether the fake world was even a fair test, found it was too easy, fixed the difficulty, and kept the failed check in the docs."
