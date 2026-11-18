@@ -199,3 +199,17 @@ def test_segment_filters_are_canonical():
     assert seg.exists({"gateway": "G1"}) and not seg.exists({"gateway": "G9"})
     kids = seg.refinements({"issuer": "C0-I0"})
     assert set(kids) == {"bin", "method", "gateway"}
+
+
+def test_windows_come_from_the_cleanroom_split_and_check_on_the_data(tiny_sim):
+    from culprit.world import panel_frame
+
+    tl = tiny_sim.observed.timeline
+    split = tl.split()
+    parts = split.apply(panel_frame(tiny_sim.observed), "time")
+    split.check(parts, "time")  # raises LeakError if windows overlap on the actual rows
+    for name, part in (("context", "train"), ("calibration", "valid"), ("evaluation", "test")):
+        lo, hi = tl.window_hours(name)
+        hours = parts[part]["hour"]
+        assert (hours.min(), hours.max() + 1) == (lo, hi)
+    assert tl.window_hours("calibration") == (tl.context_end, tl.calibration_end)

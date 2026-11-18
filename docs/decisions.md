@@ -31,3 +31,7 @@ Only `evaluate/grade.py` reads the answer key, and only after checking it agains
 ### D7. The agent's harness: four read-only tools, a ledger, a critic, a reporter
 
 The agent can only call four read-only tools that see nothing after the alarm, every call is numbered and its numbers kept in a ledger, the agent writes claims with placeholders and cites ledger entries, a deterministic critic rejects any claim with a typed or unknown number, and the reporter fills the numbers in by code. The LLM sits behind an interface, and the only test conversation is a hand-written cassette, so no test costs money or depends on a live model. Analogy: an intern who may only read the dashboards, must footnote every figure, and whose footnotes are checked before the memo goes out.
+
+### D8. One command per step, and a separate sealed path for test worlds
+
+`culprit simulate`, `detect`, `attribute` and `evaluate` run the small development world end to end on a laptop CPU in well under a minute, and every output file records the config hash, git commit and dataset hash. Test worlds take a different path: seal the config and the answer key, commit them, run detection and the control as one sealed run, and only then grade. Analogy: practice exams can be marked as often as you like; the real exam is sat once, in a sealed room, and the envelope is opened afterwards.

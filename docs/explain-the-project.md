@@ -81,3 +81,13 @@ The technical detail behind each step is in `docs/methodology.md` (numbered M1, 
 - **What else I considered:** letting the model write numbers and checking them afterwards. Rejected: matching "about 61%" to 0.6123 is fuzzy, while a placeholder that points at tool call c2, field `rate`, is exact.
 - **Cause and effect:** the agent uses the same arithmetic as the control, so if it wins or loses, it is because of where it looked and how it reasoned. No live model call has been made yet: the only test conversation is a hand-written fixture, clearly labeled. The real run needs an API key and a spend cap from the owner.
 - **How to say it:** "The agent can't type a number. It cites tool call c2, field rate, and code fills the number in, so every figure in a report is traceable."
+
+## Part 6. Running it
+
+### Step 8. One command per step, with provenance on every file
+
+- **What I did:** wrote the CLI. `simulate` builds the world, `detect` runs the detectors at the shared budget, `attribute` runs the control on the incidents, `evaluate` grades a development world. For test worlds, `seal`, `run --sealed` and `evaluate --run-id` go through the Cleanroom's lock, guard and vault. Also made every window bound come from the Cleanroom split, with a test that checks it on the real rows.
+- **Why:** the plan asks for one-command reproduction on a small world, and every number needs to trace back to a config, a commit and a dataset.
+- **What else I considered:** one big "do everything" command. Kept separate so a failure shows which step broke and so the sealed path cannot be confused with development.
+- **Cause and effect:** the first development run (small config, seed 7, development only, not a result) showed how strict the budget is. At 2 false alarms per week counted over all 123 series, Detector A and A2 caught 1 of 14 faults and B 3 of 14, and the control investigated A2's incidents and covered 1 fault. Promotions in the calibration weeks fire several related series at once and use up the allowance, so thresholds sit high. Whether to count the budget per incident instead of per series is an open decision for the owner, to settle before the lock.
+- **How to say it:** "Four commands rebuild the whole small experiment in under a minute, and the first run already told me my false-alarm budget was probably too strict."

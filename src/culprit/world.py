@@ -66,11 +66,11 @@ class Timeline:
         )
 
     def window_hours(self, name: str) -> tuple[int, int]:
-        return {
-            "context": (0, self.context_end),
-            "calibration": (self.context_end, self.calibration_end),
-            "evaluation": (self.calibration_end, self.n_hours),
-        }[name]
+        """Hour bounds [lo, hi) of a window, read from the Cleanroom split (CLAUDE.md rule 4)."""
+        part = {"context": "train", "calibration": "valid", "evaluation": "test"}[name]
+        w = dict(self.split().windows())[part]
+        lo = 0 if w.start is None else int((w.start - self.start) / timedelta(hours=1))
+        return lo, int((w.end - self.start) / timedelta(hours=1))
 
     def to_dict(self) -> dict[str, Any]:
         return {

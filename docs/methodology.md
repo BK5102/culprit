@@ -112,7 +112,7 @@ All data in this project is simulated. Numbers quoted below come from code run o
 - Limitation: one held-out type; a single type can be easy or hard by accident.
 
 **M17. Timeline and split: context (normal only), calibration (no faults), evaluation (faults), through `cleanroom.split`.**
-- What: small config 4 + 2 + 2 weeks, full 6 + 2 + 4 weeks, starting on a simulated Monday, 2026-01-05. `Timeline.split()` returns a Cleanroom `Split` with train = context, valid = calibration, test = evaluation.
+- What: small config 4 + 2 + 2 weeks, full 6 + 2 + 4 weeks, starting on a simulated Monday, 2026-01-05. `Timeline.split()` returns a Cleanroom `Split` with train = context, valid = calibration, test = evaluation. Every window bound the code uses (`Timeline.window_hours`) is read from that split, and a test runs `Split.check` on the actual panel rows.
 - Why: forecasters need weeks of normal history (the weekly rhythm repeats every 168 hours). Thresholds are set on calibration, which has surges but no faults, so every calibration alarm is a false alarm and the alarm budget can be set honestly. Evaluation is the only place faults exist.
 - Considered: calibrating on the evaluation window. Rejected: thresholds would be tuned on the data they are scored on.
 - Limitation: calibration and evaluation come from the same simulated world, so a regime change between them is not tested yet.
@@ -257,6 +257,20 @@ All data in this project is simulated. Numbers quoted below come from code run o
 - Considered: partial credit for an ancestor or descendant of the target. Kept out of the headline; top-3 gives some of that.
 - Limitation: a 6-hour tolerance after a fault ends credits late alarms that an operations team might call useless; delay is reported next to detection.
 
+**M40. Test worlds are scored once, inside a Cleanroom sealed run.**
+- What: for a config with `evaluate.role: test`, `culprit seal` writes the lock (config hash, with the dataset hash pinned) and a vault record for the key under `locks/`; both must be committed. `culprit run CONFIG --sealed RUN_ID` runs detection and the control inside `cleanroom.guard.sealed_run`, which refuses a dirty git tree or an uncommitted lock and writes "started" and "finished" records. Only then does `culprit evaluate CONFIG --run-id RUN_ID` open the key through the vault. Development configs (`role: dev`, the default) cannot use `seal` or `run`.
+- Why: CLAUDE.md rule 4 and the plan's "one lock covering detectors, control, agent prompt hash, test seeds". Every attempt is counted, including crashed ones.
+- Considered: one combined command. Kept separate so the commit of the lock and vault record visibly happens between sealing and running.
+- Limitation: no test config exists yet; its seeds, the held-out type and the second simulator regime must be chosen and locked by the owner. The agent prompt hash is not in the lock yet because the agent has not run.
+
+## 9. Configs and the command line
+
+**M41. Two development configs and one command per step.**
+- What: `configs/small.yaml` (96 leaves, 4 + 2 + 2 weeks, 20,000 attempts per hour, seed 7, detectors A, A2, B) and `configs/full.yaml` (1,440 leaves, 6 + 2 + 4 weeks, 150,000 attempts per hour, seed 17, detectors A, A2, B and TSFM with Chronos-Bolt-tiny). YAML is merged over the defaults in `culprit/config.py` and the hash covers the merged result. Commands: `simulate`, `detect`, `attribute`, `evaluate` (development worlds), and `seal`, `run --sealed`, `evaluate --run-id` (test worlds). Each output JSON carries provenance from `cleanroom.provenance.stamp` (config hash, git commit and dirty flag, panel file sha256, package versions) plus the dataset hash.
+- Why: the plan approved about 100 leaves small and 1,000 to 2,000 full. The small config is the one-minute check (measured: `simulate`, `detect` and `attribute` take 36.5 s of wall time as three separate processes on a laptop CPU, most of it start-up; the in-process test of all four commands must finish under 60 s). Hashing the merged config means a changed default changes every hash.
+- Considered: separate config files for each step. One file keeps a run's settings in one hashable place.
+- Limitation: both configs are development worlds; their numbers are development numbers, never results.
+
 ---
 
 ## Limitations register
@@ -285,3 +299,4 @@ The honest list. Each item says what could be wrong and what was done about it.
 | L18 | No live LLM run and no recorded real cassette | The agent loop is tested only on a hand-written fixture | Stated (M38); recording needs the owner's API key and spend cap |
 | L19 | The critic has no LLM review stage | A real but irrelevant number can be cited in support of a wrong claim | Stated (M36); planned for PLAN.md Day 25 |
 | L20 | Agent budgets (12 calls, USD 0.50) are unmeasured guesses | Too tight or too loose a budget changes H2 | Fix them from development runs before the lock (M35) |
+| L21 | At 2 false alarms per week counted over all monitored series, development detection is low (small config, seed 7: A and A2 caught 1 of 14 faults, B 3 of 14) | H1 may have little to compare unless the budget or the alarm counting changes | Measured on a development world and reported in `docs/explain-the-project.md`; any change to the budget must be decided before the lock |

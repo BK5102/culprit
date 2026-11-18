@@ -27,20 +27,21 @@ culprit/
   CLAUDE.md  PROMPT.md  PLAN.md  README.md
   pyproject.toml  uv.lock
   src/culprit/
+    config.py  world.py (observed data only)  segments.py  panel.py  cli.py
     sim/         hierarchy.py  normal.py  surges.py  faults.py  signals.py  build.py
-    detect/      seasonal_naive.py  classical.py  tsfm.py  budget.py
-    investigate/ contribution.py  drilldown.py  fault_typing.py
-    agent/       orchestrator.py  investigator.py  critic.py  reporter.py  tools.py
+    detect/      seasonal_naive.py  binomial.py  classical.py  tsfm.py  budget.py  run.py
+    investigate/ contribution.py  drilldown.py  fault_typing.py  control.py
+    agent/       investigator.py  critic.py  reporter.py  tools.py  llm.py
     evaluate/    metrics.py  grade.py   (the only module allowed to read the fault log)
-    cli.py
-  tests/
-  configs/
-  docs/          tsfm-notes.md  decisions.md  findings.md
+  tests/         cassettes/ (hand-written LLM fixtures)
+  scripts/       check_data_fit.py
+  configs/       small.yaml  full.yaml
+  docs/          methodology.md  explain-the-project.md  decisions.md  data-fit.md  tsfm-notes.md  findings.md
   data/          gitignored. Generated datasets, hashes recorded.
   artifacts/     gitignored except small sample outputs
 ```
 
-The testing toolkit comes from the shared `cleanroom` package (split, lock, metrics, bootstrap), built in the sibling project Tells under `packages/cleanroom` and installed here from a git tag: `uv add "cleanroom @ git+https://github.com/BK5102/tells@cleanroom-v0.1#subdirectory=packages/cleanroom"`. Import it. Do not copy it. If something is missing, add it to `cleanroom` in the Tells repo in a domain-neutral way, release a new `cleanroom-vX.Y` tag, then bump the version here.
+The testing toolkit comes from the shared `cleanroom` package (split, lock, metrics, bootstrap), built in the sibling project Tells under `packages/cleanroom` and installed here from a git tag: `uv add "cleanroom @ git+https://github.com/BK5102/tells@cleanroom-v0.2#subdirectory=packages/cleanroom"` (v0.2 adds events, vault, guard and forecast scoring). Import it. Do not copy it. If something is missing, add it to `cleanroom` in the Tells repo in a domain-neutral way, release a new `cleanroom-vX.Y` tag, then bump the version here.
 
 ## Commands
 
@@ -49,10 +50,15 @@ uv sync
 uv run pytest -q
 uv run ruff check . && uv run ruff format --check .
 uv run culprit simulate configs/small.yaml     # generate a small simulated dataset
-uv run culprit detect configs/small.yaml       # run all three detectors at an equal alert budget
-uv run culprit agent --incident 3              # investigate one incident
-uv run culprit evaluate configs/small.yaml     # grade against the sealed log
+uv run culprit detect configs/small.yaml       # run the detectors at an equal alert budget
+uv run culprit attribute configs/small.yaml    # the no-LLM control on the incidents
+uv run culprit evaluate configs/small.yaml     # grade a development world against its answer key
+uv run python scripts/check_data_fit.py configs/small.yaml   # data-fit gate
+uv run culprit seal CONFIG; uv run culprit run CONFIG --sealed RUN_ID; uv run culprit evaluate CONFIG --run-id RUN_ID   # test worlds only
+uv sync --extra tsfm                           # Chronos-Bolt-tiny for the TSFM detector (CPU)
 ```
+
+Not built yet: `culprit agent --incident N` (needs an API key and spend cap from the owner; the investigator loop exists in `agent/investigator.py` and is tested with cassettes).
 
 If a command above does not exist yet, create it as part of the day's task and update this file.
 
