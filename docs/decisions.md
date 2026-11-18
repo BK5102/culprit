@@ -27,3 +27,7 @@ For each incident, the control looks only at data up to the first alarm, scores 
 ### D6. Grading through the Cleanroom vault
 
 Only `evaluate/grade.py` reads the answer key, and only after checking it against the vault record made when the world was built; a sealed test world opens only through the Cleanroom vault after a finished, committed sealed run, and every opening is logged. Matching alarms to faults and counting false alarms per week use the Cleanroom's event tools, so all three projects grade alarms the same way. Analogy: the exam board keeps the marking scheme in a sealed envelope, and the envelope logs who opened it and when.
+
+### D7. The agent's harness: four read-only tools, a ledger, a critic, a reporter
+
+The agent can only call four read-only tools that see nothing after the alarm, every call is numbered and its numbers kept in a ledger, the agent writes claims with placeholders and cites ledger entries, a deterministic critic rejects any claim with a typed or unknown number, and the reporter fills the numbers in by code. The LLM sits behind an interface, and the only test conversation is a hand-written cassette, so no test costs money or depends on a live model. Analogy: an intern who may only read the dashboards, must footnote every figure, and whose footnotes are checked before the memo goes out.

@@ -71,3 +71,13 @@ The technical detail behind each step is in `docs/methodology.md` (numbered M1, 
 - **What else I considered:** partial credit for naming a parent or child of the true segment. Kept out of the headline because it sends the analyst to the wrong team; top-3 covers near misses.
 - **Cause and effect:** a test proves the key will not open for a test world until a sealed run has finished and the lock and vault record are committed.
 - **How to say it:** "The answer key sits in a vault that only opens after the run has written its answers, and every opening is logged."
+
+## Part 5. The agent
+
+### Step 7. Build the agent's harness before the agent ever runs
+
+- **What I did:** gave the LLM investigator four read-only tools (query a segment, see its hourly forecast, its decline reasons, its latency), all cut at the alarm time, a hard budget of tool calls and dollars per incident, a critic that rejects any claim whose numbers are not in tool output, and a reporter that inserts every number by code.
+- **Why:** the risk with an agent is that it invents a cause and dresses it in plausible numbers. Making typed numbers impossible and citations exact removes the second half of that risk; the comparison with the control handles the first.
+- **What else I considered:** letting the model write numbers and checking them afterwards. Rejected: matching "about 61%" to 0.6123 is fuzzy, while a placeholder that points at tool call c2, field `rate`, is exact.
+- **Cause and effect:** the agent uses the same arithmetic as the control, so if it wins or loses, it is because of where it looked and how it reasoned. No live model call has been made yet: the only test conversation is a hand-written fixture, clearly labeled. The real run needs an API key and a spend cap from the owner.
+- **How to say it:** "The agent can't type a number. It cites tool call c2, field rate, and code fills the number in, so every figure in a report is traceable."

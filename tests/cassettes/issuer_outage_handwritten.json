@@ -1,0 +1,58 @@
+[
+  {
+    "note": "Hand-written test fixture in the cassette format. Not a recording of any real model; token counts are made up for the cost-cap test.",
+    "request_digest": "any",
+    "response": {
+      "stop_reason": "tool_use",
+      "model": "claude-opus-5-5",
+      "usage": {"input_tokens": 1500, "output_tokens": 120},
+      "content": [
+        {"type": "text", "text": "Start at the top and split by issuer."},
+        {"type": "tool_use", "id": "t1", "name": "query_slice",
+         "input": {"segment": {"country": null, "issuer": null, "bin": null, "method": null, "gateway": null},
+                   "hours": 3, "breakdown": "issuer"}}
+      ]
+    }
+  },
+  {
+    "request_digest": "any",
+    "response": {
+      "stop_reason": "tool_use",
+      "model": "claude-opus-5-5",
+      "usage": {"input_tokens": 2600, "output_tokens": 140},
+      "content": [
+        {"type": "tool_use", "id": "t2", "name": "query_slice",
+         "input": {"segment": {"country": null, "issuer": "C0-I1", "bin": null, "method": null, "gateway": null},
+                   "hours": 3, "breakdown": null}},
+        {"type": "tool_use", "id": "t3", "name": "decline_reasons",
+         "input": {"segment": {"country": null, "issuer": "C0-I1", "bin": null, "method": null, "gateway": null},
+                   "hours": 3}}
+      ]
+    }
+  },
+  {
+    "request_digest": "any",
+    "response": {
+      "stop_reason": "tool_use",
+      "model": "claude-opus-5-5",
+      "usage": {"input_tokens": 3900, "output_tokens": 260},
+      "content": [
+        {"type": "tool_use", "id": "t4", "name": "submit_hypothesis",
+         "input": {
+           "culprit": {"country": null, "issuer": "C0-I1", "bin": null, "method": null, "gateway": null},
+           "fault_type": "issuer_outage",
+           "since_hour": 702,
+           "confidence": "medium",
+           "claims": [
+             {"text": "Issuer C0-I1 approved {0} of attempts against an expected {1}.",
+              "cites": [{"call_id": "c2", "field": "rate", "value": null},
+                        {"call_id": "c2", "field": "expected_rate", "value": null}]},
+             {"text": "It holds {0} missing approvals, the most of any issuer.",
+              "cites": [{"call_id": "c1", "field": "issuer=C0-I1.missing_approvals", "value": null}]}
+           ],
+           "next_checks": ["Ask the issuer whether its authorization host is degraded."]
+         }}
+      ]
+    }
+  }
+]

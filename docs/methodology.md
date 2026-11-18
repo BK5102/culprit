@@ -213,6 +213,42 @@ All data in this project is simulated. Numbers quoted below come from code run o
 - Considered: dropping the authentication_required rule because extra_verification is held out. Rejected: an analyst would write that rule from the meaning of the reason alone, and removing it would weaken the control to the agent's advantage (CLAUDE.md rule 5). Its 0.2-point threshold is shared with the other rules and was not tuned on any world containing the type.
 - Limitation: the mapping matches the simulator's own signature table (M14), so fault typing is easier here than on real data, and on the held-out type it tests the thresholds, not the mapping.
 
+## 7. The agent harness
+
+**M33. Four read-only tools, cut at the investigation time.**
+- What: `query_slice` (attempts, approvals, rate, expected rate, missing approvals and z for a segment, optionally split by any dimension it does not fix), `forecast` (hour by hour actual and expected rate with a 90% binomial band), `decline_reasons` (rate per attempt of each reason now, in the same hours of the previous 4 weeks, and the change), `latency` (mean now, before, ratio). Each tool reads a copy of the observed world cut at the hour after the first alarm, over at most 48 hours. Numbers use the same baseline as the control (M30).
+- Why: CLAUDE.md agent safety rules. Sharing the control's arithmetic means any accuracy gap between agent and control comes from the search and the reasoning, not from different maths. A test wrecks all later data and checks every tool output is unchanged; the import-graph test covers the agent package.
+- Considered: giving the agent the detector's forecasts. Deferred: `forecast` uses the seasonal baseline so it does not depend on which detector alarmed; swapping in the TSFM forecast is one function.
+- Limitation: the agent cannot ask for anything the four tools do not compute (for example a breakdown by two dimensions at once in one call).
+
+**M34. Every tool call goes into a ledger with a flat table of the numbers it returned.**
+- What: calls are numbered c1, c2, ...; each keeps its arguments, its output and a table such as `rate`, `issuer=C0-I1.missing_approvals`, `issuer_unavailable.change` or `h704.expected_rate`. Values are rounded to 4 decimals before the model sees them.
+- Why: citations become exact lookups, which is what lets the critic reject made-up numbers and lets the reporter insert numbers by code (CLAUDE.md rule 7).
+- Limitation: the model may cite a real number that does not support its claim; only the planned LLM review would catch that.
+
+**M35. One investigator loop with a hard tool-call budget, a cost cap and a turn limit.**
+- What: defaults 12 tool calls, USD 0.50 and 20 turns per incident (`agent` in the config). Cost = input tokens x 4 + output tokens x 20 USD per million for `claude-opus-5-5` (the claude-api skill's model table, cached 2026-11-03; re-check before a paid run). Statuses: submitted, budget_exceeded, cost_cap, no_answer, max_turns. PLAN.md's orchestrator, investigator and hypothesis writer are one loop in v0.1.
+- Why: CLAUDE.md rule 6, and cost per incident is one of the two numbers H2 reports.
+- Considered: separate orchestrator and writer agents. Deferred until one loop has a measured result; more agents cost more and are harder to compare with the control.
+- Limitation: the budget values are guesses until the first live run; they must be fixed before the lock.
+
+**M36. A deterministic critic runs before any report exists.**
+- What: claim text may not contain digits (segment ids allowed); numbers appear only as placeholders {0}, {1} matched to citations (call id and field), and every citation must exist in the ledger, with any stated value equal to it. The culprit must exist and have been examined with `query_slice`; fault type and confidence must be allowed values; the start hour must be before the investigation time. Ten rejection cases are tested.
+- Why: CLAUDE.md rule 7: the agent can be wrong, but it cannot invent evidence.
+- Considered: parsing numbers out of free text and matching them to tool output. Rejected: rounding and formatting make that fuzzy; placeholders make it exact.
+- Limitation: the second stage, an LLM review of whether the cited evidence supports the claim (PLAN.md Day 25), is not built.
+
+**M37. The reporter fills a fixed template and inserts every number from the ledger.**
+- What: what changed (from the last `query_slice` on the culprit), where, since when, likely cause, confidence, evidence (claim texts with placeholders filled), what to check next. The first lines say "Investigation, not a decision" and that the data is simulated.
+- Why: PLAN.md FR15 and CLAUDE.md rules 7 and 8.
+- Limitation: formatting rules (rates as percentages, counts as whole numbers) are inferred from field names.
+
+**M38. LLM behind an interface; tests replay cassettes; no live call anywhere in this build.**
+- What: `culprit.agent.llm` copies Tells' interface: `AnthropicLLM` (model `claude-opus-5-5`, effort `high` set explicitly because this model's default is medium, strict tool schemas, server-side refusal fallback `fallbacks: "default"` with beta `server-side-fallback-2026-07-01`), and `CassetteLLM` (replay checks a request digest; a digest of "any" marks a hand-written fixture; record mode wraps a real backend). The only cassette, `tests/cassettes/issuer_outage_handwritten.json`, is hand-written and labeled as such: it is not a recording of any model, and its token counts are invented for the cost-cap test.
+- Why: tests must be deterministic and free (CLAUDE.md). The API key stays in the environment and never in git.
+- Considered: a different provider or a smaller model. Not chosen: the claude-api skill names `claude-opus-5-5` as the default, and Tells uses the same model, so the projects stay comparable.
+- Limitation: no recorded real exchange exists yet, so the agent's behaviour on real model output is untested.
+
 ## 8. Grading
 
 **M39. Grading reads the key only through the vault, and matching uses `cleanroom.events`.**
@@ -246,3 +282,6 @@ The honest list. Each item says what could be wrong and what was done about it.
 | L15 | Near-ties between a segment and its biggest child | The control sometimes names the child | Generalization step (M31); top-3 reported; tests require 75%, not 100% |
 | L16 | Fault-typing rules mirror the simulator's signature table | Typing accuracy overstates what rules would do on real data | Stated (M32); the held-out type tests thresholds only |
 | L17 | The control's design was revised four times on development worlds | It is tuned to this simulator's development worlds to some degree | Every revision happened before any grading code existed and is listed (M31); held-out type and a second regime at test time (rule 9) |
+| L18 | No live LLM run and no recorded real cassette | The agent loop is tested only on a hand-written fixture | Stated (M38); recording needs the owner's API key and spend cap |
+| L19 | The critic has no LLM review stage | A real but irrelevant number can be cited in support of a wrong claim | Stated (M36); planned for PLAN.md Day 25 |
+| L20 | Agent budgets (12 calls, USD 0.50) are unmeasured guesses | Too tight or too loose a budget changes H2 | Fix them from development runs before the lock (M35) |
