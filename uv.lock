@@ -147,6 +147,8 @@ dependencies = [
     { name = "numpy", version = "2.5.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
     { name = "polars" },
     { name = "pyyaml" },
+    { name = "scipy", version = "1.17.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
+    { name = "scipy", version = "1.18.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
     { name = "statsmodels" },
 ]
 
@@ -174,6 +176,7 @@ requires-dist = [
     { name = "numpy", specifier = ">=2.1" },
     { name = "polars", specifier = ">=1.30" },
     { name = "pyyaml", specifier = ">=6.0" },
+    { name = "scipy", specifier = ">=1.13" },
     { name = "statsmodels", specifier = ">=0.14.4" },
     { name = "torch", marker = "extra == 'tsfm'", specifier = ">=2.6", index = "https://download.pytorch.org/whl/cpu" },
 ]
