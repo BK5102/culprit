@@ -23,7 +23,7 @@ The technical detail behind each step is in `docs/methodology.md` (numbered M1, 
 - **What I did:** set up a uv Python project with ruff, pytest and a CI workflow, and installed the Cleanroom (time splits, a sealed-envelope lock, provenance) from a git tag of the Tells repo.
 - **Why:** the Cleanroom is what makes cheating mechanically hard, and all three projects must sit the same exam.
 - **What else I considered:** copying the Cleanroom code in. Rejected because copies drift.
-- **Cause and effect:** the Cleanroom v0.1 has no tools for matching alarms to fault windows yet, so Culprit carries its own small versions with a TODO to switch to v0.2 (M4).
+- **Cause and effect:** Cleanroom v0.1 had no tools for matching alarms to fault windows, so the scaffold carried a TODO to bump. v0.2 (alarm matching, thresholds for a fixed alarm rate, an answer-key vault and sealed runs) was released the same day, and Culprit moved to it before writing any detector, so nothing was duplicated (M4).
 - **How to say it:** "Every project imports the same versioned testing toolkit, so a fix to the exam rules reaches all of them."
 
 ## Part 2. The simulated world

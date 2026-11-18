@@ -24,17 +24,17 @@ All data in this project is simulated. Numbers quoted below come from code run o
 
 ## 2. Tooling
 
-**M3. The shared Cleanroom is installed from the git tag `cleanroom-v0.1`, never copied.**
-- What: `pyproject.toml` pulls `cleanroom` from `github.com/BK5102/tells`, tag `cleanroom-v0.1`, subdirectory `packages/cleanroom`. Culprit uses its time split (`cleanroom.split`), sealed-envelope lock (`cleanroom.lock`), provenance stamp and past-only test helper.
+**M3. The shared Cleanroom is installed from the git tag `cleanroom-v0.2`, never copied.**
+- What: `pyproject.toml` pulls `cleanroom` from `github.com/BK5102/tells`, tag `cleanroom-v0.2`, subdirectory `packages/cleanroom`. Culprit uses its time split (`cleanroom.split`), lock (`cleanroom.lock`), sealed runs (`cleanroom.guard`), answer-key vault (`cleanroom.vault`), alarm rules, alarm matching and threshold calibration (`cleanroom.events`), forecast interval coverage (`cleanroom.forecast`), provenance and the past-only test helper.
 - Why: one copy of the honesty machinery for all three projects, so a fix in one place reaches all of them (Tells `docs/decisions.md` D1).
 - Considered: a local copy. Rejected: copies drift.
-- Limitation: Culprit is pinned to whatever v0.1 contains until it bumps on purpose.
+- Limitation: Culprit is pinned to whatever v0.2 contains until it bumps on purpose.
 
-**M4. Event matching and threshold calibration live in Culprit until Cleanroom v0.2 ships.**
-- What: matching alarms to fault windows, detection delay, false alarms per week and the threshold for a fixed alarm rate are in `culprit.evaluate.metrics` and `culprit.detect.budget`. The answer key is read by `culprit.evaluate.grade` directly. A TODO in `pyproject.toml` says to bump to `cleanroom-v0.2` and replace these with its event tools and its answer-key vault.
-- Why: v0.2 is being built in parallel; waiting would block the simulator and the detectors.
-- Considered: pinning to an unreleased commit. Rejected: siblings must only depend on released tags.
-- Limitation: until the bump, these pieces are tested here only and are not shared.
+**M4. Started on cleanroom-v0.1, bumped to v0.2 the same day; no local stand-ins remain.**
+- What: the first scaffold used `cleanroom-v0.1`, with a TODO to bump once v0.2 (events, vault, guard, forecast scoring) was released. v0.2 was tagged while the detectors were being written, so the bump happened before any detector, budget or grading code was committed, and those were written against v0.2 directly.
+- Why: siblings depend only on released tags; v0.1 lacked the event tools Culprit needs.
+- Considered: writing local versions of event matching and thresholding first. Not needed once v0.2 existed.
+- Limitation: none beyond M3.
 
 **M5. CPU only.**
 - What: every step, including the full config and the TSFM detector, runs on a laptop CPU. PyTorch comes from the CPU-only wheel index.
@@ -120,7 +120,7 @@ All data in this project is simulated. Numbers quoted below come from code run o
 **M18. The answer key is written to a separate `sealed/` folder, and only the grader reads it.**
 - What: `culprit.sim.build.write_world` writes `observed/` (panel and public leaf table) and `sealed/answer_key.json` (faults and surges with their true targets and hours). `culprit.world.load_observed` reads only `observed/`. Tests prove that no detector, control or agent module can import `culprit.sim` or `culprit.evaluate` (import-graph test), that no other module names the key file, that the observed files mention no fault or surge, and that everything still loads with `sealed/` deleted.
 - Why: CLAUDE.md rule 1. A sealed key is like a fire drill where only the organizer knows where the fire is.
-- Considered: encrypting the key. Not needed for honesty between code modules, and Cleanroom v0.2 will add a vault that releases the key only to a finished, locked run (M4).
+- Considered: encrypting the key. Not needed for honesty between code modules, and the key is also sealed with the Cleanroom vault, which releases it only to a finished, locked run (M39).
 - Limitation: a person can still open the file; the protection is against code paths, and git history shows who changed what.
 
 **M19. Seeds and hashes.**
@@ -146,10 +146,10 @@ The honest list. Each item says what could be wrong and what was done about it.
 | # | Limitation | Effect | What was done |
 |---|---|---|---|
 | L1 | Simulated data only | No result shows real-world performance | Stated on the first screen of the README and in every report (CLAUDE.md rule 8) |
-| L2 | Event matching and calibration are local until Cleanroom v0.2 | Not shared with the sibling projects yet | TODO in `pyproject.toml`; tested here (M4) |
+| L2 | Cleanroom is pinned to one tag | Fixes made in Tells after `cleanroom-v0.2` do not reach Culprit until a deliberate bump | Bump on purpose, as done from v0.1 to v0.2 (M4) |
 | L3 | Seasonality, base rates, fault ranges and surge shapes are the author's assumptions | Results depend on these choices | Each value is listed in M9 to M15; a second simulator regime is required at test time (rule 9) |
 | L4 | Every fault has a clean decline-reason signature | Fault typing is easier than on real data | Stated; reason leakage (part of each fault's declines go to a second reason) adds some mess |
 | L5 | Fault targets are uniform among segments of a level | Tiny BINs are hit as often as large ones, which makes some faults nearly invisible | Measured in the fit check (signal versus noise per fault) |
 | L6 | One held-out fault type | A single type can be easy or hard by accident | Stated; reported separately from the development types |
-| L7 | The answer key is protected against code paths, not against people | A person could read it | Import-graph and text tests; Cleanroom v0.2 vault planned (M4, M18) |
+| L7 | The answer key is protected against code paths, not against people | A person could read it | Import-graph and text tests; Cleanroom vault with a release log (M18, M39) |
 | L8 | Headroom over a 4-week pooled average is small at the leaf level (oracle / pooled 0.87 small, 0.89 full) | A TSFM has little room to beat a cheap baseline on single leaves; gains, if any, should come on aggregates | Measured and reported in `docs/data-fit.md` before any detector; stated with H1 |

@@ -46,13 +46,9 @@ packages = ["src/culprit"]
 
 [tool.uv.sources]
 # The shared Cleanroom, installed from a git tag, never copied (CLAUDE.md, Tells D1).
-# TODO(cleanroom-v0.2): bump to tag cleanroom-v0.2 once it is released. It adds
-# event matching (alarms against fault windows, detection delay, false alarms per
-# week, threshold for a fixed alarm rate) and a sealed answer-key vault. When it
-# lands, replace culprit.evaluate.metrics event matching and culprit.detect.budget
-# thresholding with the Cleanroom versions and move the answer-key reader in
-# culprit.evaluate.grade behind the vault. See docs/methodology.md M4.
-cleanroom = { git = "https://github.com/BK5102/tells", tag = "cleanroom-v0.1", subdirectory = "packages/cleanroom" }
+# v0.2 adds events (alarm matching, thresholds for a fixed alarm rate), vault
+# (sealed answer key), guard (sealed runs) and forecast scoring (methodology M4).
+cleanroom = { git = "https://github.com/BK5102/tells", tag = "cleanroom-v0.2", subdirectory = "packages/cleanroom" }
 torch = [{ index = "pytorch-cpu" }]
 
 # CPU-only PyTorch wheels: smaller, and this project never uses a GPU.

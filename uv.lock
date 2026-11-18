@@ -111,12 +111,14 @@ wheels = [
 
 [[package]]
 name = "cleanroom"
-version = "0.1.0"
-source = { git = "https://github.com/BK5102/tells?subdirectory=packages%2Fcleanroom&tag=cleanroom-v0.1#b807bfb74b42592ed7013b80b089be1df949a220" }
+version = "0.2.0"
+source = { git = "https://github.com/BK5102/tells?subdirectory=packages%2Fcleanroom&tag=cleanroom-v0.2#e6d50a425780cb1dc018ea399d627643e93d365b" }
 dependencies = [
     { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
     { name = "numpy", version = "2.5.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
     { name = "polars" },
+    { name = "scipy", version = "1.17.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
+    { name = "scipy", version = "1.18.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
 ]
 
 [[package]]
@@ -172,7 +174,7 @@ dev = [
 requires-dist = [
     { name = "anthropic", marker = "extra == 'agent'", specifier = ">=1.0" },
     { name = "chronos-forecasting", marker = "extra == 'tsfm'", specifier = ">=2.3" },
-    { name = "cleanroom", git = "https://github.com/BK5102/tells?subdirectory=packages%2Fcleanroom&tag=cleanroom-v0.1" },
+    { name = "cleanroom", git = "https://github.com/BK5102/tells?subdirectory=packages%2Fcleanroom&tag=cleanroom-v0.2" },
     { name = "numpy", specifier = ">=2.1" },
     { name = "polars", specifier = ">=1.30" },
     { name = "pyyaml", specifier = ">=6.0" },

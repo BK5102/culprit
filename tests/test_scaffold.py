@@ -9,8 +9,11 @@ def test_package_imports():
 
 def test_cleanroom_imports_from_the_git_tag():
     import cleanroom
-    from cleanroom import lock, split
+    from cleanroom import events, guard, lock, split, vault
 
-    assert cleanroom.__version__.startswith("0.")
+    assert cleanroom.__version__ == "0.2.0"
     assert hasattr(split, "Split")
     assert hasattr(lock, "require_lock")
+    assert hasattr(events, "threshold_for_alarm_rate")
+    assert hasattr(vault, "release_answer_key")
+    assert hasattr(guard, "sealed_run")
