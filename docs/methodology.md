@@ -129,13 +129,6 @@ All data in this project is simulated. Numbers quoted below come from code run o
 - Limitation: the hash is reproducible for the same library versions; a numpy change to its random algorithms could change worlds (uv.lock pins versions).
 
 
-The honest list. Each item says what could be wrong and what was done about it.
-
-| # | Limitation | Effect | What was done |
-|---|---|---|---|
-| L1 | Simulated data only | No result shows real-world performance | Stated on the first screen of the README and in every report (CLAUDE.md rule 8) |
-| L2 | Event matching and calibration are local until Cleanroom v0.2 | Not shared with the sibling projects yet | TODO in `pyproject.toml`; tested here (M4) |
-
 ## 4. Data fit
 
 **M20. A data-fit gate before any detector: signal versus noise, masking, surge traps, headroom, too easy, bookkeeping.**
