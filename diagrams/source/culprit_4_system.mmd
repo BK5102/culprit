@@ -1,0 +1,59 @@
+flowchart TD
+    subgraph S1["1. SIMULATED PAYMENT WORLD (no real payment data)"]
+        A["Slice hierarchy<br/>country, issuer, BIN range, method, gateway"]
+        B["Normal behavior<br/>hourly volume with day and week rhythm,<br/>holidays, base approval rates, noise"]
+        C["Legit surges<br/>promotions, paydays: unusual but NOT faults<br/><i>the false-alarm traps</i>"]
+        D["Fault injector<br/>issuer outage, BIN decline spike,<br/>gateway degradation, extra-verification change"]
+        E["Sealed ground-truth log<br/>true cause, slice, start, end<br/><i>the agent can never read this</i>"]
+        F["Side signals<br/>decline reason codes, latency"]
+    end
+    subgraph S2["2. KNOW NORMAL (detectors)"]
+        G["A. Seasonal naive + threshold<br/><i>last week's same hour</i>"]
+        H["B. Classical seasonal forecaster<br/>with intervals"]
+        I["C. TSFM zero-shot quantile forecast<br/>per slice with persistence rule"]
+    end
+    subgraph S3["3. THE CLEANROOM (honest exam)"]
+        J["Context period = normal only<br/>Evaluation period = faults appear<br/>+ sealed envelope lock"]
+        K["Equal alert budget for every detector<br/>(same false alarms per week)"]
+        L["Scores: detection delay, false alarms,<br/>revenue-at-risk, attribution accuracy,<br/>cost per incident"]
+    end
+    subgraph S4["4. FIND THE CULPRIT"]
+        M["Deterministic pipeline<br/>contribution analysis + drill-down + rules<br/><i>the no-LLM control</i>"]
+        N["Agent harness (read-only tools)<br/>Orchestrator, Investigator, Hypothesis writer"]
+        O["Critic<br/>rejects claims not backed by tool output"]
+        P["Reporter<br/>incident report, numbers inserted by code"]
+    end
+    Q["YOU<br/>compare agent vs deterministic control and read incident reports"]
+
+    A --> B --> C
+    B --> D
+    D --> E
+    D --> F
+    C --> J
+    B --> J
+    J --> G
+    J --> H
+    J --> I
+    G --> K
+    H --> K
+    I --> K
+    K --> L
+    I --> M
+    I --> N
+    F --> N
+    N --> O --> P --> Q
+    M --> L
+    P --> L
+    E -. used only after the run to grade .-> L
+    L --> Q
+
+    classDef world fill:#eef2f7,stroke:#4a5568,color:#1a202c;
+    classDef det fill:#f3e8ff,stroke:#6b46c1,color:#2d1b4e;
+    classDef room fill:#fff4d6,stroke:#b7791f,color:#4a3200;
+    classDef agent fill:#e6f7ec,stroke:#2f855a,color:#0f3d24;
+    classDef human fill:#ffe8e8,stroke:#c53030,color:#4a1010;
+    class A,B,C,D,E,F world;
+    class G,H,I det;
+    class J,K,L room;
+    class M,N,O,P agent;
+    class Q human;

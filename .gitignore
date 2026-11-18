@@ -1,0 +1,33 @@
+# Generated data is never committed. Worlds are rebuilt from a config and a seed.
+data/raw/
+data/worlds/
+data/interim/
+artifacts/
+!artifacts/samples/
+
+# Locks for scratch runs made by tests or by hand outside locks/
+locks/scratch/
+
+# Secrets
+.env
+.env.*
+
+# Python and tooling
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+dist/
+build/
+
+# OS and editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Temporary git worktrees made by Claude Code agents
+.claude/worktrees/

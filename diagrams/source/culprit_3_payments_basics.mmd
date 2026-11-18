@@ -1,0 +1,41 @@
+flowchart LR
+    subgraph P1["STEP 1: HOW A PAYMENT WORKS"]
+        direction TB
+        A["<b>YOU TAP YOUR CARD</b><br/>The shop must ask: will your bank approve this payment?<br/><i>Like: asking permission through a chain of assistants</i>"]
+        B["<b>THE CHAIN</b><br/>Merchant, then payment processor or gateway,<br/>then card network, then YOUR BANK (the issuer)<br/>The answer travels back in about a second"]
+        C["<b>AUTHORIZATION</b><br/>The issuer's yes or no<br/>Approval rate = approved payments / attempted payments<br/><i>Like: the share of people the bouncer lets in</i>"]
+        D["<b>WHY IT MATTERS</b><br/>A small drop in approval rate means many real customers<br/>turned away and lost sales<br/><i>Like: a shop door that sticks for one in twenty customers</i>"]
+        A --> B
+        B --> C
+        C --> D
+    end
+    subgraph P2["STEP 2: WHY IT BREAKS AND WHY IT IS HARD TO SEE"]
+        direction TB
+        E["<b>WHY IT DROPS</b><br/>Issuer outage, one card range (BIN) declined more,<br/>gateway slowdown or timeouts, a new extra-verification rule<br/><i>Like: a traffic jam can be a crash, roadworks, or a stadium letting out</i>"]
+        F["<b>SEGMENTS (SLICES)</b><br/>Country, issuer, BIN range, payment method, gateway<br/>Thousands of combinations, each its own time series<br/><i>Like: a city's neighborhoods</i>"]
+        G["<b>THE TRAP</b><br/>The overall rate can barely move while one slice collapses<br/><i>Like: a city's average temperature hides one freezing neighborhood</i>"]
+        H["<b>TODAY'S TOOLS</b><br/>Learn an expected baseline, flag deviations, size the financial impact,<br/>send an alert. Finding the cause is mostly manual drill-down<br/>(as described on one vendor's product page)"]
+        E --> F
+        F --> G
+        G --> H
+    end
+    subgraph P3["STEP 3: THE IDEA AND THE EXAM"]
+        direction TB
+        I["<b>THE IDEA, PART 1: KNOW NORMAL</b><br/>One pretrained TSFM forecasts the expected approval rate<br/>for thousands of slices without training one model per slice<br/><i>Like: one forecaster covering every neighborhood, not one hired per street</i>"]
+        J["<b>THE IDEA, PART 2: FIND THE CULPRIT</b><br/>When actual falls below the forecast range, an agent drills down<br/>through slices, checks decline reasons and latency, and writes a<br/>hypothesis with evidence<br/><i>Like: a detective who starts at the city and narrows to the street</i>"]
+        K["<b>HONEST EXAM</b><br/>Simulated payment streams with injected faults whose<br/>true cause is sealed in a log the agent cannot see<br/><i>Like: a fire drill where only the organizer knows where the fire is</i>"]
+        L["<b>WHAT YOU REPORT</b><br/>How fast faults are caught, how many false alarms,<br/>how often the culprit is named correctly, and what it costs per incident"]
+        I --> J
+        J --> K
+        K --> L
+    end
+    P1 --> P2
+    P2 --> P3
+    classDef concept fill:#e8f1ff,stroke:#2b6cb0,color:#102a43;
+    classDef warn fill:#ffe8e8,stroke:#c53030,color:#4a1010;
+    classDef idea fill:#fff4d6,stroke:#b7791f,color:#4a3200;
+    classDef good fill:#e6f7ec,stroke:#2f855a,color:#0f3d24;
+    class A,B,C,D concept;
+    class E,F,G,H warn;
+    class I,J idea;
+    class K,L good;
