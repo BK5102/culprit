@@ -19,3 +19,11 @@ The simulator builds an hourly world of leaf segments (BIN range x method x gate
 ### D4. Detectors compared at the same false-alarm budget
 
 Four detectors score every monitored series: A (same hour last week, with a robust spread), A2 (a binomial z-score that knows small segments are noisier), B (MSTL seasonal pattern with intervals) and C (Chronos-Bolt-tiny forecasting the rate, tested so far with a fake stand-in). Each gets its threshold on a fault-free calibration window so that all of them raise at most 2 alarms per week across all series, using the Cleanroom's alarm rule and calibration, and a test proves every score uses only the past. Analogy: four smoke detectors tuned so each beeps falsely twice a week, then judged on how fast they notice a real fire.
+
+### D5. The no-LLM control: scan every segment, then type the cause from decline reasons
+
+For each incident, the control looks only at data up to the first alarm, scores every segment (country, issuer, BIN, and their combinations with method and gateway) by how far its approvals fell short of a drift-adjusted seasonal baseline, picks the most significant, widens it to a parent when the rest of that parent is hit too, and names the cause from the decline reason that rose most and from latency. It went through four designs on development worlds before any grading code existed; each failure is written down in methodology M31. Analogy: instead of walking from the city to the street one turn at a time, the detective checks every street at once and names the one where the trouble is most concentrated.
+
+### D6. Grading through the Cleanroom vault
+
+Only `evaluate/grade.py` reads the answer key, and only after checking it against the vault record made when the world was built; a sealed test world opens only through the Cleanroom vault after a finished, committed sealed run, and every opening is logged. Matching alarms to faults and counting false alarms per week use the Cleanroom's event tools, so all three projects grade alarms the same way. Analogy: the exam board keeps the marking scheme in a sealed envelope, and the envelope logs who opened it and when.

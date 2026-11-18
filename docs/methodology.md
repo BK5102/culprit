@@ -186,6 +186,41 @@ All data in this project is simulated. Numbers quoted below come from code run o
 - Why: CLAUDE.md rule 3. Forecast origins and scale refreshes are fixed points on the timeline, not "the end of the data", and this test enforces it.
 - Limitation: probes are a sample (7 per detector), not every hour.
 
+## 6. Finding the culprit without an LLM (the control)
+
+**M29. The control investigates each incident with only the data visible at its first alarm, over the alarm's own window.**
+- What: for an incident whose first alarm fires at hour h, the control works on `world.until(h + 1)`. Its window starts where that alarm's run of exceedances began (h - persistence + 1), widened to at least 3 hours. It investigates every incident of the configured detector (A2 by default).
+- Why: an analyst paged at hour h cannot see hour h + 1 (CLAUDE.md rule 3). A test wrecks all data after the alarm and checks the attribution does not change. The first version used the last 6 hours, which, with an alarm 2 hours into a fault, was mostly normal hours and diluted the drop.
+- Considered: waiting a few hours after the alarm for more evidence. Deferred: it trades attribution accuracy for time to answer, which should be a measured choice.
+- Limitation: a mild, slow fault seen through a 3-hour window gives weak evidence (the held-out type especially).
+
+**M30. Contribution: missing approvals against a level-adjusted seasonal baseline.**
+- What: each leaf's expected approval rate is the pooled same-hour rate of the previous 4 weeks, shifted by the leaf's recent level (its approvals minus pooled-expected approvals per attempt over the 24 hours that end 6 hours before the window). Missing approvals = attempts x expected rate - approvals, summed over a segment; z = missing / sqrt(sum of attempts x p x (1 - p)).
+- Why: using actual attempts means a volume surge alone creates no missing approvals (tested). The level shift was added after a test showed day-to-day drift giving a big, normal segment a z of about 9, larger than a real injected drop on a small issuer. The 6-hour gap keeps a fault that started just before the window out of its own baseline.
+- Considered: the detector's own forecast as the baseline. Rejected for the control: the control should not depend on which detector raised the alarm.
+- Limitation: a fault that started more than 6 hours before the window's start is partly absorbed into the level.
+
+**M31. Drill-down by scanning the whole hierarchy, with a stopping rule and a generalization step.**
+- What: every segment of the form (none, country, issuer or BIN) x (method or not) x (gateway or not) is scored: z_now / phi, where phi is one overdispersion factor for the window (the median over segments of 1.4826 x median |z| on the same hours of the previous 7 days, at least 1). The best-scoring segment is kept if its score is at least 3 (the stopping rule; otherwise "no localized drop"). Then, while a parent of it (drop one cross dimension, or go one level up the geography) has a "rest" (parent minus segment) whose relative drop is at least half the segment's, move to that parent. Top-3 = the three best scores.
+- Why: for a fault on segment T, raw z peaks at T in expectation (parents dilute, children lose affected payments); this is the idea behind expectation-based scan statistics (Neill and Moore's work on spatial scan statistics; not re-read for this project, so cited from memory only). The generalization step settles near-ties between T and its biggest child: a whole-issuer fault hits all its BINs, a one-BIN fault does not. The half-way threshold is the midpoint between "rest untouched" and "rest equally hit".
+- History (all before any grading code existed, in tests on development worlds): (1) a greedy top-down walk choosing the child with the largest excess share picked the wrong child when the true child held most of its parent's volume; (2) a complement rule kept it from that, but the walk stopped at the total whenever an unrelated sibling's drift cancelled the faulty segment's shortfall in the parent (an issuer with z of 6 under a country with z of -2.9); (3) a per-segment phi from 7 past windows was too noisy (1.35 to 3.04 in one world) and reordered candidates; (4) requiring the rest to have z of at least 2 blocked generalization when the rest was small.
+- Considered: an LLM (that is the agent, H2); a full likelihood model of every segment combination (more machinery than needed for v0.1).
+- Limitation: when the true segment and its largest child are nearly the same size, the data cannot tell them apart in a short window; the control will sometimes name the child. Tests require at least 75% of strong, isolated faults right, not all.
+
+**M32. Fault typing: dominant new decline reason, then latency.**
+- What: on the culprit segment, the rise in each decline reason's rate per attempt (window against the same hours of the previous 4 weeks) and the latency ratio. Rules, first match: issuer_unavailable rise -> issuer_outage; processing_error rise or latency ratio of at least 1.8 -> gateway_degradation; do_not_honor or suspected_fraud -> bin_decline_spike; authentication_required -> extra_verification; insufficient_funds -> no_fault; a largest rise under 0.2 percentage points -> unknown. No culprit -> no_fault.
+- Why: decline reasons are what an analyst reads first. Latency separates gateway trouble. The insufficient_funds rule keeps a promotion from being blamed on the system (tested).
+- Considered: dropping the authentication_required rule because extra_verification is held out. Rejected: an analyst would write that rule from the meaning of the reason alone, and removing it would weaken the control to the agent's advantage (CLAUDE.md rule 5). Its 0.2-point threshold is shared with the other rules and was not tuned on any world containing the type.
+- Limitation: the mapping matches the simulator's own signature table (M14), so fault typing is easier here than on real data, and on the held-out type it tests the thresholds, not the mapping.
+
+## 8. Grading
+
+**M39. Grading reads the key only through the vault, and matching uses `cleanroom.events`.**
+- What: an alarm on a series matches a fault when the series' segment shares a leaf with the fault's target and start <= alarm hour <= last fault hour + 6 (`match_alarms` with tolerance 6). Delay = first matching alarm minus start; `caught_within` gives the share caught within 2, 6 and 24 hours; unmatched alarms are false alarms, per week via `false_alarms_per_unit`, and those touching a surge are counted as surge traps. Attribution: each fault's first matching incident is graded on top-1 (culprit equals the target segment exactly), top-3 and fault type; surge-only incidents count as blamed if the investigator names a culprit and a cause other than no_fault. The key is sealed with `cleanroom.vault.seal_answer_key` when a world is written. Development worlds open it after a checksum check against that record, and never for a config with `evaluate.role: test`. Test worlds open it only through `release_answer_key`: valid lock and vault record both committed to git, the sealed run recorded as finished (`cleanroom.guard`), and the key unchanged; each release is logged.
+- Why: CLAUDE.md rules 1 and 4. Exact-segment top-1 is strict on purpose: naming the BIN when the issuer failed sends an analyst to the wrong team.
+- Considered: partial credit for an ancestor or descendant of the target. Kept out of the headline; top-3 gives some of that.
+- Limitation: a 6-hour tolerance after a fault ends credits late alarms that an operations team might call useless; delay is reported next to detection.
+
 ---
 
 ## Limitations register
@@ -207,3 +242,7 @@ The honest list. Each item says what could be wrong and what was done about it.
 | L11 | Detector B's seasonal pattern is frozen at the end of the context | Holidays or rhythm changes in evaluation are only absorbed through the level | Stated (M24) |
 | L12 | The TSFM detector is tested only with a fake forecaster | No TSFM detection number exists | Adapter pinned and import-tested; the full run is left for the owner with the `tsfm` extra (M25) |
 | L13 | A 2-hour persistence rule cannot catch a 1-hour fault | Some gateway faults are undetectable by design | Stated (M26) |
+| L14 | The control's window is short (from the alarm run's start, at least 3 hours) | Mild, slow faults give weak evidence; the held-out type is mild and slow | Stated (M29); a longer wait is a measured option for later |
+| L15 | Near-ties between a segment and its biggest child | The control sometimes names the child | Generalization step (M31); top-3 reported; tests require 75%, not 100% |
+| L16 | Fault-typing rules mirror the simulator's signature table | Typing accuracy overstates what rules would do on real data | Stated (M32); the held-out type tests thresholds only |
+| L17 | The control's design was revised four times on development worlds | It is tuned to this simulator's development worlds to some degree | Every revision happened before any grading code existed and is listed (M31); held-out type and a second regime at test time (rule 9) |

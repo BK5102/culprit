@@ -81,14 +81,14 @@ DEFAULTS: dict[str, Any] = {
     },
     "control": {
         "detector": "A2",
-        "lookback_hours": 6,
-        "min_share": 0.6,
-        "min_excess": 0.1,
+        "lookback_hours": 3,
         "min_z": 3.0,
-        "max_depth": 4,
+        "history_days": 7,
+        "rest_min_z": 0.0,
+        "rest_min_ratio": 0.5,
     },
     "agent": {"max_tool_calls": 12, "max_cost_usd": 0.50},
-    "evaluate": {"match_grace_hours": 6, "average_ticket_usd": 50.0},
+    "evaluate": {"role": "dev", "match_grace_hours": 6, "average_ticket_usd": 50.0},
     "paths": {"data_dir": "data/worlds", "artifacts_dir": "artifacts", "lock_dir": "locks"},
 }
 

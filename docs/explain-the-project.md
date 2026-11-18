@@ -53,3 +53,21 @@ The technical detail behind each step is in `docs/methodology.md` (numbered M1, 
 - **What else I considered:** a CUSUM for A2, which adds up evidence over hours. On a development world a long promotion piled up a huge CUSUM score in the calibration week and pushed the threshold above what a 6-hour outage reached, so the per-hour z-score is the default and the CUSUM stays as an option.
 - **Cause and effect:** the full world exposed a bug in Detector A: tiny segments whose rate is always 0 or 1 had zero spread and absurd scores, so A raised no alarm at all at the budget. A standard-deviation fallback fixed it before any grading existed. A past-only test on every detector proves no score uses later hours, and a deliberately cheating detector fails it.
 - **How to say it:** "I tuned every detector to the same two false alarms a week on a quiet calibration period, so the comparison is about who notices real faults first, not who alarms most."
+
+## Part 4. Finding the culprit without an LLM
+
+### Step 5. Build the no-LLM control the agent must beat
+
+- **What I did:** wrote a deterministic investigator. For each incident it uses only data up to the alarm, measures every segment's shortfall of approvals against a seasonal baseline adjusted for recent drift, picks the most significant segment, widens it to a parent when the rest of the parent is hit too, and names the cause from decline reasons and latency.
+- **Why:** research on agentic forecasters found that removing the LLM often kept performance (PLAN.md Part 8, Nexus). The agent only earns its cost if it beats a strong script, so the script has to be as good as I can make it.
+- **What else I considered:** a greedy walk from the total down to the culprit. It failed in tests in two ways: it picked the wrong child when the right one held most of its parent's volume, and it stopped at the top whenever another segment's normal drift cancelled the drop in a parent. The scan fixed both.
+- **Cause and effect:** the tests also showed the honest limits: when a segment and its biggest child are nearly the same size, a few hours of data cannot tell them apart, so the control is required to get most strong faults right, not all. A promotion is typed as "no fault" because its extra declines are "insufficient funds".
+- **How to say it:** "My no-AI baseline scans every segment at once and names the one where the shortfall is most concentrated; it took four designs, and I wrote down why each one failed."
+
+### Step 6. Grade only through a sealed envelope
+
+- **What I did:** `evaluate/grade.py` is the only code that reads the answer key. It matches alarms to faults with the Cleanroom's event tools (a fault counts as caught if an alarm on an overlapping segment fires between its start and 6 hours after its end), measures delay and false alarms per week, and grades the investigator on top-1, top-3 and fault type. Test worlds open only through the Cleanroom vault after a finished sealed run.
+- **Why:** the result is only believable if nothing could peek, and if the peeking rules are the same across all three projects.
+- **What else I considered:** partial credit for naming a parent or child of the true segment. Kept out of the headline because it sends the analyst to the wrong team; top-3 covers near misses.
+- **Cause and effect:** a test proves the key will not open for a test world until a sealed run has finished and the lock and vault record are committed.
+- **How to say it:** "The answer key sits in a vault that only opens after the run has written its answers, and every opening is logged."
