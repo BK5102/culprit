@@ -47,13 +47,29 @@ Needs [uv](https://docs.astral.sh/uv/) and a laptop CPU. No GPU, no API key, and
 
 ```
 uv sync
-uv run pytest -q
-uv run culprit simulate configs/small.yaml    # build the small simulated world (about 100 segments)
-uv run culprit detect configs/small.yaml      # run the detectors at an equal false-alarm budget
-uv run culprit attribute configs/small.yaml   # deterministic drill-down to the culprit segment
+uv run pytest -q                              # 161 tests, about a minute
+uv run python scripts/check_data_fit.py configs/small.yaml   # is the simulated world a fair test?
+uv run culprit simulate configs/small.yaml    # build the small world (96 leaf segments, 8 weeks hourly)
+uv run culprit detect configs/small.yaml      # detectors A, A2, B at 2 false alarms per week
+uv run culprit attribute configs/small.yaml   # the no-LLM control names a culprit per incident
+uv run culprit evaluate configs/small.yaml    # grade this development world (not a result)
 ```
 
-Outputs go to `data/worlds/` and `artifacts/`, both gitignored.
+The three middle commands take about 40 seconds together on a laptop CPU. Outputs go to `data/worlds/` and `artifacts/`, both gitignored. Every output file records the config hash, git commit and dataset hash.
+
+Optional, for the TSFM detector (Chronos-Bolt-tiny, CPU only; the first run downloads the pinned weights from Hugging Face):
+
+```
+uv sync --extra tsfm
+uv run culprit detect configs/full.yaml
+```
+
+## Manual steps for the owner
+
+- **GitHub repo.** This repository has no remote yet. Create one and push when ready; CI (`.github/workflows/ci.yml`) runs ruff and pytest on Python 3.11 and 3.12.
+- **LLM API key and spend cap** for the agent (H2). Put `ANTHROPIC_API_KEY` in the environment (never in git) and decide a total cap and a per-incident cap. The investigator loop, critic and reporter exist and are tested with a hand-written cassette; no live call has been made.
+- **The false-alarm budget.** On the first development run, 2 alarms per week counted over all series caught few faults (see `docs/explain-the-project.md`, Step 8). Decide before the lock whether to keep it, raise it, or count it per incident.
+- **The sealed test.** Choose test seeds, keep `extra_verification` in the test worlds' fault types, pick a second simulator regime, set `evaluate.role: test`, then `culprit seal`, commit, `culprit run --sealed RUN_ID`, `culprit evaluate --run-id RUN_ID`.
 
 ## What is in the repo
 
