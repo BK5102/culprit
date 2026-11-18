@@ -93,10 +93,11 @@ All data in this project is simulated. Numbers quoted below come from code run o
 - Limitation: two surge shapes only; real promotions vary much more.
 
 **M14. Four fault types, each with a target level, severity, duration, decline signature and latency factor.**
-- What: issuer_outage (one issuer, severity 0.25 to 0.70, 2 to 8 hours, issuer_unavailable 85% and processing_error 15%, latency x1.2 to 1.6); bin_decline_spike (one BIN, 0.15 to 0.50, 4 to 24 hours, do_not_honor 80% and suspected_fraud 20%, no latency change); gateway_degradation (one gateway, 0.05 to 0.25, 1 to 6 hours, processing_error 90% and issuer_unavailable 10%, latency x2 to 4); extra_verification (one issuer's card-not-present payments, 0.10 to 0.30, 12 to 48 hours, authentication_required 90% and do_not_honor 10%, latency x1.1 to 1.3). Severity is the share of approvals lost: p becomes p x (1 - severity) on every leaf under the target.
+- What: issuer_outage (one issuer, severity 0.01 to 0.40, 2 to 8 hours, issuer_unavailable 85% and processing_error 15%, latency x1.2 to 1.6); bin_decline_spike (one BIN, 0.01 to 0.30, 4 to 24 hours, do_not_honor 80% and suspected_fraud 20%, no latency change); gateway_degradation (one gateway, 0.01 to 0.15, 1 to 6 hours, processing_error 90% and issuer_unavailable 10%, latency x2 to 4); extra_verification (one issuer's card-not-present payments, 0.01 to 0.20, 12 to 48 hours, authentication_required 90% and do_not_honor 10%, latency x1.1 to 1.3). Severity is the share of approvals lost: p becomes p x (1 - severity) on every leaf under the target. Severity is drawn log-uniformly, so a fault of 1% to 2% is as likely as one of 20% to 40%.
+- History: the first ranges were 0.25 to 0.70, 0.15 to 0.50, 0.05 to 0.25 and 0.10 to 0.30, drawn uniformly. Data-fit run 1 showed 88.9% of faults at over 10 times the noise and none under 3 times, so every detector would catch everything at once and H1 could not separate them (`docs/data-fit.md`). The ranges were lowered before any detector existed; this changes the exam's difficulty on development seeds, it does not tune any method.
 - Why: these are the four causes in PLAN.md FR4. Their blast radius differs (a gateway carries a quarter or a sixth of all traffic, a BIN about 1%), so some faults hide in the overall rate and some do not.
 - Considered: gradual ramps instead of steps. Deferred to a later regime.
-- Limitation: ranges are assumptions; real outages are often total for minutes rather than partial for hours.
+- Limitation: ranges are assumptions, chosen so detection is neither trivial nor hopeless; real outages are often total for minutes rather than partial for hours, and the mildest "outages" here (1% of approvals) are really partial degradations.
 
 **M15. Faults only in the evaluation window, Poisson in number, uniform in start and target, overlaps allowed.**
 - What: 5 faults per week (small) or 6 (full) on average; the type is uniform among the configured types, the target uniform among segments of that level, the start uniform within the evaluation window so the fault ends inside it.
@@ -134,8 +135,28 @@ The honest list. Each item says what could be wrong and what was done about it.
 |---|---|---|---|
 | L1 | Simulated data only | No result shows real-world performance | Stated on the first screen of the README and in every report (CLAUDE.md rule 8) |
 | L2 | Event matching and calibration are local until Cleanroom v0.2 | Not shared with the sibling projects yet | TODO in `pyproject.toml`; tested here (M4) |
+
+## 4. Data fit
+
+**M20. A data-fit gate before any detector: signal versus noise, masking, surge traps, headroom, too easy, bookkeeping.**
+- What: `scripts/check_data_fit.py` simulates development seeds in memory and measures six things (definitions in the script docstring and `docs/data-fit.md`). Gates: largest-rate-drop top-1 under 90% (from the plan); some faults masked in the total but visible at their segment; at least half of faults with whole-window SNR of at least 3; detection not trivial (under half of faults at 10 times the empirical hourly noise and over 10% under 3 times); promotions fire a naive detector more often than quiet windows; oracle error under 0.9 of seasonal naive's at the leaf level; bookkeeping reconciles.
+- Why: Tells' main lesson was to measure whether the data can answer the question before building on it (`NEXT_PROJECTS_PLAN.md`). A world where faults are obvious, invisible, or where the largest drop is always the culprit cannot test H1 or H2.
+- Considered: only the plan's four checks. Added "detection not trivial" after run 1 showed every fault was obvious, and a 4-week pooled baseline column to headroom so the TSFM's real room is visible.
+- Limitation: the gate thresholds (3 sigma, 10 sigma, 0.9) are judgment calls, written down before any detector or result existed. The check uses the simulator's truth, so it says what is possible, not what a method achieves.
+
+---
+
+## Limitations register
+
+The honest list. Each item says what could be wrong and what was done about it.
+
+| # | Limitation | Effect | What was done |
+|---|---|---|---|
+| L1 | Simulated data only | No result shows real-world performance | Stated on the first screen of the README and in every report (CLAUDE.md rule 8) |
+| L2 | Event matching and calibration are local until Cleanroom v0.2 | Not shared with the sibling projects yet | TODO in `pyproject.toml`; tested here (M4) |
 | L3 | Seasonality, base rates, fault ranges and surge shapes are the author's assumptions | Results depend on these choices | Each value is listed in M9 to M15; a second simulator regime is required at test time (rule 9) |
 | L4 | Every fault has a clean decline-reason signature | Fault typing is easier than on real data | Stated; reason leakage (part of each fault's declines go to a second reason) adds some mess |
 | L5 | Fault targets are uniform among segments of a level | Tiny BINs are hit as often as large ones, which makes some faults nearly invisible | Measured in the fit check (signal versus noise per fault) |
 | L6 | One held-out fault type | A single type can be easy or hard by accident | Stated; reported separately from the development types |
 | L7 | The answer key is protected against code paths, not against people | A person could read it | Import-graph and text tests; Cleanroom v0.2 vault planned (M4, M18) |
+| L8 | Headroom over a 4-week pooled average is small at the leaf level (oracle / pooled 0.87 small, 0.89 full) | A TSFM has little room to beat a cheap baseline on single leaves; gains, if any, should come on aggregates | Measured and reported in `docs/data-fit.md` before any detector; stated with H1 |
