@@ -137,6 +137,55 @@ All data in this project is simulated. Numbers quoted below come from code run o
 - Considered: only the plan's four checks. Added "detection not trivial" after run 1 showed every fault was obvious, and a 4-week pooled baseline column to headroom so the TSFM's real room is visible.
 - Limitation: the gate thresholds (3 sigma, 10 sigma, 0.9) are judgment calls, written down before any detector or result existed. The check uses the simulator's truth, so it says what is possible, not what a method achieves.
 
+## 5. Detectors ("know normal")
+
+**M21. Every detector watches the same series: the total, every single-dimension segment, and every leaf.**
+- What: 1 total + each country, issuer, BIN, method and gateway + each leaf: 123 series in the small config and 1,554 in the full one. Scores start at the first calibration hour.
+- Why: a fault on an issuer shows most clearly at the issuer, a gateway fault at the gateway, and a masked fault only below the total. Watching one level would hide some fault types from some detectors. The same set for every detector keeps the comparison fair.
+- Considered: leaves only (most series, weakest signal each); every cross combination such as issuer x method (many more series, and more false alarms at a fixed budget).
+- Limitation: cross segments such as an issuer's card-not-present payments are not watched directly; the held-out extra-verification fault lives on one and must show through its issuer or its leaves.
+
+**M22. Detector A: seasonal naive with a MAD threshold.**
+- What: forecast = the rate at the same hour last week; score = (forecast - actual) / (1.4826 x MAD of that residual over the previous 4 weeks, refreshed daily). Where the MAD is zero, the standard deviation is used.
+- Why: the laziest sensible forecaster (PLAN.md Diagram 4, "last week's same hour"). The MAD (median absolute deviation, a spread measure that ignores a few wild values; like judging a commute by a typical day, not the day of the snowstorm) keeps one bad hour from inflating the scale.
+- History: on the full world, tiny leaves (one or two attempts an hour) have rates of exactly 0 or 1 almost always, so their MAD was 0, their scores hit 10,000, and the budget threshold rose so high that A raised no alarm at all. The standard-deviation fallback was added on 2026-11-17, before any grading code existed.
+- Limitation: one noisy past point per forecast; its error includes last week's noise as well as this week's.
+
+**M23. Detector A2: binomial-aware seasonal z-score (CUSUM available, not the default).**
+- What: expected rate = approvals over attempts pooled over the same hour of the previous 4 weeks; z = (n p - approvals) / sqrt(n p (1 - p) (1 + n / n_base)); z is divided by its own robust spread over the previous 4 weeks (at least 1, refreshed daily) to absorb drift. `a2_mode: cusum` adds a one-sided CUSUM with k = 0.5.
+- Why: this is the detector that knows a rate from 20 payments is noisier than one from 20,000. The plan allows a z-score or a CUSUM. A CUSUM's score grows with event length: on a development world a long promotion in the calibration week reached 307, set the threshold at 204, and a 6-hour 40% outage (score 169) went unflagged. A per-hour z keeps short outages and long surges on the same scale. The choice was made while writing tests, before any grading code existed.
+- Considered: a beta-binomial likelihood ratio. Deferred: more machinery for the same idea.
+- Limitation: a slow, mild fault (the held-out extra-verification type lasts 12 to 48 hours) is exactly what a CUSUM would catch better, so A2 may be weak on it; the CUSUM stays in code for that comparison.
+
+**M24. Detector B: MSTL seasonal pattern plus an exponentially smoothed level, with intervals by hour of day.**
+- What: statsmodels MSTL (periods 24 and 168, one iteration, LOESS jumps of 24) on the last 4 weeks of the context, once per series. Forecast = weekly-plus-daily pattern + a level updated each hour with exponential smoothing (alpha 0.05) on past deseasonalized values. Interval spread = robust spread of one-step errors over the last 2 weeks of context, one value per hour of day. Score = (forecast - actual) / spread.
+- Why: MSTL (a classical split of a series into trend, daily and weekly rhythm; like separating a song into bass line and melody) is the standard decomposition for hourly data with two rhythms. Fitting once on normal-only context and updating only the level is cheap and cannot learn from faults. LOESS jumps cut the fit from about 0.5 s to 0.02 s per series (measured 2026-11-17), so the full config's 1,554 series take about 22 s.
+- Considered: statsmodels ExponentialSmoothing (Holt-Winters, the classical ETS model) with a 168-hour season (about 0.1 s per series with a 24-hour season, and it must fit 168 starting values for a weekly one); refitting MSTL every day (more adaptive, about 50 times the cost).
+- Limitation: the seasonal pattern is frozen at the end of the context, so a holiday or a slow change in rhythm during evaluation is absorbed only through the level.
+
+**M25. Detector C: Chronos-Bolt-tiny forecasts the rate, zero-shot, with a quantile-based score.**
+- What: at origins every 24 hours (fixed points starting at the first calibration hour), the model reads each series' last 512 hourly rates and returns the 0.1, 0.5 and 0.9 quantiles for the next 24 hours. Score = (median - actual) / ((median - q0.1) / 1.2816). Weights pinned to revision `a0e552de83495b5c28c14c71c374f3e33280b340` (`docs/tsfm-notes.md`). CPU only, optional `tsfm` extra, forecasts cacheable on disk. `FakeForecaster` (seasonal mean and robust spread) stands in for tests.
+- Why: approved in the plan ("TSFM detector forecasts the rate"; Chronos-Bolt-tiny is already pinned and cheap on CPU from Tells). Zero-shot means the model is used as is, with no training on this data (like asking an experienced forecaster about a new city without a briefing). Forecasting the rate matches what the other detectors judge. Daily origins keep the full config to about 1,554 x 56 forecasts.
+- Considered: an hourly rolling origin (24 times the cost); forecasting approvals and attempts separately (two models, harder to compare).
+- Limitation: the model does not know how many attempts are behind each rate, so it can only infer that a small segment is noisy from the history's own wiggle. The PLAN.md "persistence rule" is the same k-hour rule as every detector (M26).
+
+**M26. One alarm rule for every detector: score above threshold for 2 consecutive hours, one alarm per run (`cleanroom.events.persistent_alarms`), per series; alarms within 6 hours form one incident.**
+- What: persistence k = 2 hours; each monitored series is its own group. Incidents chain alarms whose hours are within 6 hours of the incident's latest alarm.
+- Why: one rule for all keeps the comparison about the forecasts, not about alarm logic. Two hours trades about one hour of delay for far fewer one-hour blips. Incidents are what an analyst investigates.
+- Considered: k = 1 (faster, noisier) and k = 3. Not tuned; k is a config value and stays fixed before the lock.
+- Limitation: a 1-hour fault (gateway degradation can last 1 hour) can never trigger a 2-hour rule.
+
+**M27. Equal false-alarm budget: 2 alarms per week across all monitored series, set on the fault-free calibration window (`cleanroom.events.threshold_for_alarm_rate`).**
+- What: per detector, the lowest threshold whose alarm count on the 2-week calibration window is at most 2 per week for it and every higher candidate. `total_time` is the calibration length (336 hours) and the unit 168 hours, so the rate is per week of wall time for the whole monitored set, not per series.
+- Why: CLAUDE.md rule 2. A detector that alarms constantly catches everything; comparing at the same false-alarm rate is what an operations team cares about. The calibration window has surges but no faults, so every alarm there is false, and it comes before evaluation.
+- Considered: a budget on incidents (pages) instead of series alarms. Series alarms are what the Cleanroom function counts and are unambiguous; one surge that fires three series counts three times, which is stricter.
+- Limitation: 2 per week over 2 weeks means the threshold rests on about 4 calibration alarms, so it is itself noisy; evaluation-window false alarms are graded separately and may differ.
+
+**M28. Every score builder has a past-only test.**
+- What: `tests/test_detectors.py` runs `cleanroom.pastonly.assert_past_only` on A, A2 (both modes), B and the TSFM detector with the fake forecaster: for probe hours, scores rebuilt from only earlier rows (plus the probe) must equal scores from the full data. A deliberately peeking detector is shown to fail the same check.
+- Why: CLAUDE.md rule 3. Forecast origins and scale refreshes are fixed points on the timeline, not "the end of the data", and this test enforces it.
+- Limitation: probes are a sample (7 per detector), not every hour.
+
 ---
 
 ## Limitations register
@@ -153,3 +202,8 @@ The honest list. Each item says what could be wrong and what was done about it.
 | L6 | One held-out fault type | A single type can be easy or hard by accident | Stated; reported separately from the development types |
 | L7 | The answer key is protected against code paths, not against people | A person could read it | Import-graph and text tests; Cleanroom vault with a release log (M18, M39) |
 | L8 | Headroom over a 4-week pooled average is small at the leaf level (oracle / pooled 0.87 small, 0.89 full) | A TSFM has little room to beat a cheap baseline on single leaves; gains, if any, should come on aggregates | Measured and reported in `docs/data-fit.md` before any detector; stated with H1 |
+| L9 | The budget counts series alarms | One surge that fires three related series uses three of the week's two-alarm allowance, so thresholds are strict | Same rule for every detector (M27); incidents reported too |
+| L10 | Thresholds rest on about 4 calibration alarms | The achieved false-alarm rate in evaluation can differ from 2 per week | Evaluation false alarms are graded and reported per detector |
+| L11 | Detector B's seasonal pattern is frozen at the end of the context | Holidays or rhythm changes in evaluation are only absorbed through the level | Stated (M24) |
+| L12 | The TSFM detector is tested only with a fake forecaster | No TSFM detection number exists | Adapter pinned and import-tested; the full run is left for the owner with the `tsfm` extra (M25) |
+| L13 | A 2-hour persistence rule cannot catch a 1-hour fault | Some gateway faults are undetectable by design | Stated (M26) |

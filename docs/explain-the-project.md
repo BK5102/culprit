@@ -43,3 +43,13 @@ The technical detail behind each step is in `docs/methodology.md` (numbered M1, 
 - **What else I considered:** just building the detectors and seeing. That is how Tells nearly lost time on a dataset with no room for a model to win.
 - **Cause and effect:** run 1 failed in an instructive way: 88.9% of faults were over 10 times the noise. I lowered the fault sizes before any detector existed. Run 2 passes every gate: about a third of faults are hard, about half hide in the total but show at their own segment, the largest drop is the culprit 0.0% of the time, and promotions fire a naive detector 44.4% of the time against 0.4% for quiet windows. It also showed headroom over a simple 4-week average is small at single leaves (oracle error 0.87 of it), so a TSFM can only win on aggregates.
 - **How to say it:** "Before building any detector I measured whether the fake world was even a fair test, found it was too easy, fixed the difficulty, and kept the failed check in the docs."
+
+## Part 3. Knowing normal
+
+### Step 4. Build four detectors and give them the same false-alarm budget
+
+- **What I did:** wrote Detector A (same hour last week, with a robust spread), A2 (a binomial z-score that knows a rate from 20 payments is noisier than one from 20,000), B (MSTL, a classical split into daily and weekly rhythm, with intervals) and the TSFM detector (Chronos-Bolt-tiny forecasts the rate; a fake forecaster stands in for tests). Every detector watches the same 123 (small) or 1,554 (full) series and uses the same alarm rule: above threshold for 2 hours in a row. Each threshold is set on a fault-free calibration window so it raises at most 2 alarms per week.
+- **Why:** without an equal budget, the most trigger-happy detector would look best. The calibration window has promotions but no faults, so every alarm there is a false alarm.
+- **What else I considered:** a CUSUM for A2, which adds up evidence over hours. On a development world a long promotion piled up a huge CUSUM score in the calibration week and pushed the threshold above what a 6-hour outage reached, so the per-hour z-score is the default and the CUSUM stays as an option.
+- **Cause and effect:** the full world exposed a bug in Detector A: tiny segments whose rate is always 0 or 1 had zero spread and absurd scores, so A raised no alarm at all at the budget. A standard-deviation fallback fixed it before any grading existed. A past-only test on every detector proves no score uses later hours, and a deliberately cheating detector fails it.
+- **How to say it:** "I tuned every detector to the same two false alarms a week on a quiet calibration period, so the comparison is about who notices real faults first, not who alarms most."

@@ -16,11 +16,13 @@ component, so the same seed always gives the same world (methodology M19).
 from __future__ import annotations
 
 import json
+import shutil
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 import numpy as np
+from cleanroom.vault import seal_answer_key
 
 from culprit.config import config_hash, world_hash
 from culprit.segments import Segments
@@ -146,12 +148,24 @@ def _key_digest(key: dict[str, Any]) -> str:
 
 
 def write_world(result: SimResult, out_dir: str | Path) -> Path:
-    """Write observed/ and sealed/ under `out_dir`. Returns `out_dir`."""
+    """Write observed/ and sealed/ under `out_dir`, and seal the key in the Cleanroom vault.
+
+    A rebuilt world replaces the old sealed folder, including its vault record
+    (development worlds keep the record next to the key, in gitignored data).
+    A sealed test world also gets a record under locks/, which git tracks and
+    which `cleanroom.vault` refuses to overwrite (`culprit seal`, methodology M39).
+    """
     out = Path(out_dir)
     write_observed(result.observed, out)
     sealed = out / SEALED_DIR
-    sealed.mkdir(parents=True, exist_ok=True)
-    (sealed / ANSWER_KEY_FILE).write_text(
-        json.dumps(result.answer_key, indent=2, sort_keys=True), encoding="utf-8"
-    )
+    if sealed.exists():
+        shutil.rmtree(sealed)
+    sealed.mkdir(parents=True)
+    key_path = sealed / ANSWER_KEY_FILE
+    key_path.write_text(json.dumps(result.answer_key, indent=2, sort_keys=True), encoding="utf-8")
+    seal_answer_key(key_path, note=f"simulated world {result.answer_key['world']}")
     return out
+
+
+def answer_key_path(world_dir: str | Path) -> Path:
+    return Path(world_dir) / SEALED_DIR / ANSWER_KEY_FILE

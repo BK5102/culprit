@@ -29,6 +29,7 @@ RESTRICTED_PREFIXES = (
     "culprit.world",
     "culprit.segments",
     "culprit.config",
+    "culprit.panel",
 )
 FORBIDDEN_PREFIXES = ("culprit.sim", "culprit.evaluate")
 KEY_READERS = {"culprit.sim.build", "culprit.evaluate.grade"}

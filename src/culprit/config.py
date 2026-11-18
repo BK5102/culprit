@@ -63,6 +63,7 @@ DEFAULTS: dict[str, Any] = {
         "detectors": ["A", "A2", "B"],
         "scale_window_hours": 672,
         "baseline_weeks": 4,
+        "a2_mode": "z",
         "cusum_k": 0.5,
         "b_level_alpha": 0.05,
         "tsfm": {

@@ -15,3 +15,7 @@ The simulator builds an hourly world of leaf segments (BIN range x method x gate
 ### D3. Measure the simulated world before building on it
 
 `scripts/check_data_fit.py` checks that faults are neither obvious nor invisible at their own segment, that many hide in the overall rate, that promotions fool a naive detector, that a forecaster has room to beat seasonal naive, and that "pick the biggest drop" does not already find the culprit. The first run showed faults were far too easy (88.9% of them over 10 times the noise), so the fault sizes were lowered before any detector existed, and the first run is kept in `docs/data-fit.md` as a negative result. Analogy: before timing runners, check that the track is not downhill.
+
+### D4. Detectors compared at the same false-alarm budget
+
+Four detectors score every monitored series: A (same hour last week, with a robust spread), A2 (a binomial z-score that knows small segments are noisier), B (MSTL seasonal pattern with intervals) and C (Chronos-Bolt-tiny forecasting the rate, tested so far with a fake stand-in). Each gets its threshold on a fault-free calibration window so that all of them raise at most 2 alarms per week across all series, using the Cleanroom's alarm rule and calibration, and a test proves every score uses only the past. Analogy: four smoke detectors tuned so each beeps falsely twice a week, then judged on how fast they notice a real fire.
