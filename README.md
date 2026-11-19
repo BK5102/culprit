@@ -70,7 +70,7 @@ uv run culprit detect configs/full.yaml
 
 - **LLM API key and spend cap** for the agent (H2). Put `ANTHROPIC_API_KEY` in the environment (never in git), set `agent.max_total_cost_usd` and review `agent.max_cost_usd` and `agent.max_tokens` in the config, then `uv run culprit agent CONFIG --all --record`. Without both the key and the total cap, recording refuses to start. No live call has been made; tests use cassettes only (methodology M43, M44).
 - **The false-alarm budget.** On the first development run, 2 alarms per week counted over all series caught few faults (see `docs/explain-the-project.md`, Steps 8 and 9). Both counting units are built: set `budget.mode` to `per_series` (the current default) or `per_incident` (alarms within 6 hours count as one; recommended) before the lock. `uv run python scripts/compare_budget_modes.py configs/small.yaml` prints both on a development world (methodology M42).
-- **The sealed test.** Choose test seeds, keep `extra_verification` in the test worlds' fault types, pick a second simulator regime, set `evaluate.role: test`, then `culprit seal`, commit, `culprit run --sealed RUN_ID`, `culprit evaluate --run-id RUN_ID`.
+- **The sealed test.** Fill the placeholders in `configs/test.yaml` (test seeds, the second simulator regime; confirm `extra_verification` stays in the fault types), run `uv run culprit validate configs/test.yaml` until it reports ready, then seal, commit, run and evaluate.
 
 ## What is in the repo
 

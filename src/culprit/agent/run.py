@@ -10,11 +10,13 @@ One cassette per incident, at `<agent.cassette_dir>/<world>/<incident id>.json`.
   in the environment and a total cap (`agent.max_total_cost_usd`) in the
   config; it refuses to start without either.
 
-Spend: every live response is appended, with its cost, to an append-only log
-`<agent.cassette_dir>/spend.jsonl`. The log's sum is what has been spent
-across all record runs, so the total cap holds across runs, not just within
-one. Before every live call the investigator checks that the log's sum plus
-the worst case of that call stays within the total cap, and that the
+Spend: every live response is appended, with its cost, to an append-only log,
+`<agent.cassette_dir>/spend-dev.jsonl` for development worlds and
+`spend-<plan>.jsonl` for the worlds of a sealed test plan. The log's sum is
+what has been spent in that scope, so the total cap holds across runs, not
+just within one, and the sealed run's cap is not used up by development.
+Before every live call the investigator checks that the log's sum plus the
+worst case of that call stays within the total cap, and that the
 incident's own spend plus the worst case stays within the per-incident cap
 (`agent.max_cost_usd`). A cassette is saved only for an incident that ended
 on its own terms; one cut off by the total cap is discarded (its spend stays
@@ -41,8 +43,12 @@ from culprit.detect.budget import Incident
 from culprit.segments import canonical, node_key
 from culprit.world import ObservedWorld
 
-SPEND_LOG = "spend.jsonl"
 PARTIAL = ".partial"
+
+
+def spend_log_path(config: dict[str, Any]) -> Path:
+    scope = (config.get("test") or {}).get("plan") or "dev"
+    return Path(config["agent"]["cassette_dir"]) / f"spend-{scope}.jsonl"
 
 
 class AgentSetupError(RuntimeError):
@@ -182,7 +188,7 @@ def run_agent(
     a = config["agent"]
     source = config["control"]["detector"]
     root = Path(a["cassette_dir"])
-    ledger = SpendLedger(root / SPEND_LOG, a.get("max_total_cost_usd"))
+    ledger = SpendLedger(spend_log_path(config), a.get("max_total_cost_usd"))
     if record:
         check_record_setup(a)
     factory = backend_factory or live_llm

@@ -45,3 +45,7 @@ The agent can only call four read-only tools that see nothing after the alarm, e
 ### D10. `culprit agent`: replay by default, record on purpose, never past the cap
 
 The LLM investigator now runs from the command line on the control's incidents, one cassette per incident, replaying recordings unless `--record` is given with an API key and a total cap in the config. Before every live call the worst case of that call is checked against both the incident's cap and the total in an append-only spend log, and incidents the agent skips or gets rejected count as misses. Analogy: a taxi meter that refuses the next mile if the fare could pass what you said you would pay, with a receipt book you cannot tear pages out of.
+
+### D11. A test plan that cannot be sealed with open choices
+
+`configs/test.yaml` describes every sealed world through seeds and simulator regimes, and its four open owner choices are marked placeholders that `culprit validate` lists and `culprit seal` refuses. The lock covers the plan and the agent's prompt hash, the sealed run includes the agent, and pooled results resample whole worlds for their intervals. Analogy: an exam paper the printer will not print while any question still says "to be written".

@@ -6,9 +6,15 @@
     culprit agent CONFIG --incident N | --all [--record]   the LLM investigator on the same
                                 incidents, replaying cassettes (default) or recording new ones
     culprit evaluate CONFIG     grade a development world against its answer key
-    culprit seal CONFIG         test worlds: lock the config and seal the key (commit both)
-    culprit run CONFIG --sealed RUN_ID   test worlds: detect + attribute as one sealed run
-    culprit evaluate CONFIG --run-id RUN_ID   test worlds: grade after the sealed run finished
+    culprit validate CONFIG     test plans: list every placeholder or problem left before sealing
+    culprit seal CONFIG         test plans: lock the plan and seal every world's key (commit both)
+    culprit run CONFIG --sealed RUN_ID   test plans: detect, attribute and (if test.agent) the
+                                agent on every world, as one sealed run
+    culprit evaluate CONFIG --run-id RUN_ID   test plans: grade after the sealed run finished
+
+A development config is one world. A test plan (configs/test.yaml) names
+several worlds through `test.seeds` and `test.regimes` (culprit/plan.py);
+every command runs on each of them, and the plan is what gets locked.
 
 Every output file carries provenance (config hash, git commit, dataset hash,
 package versions). All data is simulated.
@@ -17,21 +23,23 @@ package versions). All data is simulated.
 from __future__ import annotations
 
 import argparse
+import copy
 import json
 import sys
 import time
 from pathlib import Path
 from typing import Any
 
-from cleanroom.guard import sealed_run
-from cleanroom.lock import seal
+from cleanroom.guard import SealedRunError, sealed_run
+from cleanroom.lock import LockMissingError, seal
 from cleanroom.provenance import config_hash, stamp
-from cleanroom.vault import seal_answer_key
+from cleanroom.vault import VaultError, seal_answer_key
 
 from culprit.config import artifacts_dir, load_config, world_dir
 from culprit.detect.budget import Alarm, Incident
 from culprit.detect.run import run_detection
 from culprit.investigate.control import run_control
+from culprit.plan import PlanError, combined_data_hash, dev_seeds, expand_worlds, is_plan, problems
 from culprit.world import OBSERVED_DIR, PANEL_FILE, load_observed
 
 PACKAGES = ("culprit", "cleanroom", "numpy", "polars", "statsmodels", "scipy")
@@ -57,18 +65,49 @@ def _provenance(config: dict[str, Any], world) -> dict[str, Any]:
     return out
 
 
+def _worlds(config: dict[str, Any]) -> list[dict[str, Any]]:
+    try:
+        return expand_worlds(config)
+    except PlanError as err:
+        raise SystemExit(str(err)) from err
+
+
+def _dev_only(config: dict[str, Any], what: str) -> None:
+    if config["evaluate"]["role"] == "test":
+        raise SystemExit(
+            f"{what} on test worlds runs only inside `culprit run CONFIG --sealed RUN_ID`, "
+            "after the plan is sealed and committed"
+        )
+
+
+def _load(w: dict[str, Any]):
+    if not (world_dir(w) / OBSERVED_DIR).exists():
+        raise SystemExit(f"missing world {world_dir(w)}; run `culprit simulate` first")
+    return load_observed(world_dir(w))
+
+
+def lock_config(config: dict[str, Any]) -> dict[str, Any]:
+    """What a test plan's lock covers: the plan plus the hash of the agent's fixed prompt."""
+    from culprit.agent.investigator import prompt_sha256
+
+    out = copy.deepcopy(config)
+    out["agent_prompt_sha256"] = prompt_sha256(config["agent"]["max_tool_calls"])
+    return out
+
+
 def cmd_simulate(config: dict[str, Any], args) -> int:
     from culprit.sim.build import simulate, write_world
 
-    t0 = time.perf_counter()
-    result = simulate(config)
-    out = write_world(result, world_dir(config))
-    obs = result.observed
-    print(
-        f"{NOTE}\nworld {out}: {obs.segments.n_leaves} leaf segments x "
-        f"{obs.timeline.n_hours} hours, dataset hash {obs.meta['dataset_hash'][:12]}, "
-        f"{time.perf_counter() - t0:.1f} s"
-    )
+    for w in _worlds(config):
+        t0 = time.perf_counter()
+        result = simulate(w)
+        out = write_world(result, world_dir(w))
+        obs = result.observed
+        print(
+            f"{NOTE}\nworld {out}: {obs.segments.n_leaves} leaf segments x "
+            f"{obs.timeline.n_hours} hours, dataset hash {obs.meta['dataset_hash'][:12]}, "
+            f"{time.perf_counter() - t0:.1f} s"
+        )
     return 0
 
 
@@ -152,12 +191,16 @@ def _attribute(config: dict[str, Any], world) -> list[dict[str, Any]]:
 
 
 def cmd_detect(config: dict[str, Any], args) -> int:
-    _detect(config, load_observed(world_dir(config)))
+    _dev_only(config, "detect")
+    for w in _worlds(config):
+        _detect(w, _load(w))
     return 0
 
 
 def cmd_attribute(config: dict[str, Any], args) -> int:
-    _attribute(config, load_observed(world_dir(config)))
+    _dev_only(config, "attribute")
+    for w in _worlds(config):
+        _attribute(w, _load(w))
     return 0
 
 
@@ -207,10 +250,30 @@ def _agent(config: dict[str, Any], world, which: str | None, record: bool) -> di
 def cmd_agent(config: dict[str, Any], args) -> int:
     if args.incident is None and not args.all:
         raise SystemExit("agent needs --incident N (index or id) or --all")
-    _agent(
-        config, load_observed(world_dir(config)), None if args.all else args.incident, args.record
-    )
+    _dev_only(config, "agent")
+    for w in _worlds(config):
+        _agent(w, _load(w), None if args.all else args.incident, args.record)
     return 0
+
+
+def cmd_validate(config: dict[str, Any], args) -> int:
+    found = problems(config, dev_seeds(Path(args.config).parent))
+    if found:
+        print(f"{args.config} is not ready to seal:")
+        for p in found:
+            print(f"- {p}")
+        return 1
+    names = [world_dir(w).name for w in _worlds(config)]
+    print(f"{args.config} is ready to seal: {len(names)} worlds ({', '.join(names)}).")
+    return 0
+
+
+def _data_hashes(worlds: list[dict[str, Any]]) -> tuple[list[Any], dict[str, str]]:
+    observed = [_load(w) for w in worlds]
+    hashes = {
+        world_dir(w).name: o.meta["dataset_hash"] for w, o in zip(worlds, observed, strict=True)
+    }
+    return observed, hashes
 
 
 def cmd_seal(config: dict[str, Any], args) -> int:
@@ -219,37 +282,63 @@ def cmd_seal(config: dict[str, Any], args) -> int:
 
     if config["evaluate"]["role"] != "test":
         raise SystemExit("seal is for test worlds (evaluate.role: test)")
-    world = load_observed(world_dir(config))
+    found = problems(config, dev_seeds(Path(args.config).parent)) if is_plan(config) else []
+    if found:
+        raise SystemExit("not ready to seal:\n" + "\n".join(f"- {p}" for p in found))
+    worlds = _worlds(config)
+    _, hashes = _data_hashes(worlds)
     lock = seal(
-        config, config["paths"]["lock_dir"], note=args.note, data_sha256=world.meta["dataset_hash"]
-    )
-    vault = seal_answer_key(
-        answer_key_path(world_dir(config)),
-        vault_path=sealed_vault_path(config, world_dir(config).name),
+        lock_config(config),
+        config["paths"]["lock_dir"],
         note=args.note,
+        data_sha256=combined_data_hash(hashes),
     )
-    print(f"lock {lock.path}\nvault record {vault.record_path}\nCommit both before the sealed run.")
+    print(f"lock {lock.path}")
+    for w in worlds:
+        vault = seal_answer_key(
+            answer_key_path(world_dir(w)),
+            vault_path=sealed_vault_path(config, world_dir(w).name),
+            note=args.note,
+        )
+        print(f"vault record {vault.record_path}")
+    print("Commit the lock and every vault record before the sealed run.")
     return 0
 
 
 def cmd_run(config: dict[str, Any], args) -> int:
     if not args.sealed:
         raise SystemExit("run needs --sealed RUN_ID (use detect and attribute for development)")
-    world = load_observed(world_dir(config))
+    if config["evaluate"]["role"] != "test":
+        raise SystemExit("run --sealed is for test worlds (evaluate.role: test)")
+    worlds = _worlds(config)
+    with_agent = is_plan(config) and bool(config["test"].get("agent", True))
+    if with_agent:
+        from culprit.agent.run import AgentSetupError, check_record_setup
+
+        try:
+            check_record_setup(config["agent"])  # before the run starts, so no attempt is wasted
+        except AgentSetupError as err:
+            raise SystemExit(str(err)) from err
+    observed, hashes = _data_hashes(worlds)
+    locked = lock_config(config)
     with sealed_run(
-        config, config["paths"]["lock_dir"], args.sealed, data_sha256=world.meta["dataset_hash"]
+        locked, config["paths"]["lock_dir"], args.sealed, data_sha256=combined_data_hash(hashes)
     ) as run:
-        _detect(config, world)
-        _attribute(config, world)
-        run.finish(config_hash=config_hash(config))
+        for w, world in zip(worlds, observed, strict=True):
+            _detect(w, world)
+            _attribute(w, world)
+            if with_agent:
+                _agent(w, world, None, record=True)
+        run.finish(config_hash=config_hash(locked), worlds=sorted(hashes))
+    print("Sealed run finished. Commit the lock's uses file (and any new cassettes) next.")
     return 0
 
 
-def cmd_evaluate(config: dict[str, Any], args) -> int:
+def _evaluate_world(w: dict[str, Any], run_id: str | None, locked: dict[str, Any] | None):
     from culprit.evaluate.grade import dev_answer_key, grade, sealed_answer_key
 
-    world = load_observed(world_dir(config))
-    a_dir = artifacts_dir(config)
+    world = _load(w)
+    a_dir = artifacts_dir(w)
     alarms = _read(a_dir / "detect" / "alarms.json")
     incidents = _read(a_dir / "detect" / "incidents.json")
     control = _read(a_dir / "attribute" / "control.json")["attributions"]
@@ -258,18 +347,23 @@ def cmd_evaluate(config: dict[str, Any], args) -> int:
     agent = json.loads(agent_path.read_text(encoding="utf-8")) if agent_path.exists() else None
     if agent is not None:
         investigators["agent"] = agent["attributions"]
-    if args.run_id:
-        key = sealed_answer_key(world_dir(config), config, args.run_id)
+    if run_id:
+        key = sealed_answer_key(world_dir(w), locked, run_id)
     else:
-        key = dev_answer_key(world_dir(config), config)
+        key = dev_answer_key(world_dir(w), w)
     lo, hi = world.timeline.window_hours("evaluation")
-    result = grade(key, world.segments, hi - lo, alarms, incidents, investigators, config)
+    result = grade(key, world.segments, hi - lo, alarms, incidents, investigators, w)
     if agent is not None:
         result["agent_cost"] = agent["summary"]
-    result["provenance"] = _provenance(config, world)
-    result["role"] = config["evaluate"]["role"]
+        result["agent_costs"] = [
+            r.get("cost_usd", 0.0) for r in agent["attributions"] if r["status"] != "not_run"
+        ]
+    result["provenance"] = _provenance(w, world)
+    result["role"] = w["evaluate"]["role"]
+    result["regime"] = (w.get("test") or {}).get("regime")
+    result["eval_hours"] = hi - lo
     _write(a_dir / "evaluate" / "grade.json", result)
-    print(f"{NOTE} Role: {result['role']}.")
+    print(f"{NOTE} Role: {result['role']}. World {world_dir(w).name}.")
     for name, m in result["detection"].items():
         print(
             f"{name:5s} detected {m['detection_rate']}  within 6h {m['caught_within_6h']}  "
@@ -286,13 +380,31 @@ def cmd_evaluate(config: dict[str, Any], args) -> int:
         print(
             f"agent cost: USD {c['total_cost_usd']:.4f}, median per incident {c['median_cost_usd']}"
         )
+    return result
+
+
+def cmd_evaluate(config: dict[str, Any], args) -> int:
+    from culprit.evaluate.pooled import pool
+
+    locked = lock_config(config) if args.run_id else None
+    grades = [_evaluate_world(w, args.run_id, locked) for w in _worlds(config)]
+    if is_plan(config):
+        summary = pool(grades, n_boot=int(config["evaluate"].get("n_boot", 2000)))
+        summary["run_id"] = args.run_id
+        summary["plan_config_hash"] = config_hash(locked or lock_config(config))
+        out = Path(config["paths"]["artifacts_dir"]) / config["name"] / "summary.json"
+        _write(out, summary)
+        print(f"pooled over {len(grades)} worlds: {out}")
+        for line in summary["headline_text"]:
+            print(line)
     return 0
 
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="culprit", description=__doc__.splitlines()[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
-    for name in ("simulate", "detect", "attribute", "agent", "evaluate", "seal", "run"):
+    commands = ("simulate", "detect", "attribute", "agent", "evaluate", "validate", "seal", "run")
+    for name in commands:
         p = sub.add_parser(name)
         p.add_argument("config")
         if name == "agent":
@@ -311,15 +423,21 @@ def main(argv: list[str] | None = None) -> int:
             p.add_argument("--sealed", default=None)
     args = ap.parse_args(argv)
     config = load_config(args.config)
-    return {
+    handler = {
         "simulate": cmd_simulate,
         "detect": cmd_detect,
         "attribute": cmd_attribute,
         "agent": cmd_agent,
         "evaluate": cmd_evaluate,
+        "validate": cmd_validate,
         "seal": cmd_seal,
         "run": cmd_run,
-    }[args.cmd](config, args)
+    }[args.cmd]
+    try:
+        return handler(config, args)
+    except (SealedRunError, LockMissingError, VaultError) as err:
+        # The Cleanroom refused: no lock, uncommitted records, or a run not finished.
+        raise SystemExit(f"refused: {err}") from err
 
 
 if __name__ == "__main__":

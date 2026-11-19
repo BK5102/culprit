@@ -107,3 +107,13 @@ The technical detail behind each step is in `docs/methodology.md` (numbered M1, 
 - **What else I considered:** one cassette per world, and keeping the running total in memory. Both lose information when a run stops halfway.
 - **Cause and effect:** an incident the agent never ran, or whose answer the critic rejected, counts as a miss, so a budget that runs out can only hurt the agent. No live call has been made: all tests use the hand-written cassette or a fake backend that serves it. The conservative reservation means the owner has to set `max_tokens` and the per-incident cap together.
 - **How to say it:** "Every model call is recorded and replayable, and the spend cap is checked against the worst case before each call, so the bill cannot pass the number I set."
+
+## Part 7. Getting ready for the sealed test
+
+### Step 11. Write the test plan as a draft that refuses to be sealed half-finished
+
+- **What I did:** wrote `configs/test.yaml`, one plan for every sealed world: the full-size world with all four fault types (the held-out extra-verification type appears only here), detectors A, A2, B and the TSFM, and a list of seeds crossed with two simulator regimes. Four values are left as marked placeholders for the owner: the budget counting unit, the agent's total spend cap, the seeds and the second regime. `culprit validate` lists what is missing; `culprit seal` refuses until nothing is. The lock now also covers a hash of the agent's prompt, and the sealed run runs the detectors, the control and the agent on every world in one go. Afterwards `culprit evaluate --run-id` writes pooled numbers with intervals that resample whole worlds.
+- **Why:** the honesty of the test rests on the plan being fixed before any test number exists. A plan with a forgotten choice should be an error, not a silent default, and a prompt changed after sealing should need a new lock.
+- **What else I considered:** one config file per test world. Ten files can drift apart and need ten locks; one plan is one commitment.
+- **Cause and effect:** the detectors, the control and the agent now refuse to run on test worlds outside the sealed run, so nobody can peek at test alarms early. A test runs the entire sealed path (seal, commit, sealed run with the agent on a fake backend, grading) on four tiny worlds.
+- **How to say it:** "My test plan is one file that the code refuses to seal while any choice is still open, and once sealed, even editing the agent's prompt needs a new lock."

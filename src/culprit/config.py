@@ -105,6 +105,8 @@ DEFAULTS: dict[str, Any] = {
     },
     "evaluate": {"role": "dev", "match_grace_hours": 6, "average_ticket_usd": 50.0},
     "paths": {"data_dir": "data/worlds", "artifacts_dir": "artifacts", "lock_dir": "locks"},
+    # Test plans only: seeds and simulator regimes of the sealed worlds (culprit/plan.py, M45).
+    "test": None,
 }
 
 

@@ -150,7 +150,7 @@ def test_record_saves_cassettes_that_replay_identically(world, monkeypatch):
     recorded = json.loads((art / "agent" / "agent.json").read_text(encoding="utf-8"))
     assert fake.calls == 3 * len(incidents)
     root = Path(cfg["agent"]["cassette_dir"])
-    log = (root / agent_run.SPEND_LOG).read_text(encoding="utf-8").splitlines()
+    log = (root / "spend-dev.jsonl").read_text(encoding="utf-8").splitlines()
     assert len(log) == fake.calls
     for inc in incidents:
         entries = json.loads((root / "tiny-seed3" / f"{inc['id']}.json").read_text("utf-8"))
@@ -179,7 +179,7 @@ def test_total_cap_stops_the_run_and_holds_across_runs(world, monkeypatch):
     assert main(["agent", str(path), "--all", "--record"]) == 0
     rows = json.loads((art / "agent" / "agent.json").read_text(encoding="utf-8"))["attributions"]
     root = Path(cfg["agent"]["cassette_dir"])
-    ledger = agent_run.SpendLedger(root / agent_run.SPEND_LOG, cap)
+    ledger = agent_run.SpendLedger(root / "spend-dev.jsonl", cap)
     assert 0 < ledger.spent() <= cap
     stopped = [r for r in rows if r["status"] == "total_cap"]
     assert stopped and rows[0]["status"] == "submitted"

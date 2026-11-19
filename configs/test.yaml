@@ -1,0 +1,73 @@
+# DRAFT of the sealed test plan. Simulated data. NOT SEALED.
+#
+# Every value that starts with PLACEHOLDER is the owner's choice. Replace each one,
+# then run `uv run culprit validate configs/test.yaml`; `culprit seal` refuses while
+# any placeholder or other problem remains (methodology M45, docs/runbook.md).
+# Once sealed and committed, this file must not change: any edit gives a new config
+# hash, and the lock no longer matches.
+#
+# Recommended defaults are written next to each placeholder. They are
+# recommendations, not decisions.
+name: test
+seed: 0  # not used: each test world takes its seed from test.seeds
+evaluate:
+  role: test
+world:
+  # The full development world's size and timeline (configs/full.yaml), so the test
+  # measures the same problem the development numbers describe.
+  weeks: {context: 6, calibration: 2, evaluation: 4}
+  hierarchy:
+    countries: 4
+    issuers_per_country: 5
+    bins_per_issuer: 4
+    methods: [card_not_present, card_present, wallet]
+    gateways: 6
+  volume:
+    mean_attempts_per_hour: 150000
+    holidays:
+      - {day: 17, factor: 0.6}
+      - {day: 45, factor: 0.7, countries: [1, 2]}
+  faults:
+    per_week: 6.0
+    # The held-out type is injected here and only here (CLAUDE.md rule 9, M16).
+    # Owner: confirm extra_verification stays in this list.
+    types: [issuer_outage, bin_decline_spike, gateway_degradation, extra_verification]
+  holdout_fault_types: [extra_verification]
+detect:
+  detectors: [A, A2, B, TSFM]
+  tsfm:
+    adapter: chronos_bolt
+budget:
+  # per_series: every series alarm counts; per_incident: alarms within 6 hours count
+  # as one page. Recommended: per_incident (development numbers in methodology M42).
+  mode: "PLACEHOLDER: per_series or per_incident (recommended: per_incident)"
+  false_alarms_per_week: 2.0
+  persistence_hours: 2
+agent:
+  # Total USD for every live call of the sealed run. Estimate it as (incidents per
+  # world) x (worlds) x (median cost per incident from the development recordings),
+  # with room to spare: an incident the cap stops counts as a miss for the agent.
+  max_total_cost_usd: "PLACEHOLDER: total USD cap for the sealed agent run"
+  # Per incident. Each call reserves its worst case first (max_tokens of output at
+  # USD 20 per million), so set the two together (methodology M44).
+  max_cost_usd: 0.50
+  max_tokens: 16000
+test:
+  agent: true  # the sealed run includes the LLM investigator (H2)
+  # Recommended: 5 new seeds per regime (10 worlds; about 80 CPU minutes with the
+  # TSFM). Draw them once, for example with
+  #   uv run python -c "import secrets; print([secrets.randbelow(10**6) for _ in range(5)])"
+  # and paste the list here. They must not be development seeds (culprit/plan.py).
+  seeds: "PLACEHOLDER: list of new integer seeds, for example 5 of them"
+  regimes:
+    base: {}  # the development settings above
+    # The held-out simulator regime (CLAUDE.md rule 9). Recommended: a noisier,
+    # shiftier world built only from existing settings, for example
+    #   second:
+    #     world:
+    #       approval: {base_rate: 0.82, drift_sd: 0.10}
+    #       volume: {day_noise_sd: 0.12, leaf_day_noise_sd: 0.15}
+    #       surges: {promotions_per_week: 3.0}
+    # Check it first on development seeds:
+    #   uv run python scripts/check_data_fit.py configs/test.yaml --regime second --seeds 301 302 303
+    second: "PLACEHOLDER: world overrides for the second simulator regime"

@@ -3,6 +3,7 @@
 Run before building on a world (methodology M20). Usage:
 
     uv run python scripts/check_data_fit.py configs/small.yaml --seeds 101 102 103 104 105
+    uv run python scripts/check_data_fit.py configs/test.yaml --regime second --seeds 301 302 303
 
 It simulates each seed in memory (so it can use the simulator's truth; it
 never reads a sealed answer key from disk) and measures:
@@ -410,8 +411,18 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("config")
     ap.add_argument("--seeds", type=int, nargs="+", default=[101, 102, 103, 104, 105])
     ap.add_argument("--out", default=None)
+    ap.add_argument(
+        "--regime", default=None, help="a test plan's regime, checked on development seeds only"
+    )
     args = ap.parse_args(argv)
     config = load_config(args.config)
+    if args.regime:
+        from culprit.plan import regime_config
+
+        test_seeds = (config.get("test") or {}).get("seeds")
+        if isinstance(test_seeds, list) and set(test_seeds) & set(args.seeds):
+            raise SystemExit("the fit check never runs on test seeds; pass development seeds")
+        config = regime_config(config, args.regime)
     t0 = time.perf_counter()
     results = [check_seed(config, s) for s in args.seeds]
     summary = summarize(results)

@@ -56,7 +56,8 @@ uv run culprit agent configs/small.yaml --all  # the LLM investigator, replaying
 uv run culprit evaluate configs/small.yaml     # grade a development world against its answer key
 uv run python scripts/check_data_fit.py configs/small.yaml   # data-fit gate
 uv run python scripts/compare_budget_modes.py configs/small.yaml   # both budget counting units, development only
-uv run culprit seal CONFIG; uv run culprit run CONFIG --sealed RUN_ID; uv run culprit evaluate CONFIG --run-id RUN_ID   # test worlds only
+uv run culprit validate configs/test.yaml     # lists the owner's open choices; seal refuses until none remain
+uv run culprit seal configs/test.yaml; uv run culprit run configs/test.yaml --sealed RUN_ID; uv run culprit evaluate configs/test.yaml --run-id RUN_ID   # test plan only (docs/runbook.md)
 uv sync --extra tsfm                           # Chronos-Bolt-tiny for the TSFM detector (CPU)
 ```
 
