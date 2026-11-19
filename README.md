@@ -49,11 +49,12 @@ Needs [uv](https://docs.astral.sh/uv/) and a laptop CPU. No GPU, no API key, and
 
 ```
 uv sync
-uv run pytest -q                              # 161 tests, about a minute
+uv run pytest -q                              # 203 tests, about a minute
 uv run python scripts/check_data_fit.py configs/small.yaml   # is the simulated world a fair test?
 uv run culprit simulate configs/small.yaml    # build the small world (96 leaf segments, 8 weeks hourly)
 uv run culprit detect configs/small.yaml      # detectors A, A2, B at 2 false alarms per week
 uv run culprit attribute configs/small.yaml   # the no-LLM control names a culprit per incident
+uv run culprit agent configs/small.yaml --all # the LLM investigator from saved cassettes (none recorded yet)
 uv run culprit evaluate configs/small.yaml    # grade this development world (not a result)
 ```
 
@@ -68,6 +69,8 @@ uv run culprit detect configs/full.yaml
 
 ## Manual steps for the owner
 
+The exact commands, in order, from these choices to a written-up sealed result are in [`docs/runbook.md`](docs/runbook.md).
+
 - **LLM API key and spend cap** for the agent (H2). Put `ANTHROPIC_API_KEY` in the environment (never in git), set `agent.max_total_cost_usd` and review `agent.max_cost_usd` and `agent.max_tokens` in the config, then `uv run culprit agent CONFIG --all --record`. Without both the key and the total cap, recording refuses to start. No live call has been made; tests use cassettes only (methodology M43, M44).
 - **The false-alarm budget.** On the first development run, 2 alarms per week counted over all series caught few faults (see `docs/explain-the-project.md`, Steps 8 and 9). Both counting units are built: set `budget.mode` to `per_series` (the current default) or `per_incident` (alarms within 6 hours count as one; recommended) before the lock. `uv run python scripts/compare_budget_modes.py configs/small.yaml` prints both on a development world (methodology M42).
 - **The sealed test.** Fill the placeholders in `configs/test.yaml` (test seeds, the second simulator regime; confirm `extra_verification` stays in the fault types), run `uv run culprit validate configs/test.yaml` until it reports ready, then seal, commit, run and evaluate.
@@ -79,11 +82,14 @@ uv run culprit detect configs/full.yaml
 | Simulator with a sealed answer key | `src/culprit/sim/` |
 | Detectors and false-alarm budget calibration | `src/culprit/detect/` |
 | Deterministic investigation (the no-LLM control) | `src/culprit/investigate/` |
-| Agent tool layer, critic, reporter, LLM interface | `src/culprit/agent/` |
+| Agent tool layer, critic, reporter, LLM interface, batch runner with spend caps | `src/culprit/agent/` |
 | Grading (the only reader of the answer key) | `src/culprit/evaluate/` |
 | Every choice and its reasoning | `docs/methodology.md` |
 | The story step by step | `docs/explain-the-project.md` |
 | Measured fit of the simulated world | `docs/data-fit.md` |
+| The sealed test plan (draft, owner choices open) | `configs/test.yaml` |
+| Commands from the owner's choices to a sealed result | `docs/runbook.md` |
+| TSFM capabilities and the full development run | `docs/tsfm-notes.md` |
 
 ## Limits
 
