@@ -76,6 +76,7 @@ uv run culprit simulate configs/full.yaml
 uv run culprit detect configs/full.yaml        # about 15 minutes with the TSFM
 uv run culprit attribute configs/full.yaml
 uv run culprit evaluate configs/full.yaml
+uv run python scripts/diagnose_control.py configs/full.yaml   # control with detector and oracle alerts, about 3 minutes
 uv run culprit validate configs/test.yaml      # must print "ready to seal"
 uv run pytest -q
 uv run ruff check . && uv run ruff format --check .

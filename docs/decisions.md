@@ -49,3 +49,7 @@ The LLM investigator now runs from the command line on the control's incidents, 
 ### D11. A test plan that cannot be sealed with open choices
 
 `configs/test.yaml` describes every sealed world through seeds and simulator regimes, and its four open owner choices are marked placeholders that `culprit validate` lists and `culprit seal` refuses. The lock covers the plan and the agent's prompt hash, the sealed run includes the agent, and pooled results resample whole worlds for their intervals. Analogy: an exam paper the printer will not print while any question still says "to be written".
+
+### D12. The control's thin-segment defect (L27), found with oracle alerts and fixed
+
+Paging the control at each fault's true start showed its zero score on the full development world was an attribution failure: thin leaves with a spotless past had a baseline rate of 0.999999, so one decline scored as a 1,000-sigma drop. Baseline rates are now held off 0 and 1 by the Jeffreys bound, and segments are ranked by the exact binomial tail of their declines, a choice made by a rule committed before measuring; on that world top-1 went from 0.0 to 0.5 (development only). Analogy: a smoke detector that screamed at a single match in an empty closet, now told how big the closet is.

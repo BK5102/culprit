@@ -49,13 +49,14 @@ Needs [uv](https://docs.astral.sh/uv/) and a laptop CPU. No GPU, no API key, and
 
 ```
 uv sync
-uv run pytest -q                              # 203 tests, about a minute
+uv run pytest -q                              # 214 tests, about a minute
 uv run python scripts/check_data_fit.py configs/small.yaml   # is the simulated world a fair test?
 uv run culprit simulate configs/small.yaml    # build the small world (96 leaf segments, 8 weeks hourly)
 uv run culprit detect configs/small.yaml      # detectors A, A2, B at 2 false alarms per week
 uv run culprit attribute configs/small.yaml   # the no-LLM control names a culprit per incident
 uv run culprit agent configs/small.yaml --all # the LLM investigator from saved cassettes (none recorded yet)
 uv run culprit evaluate configs/small.yaml    # grade this development world (not a result)
+uv run python scripts/diagnose_control.py configs/small.yaml   # the control with detector and oracle alerts (development only)
 ```
 
 The three middle commands take about 40 seconds together on a laptop CPU. Outputs go to `data/worlds/` and `artifacts/`, both gitignored. Every output file records the config hash, git commit and dataset hash.
