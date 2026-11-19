@@ -8,6 +8,9 @@ artifacts/
 # Locks for scratch runs made by tests or by hand outside locks/
 locks/scratch/
 
+# Unfinished agent recordings (a finished cassette is renamed without .partial)
+cassettes/**/*.partial
+
 # Secrets
 .env
 .env.*

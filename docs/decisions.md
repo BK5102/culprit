@@ -41,3 +41,7 @@ The agent can only call four read-only tools that see nothing after the alarm, e
 ### D9. The false-alarm budget can count incidents instead of series alarms
 
 `budget.mode` now chooses whether the 2-per-week allowance counts every series alarm or every incident (alarms within 6 hours grouped as one page), with the per-incident threshold found by the same rule as the Cleanroom's and checked to reproduce it exactly when nothing is grouped. On the small development world, counting incidents let A2 catch 10 of 14 faults instead of 1 (development only), at the cost of many more series alarms, so both units are graded. Analogy: a smoke alarm budget that counts fires the fire brigade is called to, not every detector that beeped during the same fire.
+
+### D10. `culprit agent`: replay by default, record on purpose, never past the cap
+
+The LLM investigator now runs from the command line on the control's incidents, one cassette per incident, replaying recordings unless `--record` is given with an API key and a total cap in the config. Before every live call the worst case of that call is checked against both the incident's cap and the total in an append-only spend log, and incidents the agent skips or gets rejected count as misses. Analogy: a taxi meter that refuses the next mile if the fare could pass what you said you would pay, with a receipt book you cannot tear pages out of.

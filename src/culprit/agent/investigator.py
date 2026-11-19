@@ -3,20 +3,29 @@
 One incident in, one hypothesis out. The loop sends the incident brief and the
 four read-only tools plus `submit_hypothesis`, runs each requested tool
 through the `ToolBox` (cut at the investigation time), and stops when the
-model submits, when the tool-call budget or cost cap is hit, or after a
-maximum number of turns. The critic then checks the hypothesis, and only an
-accepted hypothesis gets a report. Orchestrator, investigator and hypothesis
-writer from PLAN.md are one loop here for v0.1; splitting them is future work.
+model submits, when the tool-call budget or a spend cap is hit, or after a
+maximum number of turns.
+
+Spend caps are checked before every call (methodology M44): the call is not
+sent if what this incident has spent plus the worst case of the next call
+(`llm.worst_case_call_usd`) would pass the per-incident cap, or if an
+optional `total_guard` (the batch's total cap) refuses that worst case. A
+check after each response stops the loop too, in case the estimate was low.
+The critic then checks the hypothesis, and only an accepted hypothesis gets a
+report. Orchestrator, investigator and hypothesis writer from PLAN.md are one
+loop here for v0.1; splitting them is future work.
 """
 
 from __future__ import annotations
 
+import hashlib
 import json
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any
 
 from culprit.agent import critic, reporter
-from culprit.agent.llm import LLM, MODEL, cost_usd
+from culprit.agent.llm import LLM, MODEL, response_cost, worst_case_call_usd
 from culprit.agent.tools import TOOL_SPECS, ToolBox, ToolBudgetExceeded, ToolError
 from culprit.detect.budget import Incident
 from culprit.investigate.fault_typing import FAULT_LABELS
@@ -86,7 +95,7 @@ SUBMIT_SPEC = {
 @dataclass
 class InvestigationResult:
     incident_id: str
-    status: str  # submitted, budget_exceeded, cost_cap, no_answer, max_turns
+    status: str  # submitted, budget_exceeded, cost_cap, total_cap, no_answer, max_turns
     hypothesis: dict[str, Any] | None
     verdict: critic.Verdict | None
     report: str | None
@@ -94,6 +103,17 @@ class InvestigationResult:
     cost_usd: float
     turns: int
     usage: dict[str, int] = field(default_factory=dict)
+    llm_calls: int = 0
+    models: list[str] = field(default_factory=list)  # every model that answered
+
+
+def prompt_sha256(max_calls: int) -> str:
+    """Hash of everything fixed that the model is sent: system prompt and tool schemas."""
+    payload = json.dumps(
+        {"system": SYSTEM.format(max_calls=max_calls), "tools": [*TOOL_SPECS, SUBMIT_SPEC]},
+        sort_keys=True,
+    )
+    return hashlib.sha256(payload.encode()).hexdigest()
 
 
 def brief(incident: Incident, keys: list[str], world: ObservedWorld) -> str:
@@ -115,12 +135,16 @@ class Investigator:
         max_cost_usd: float = 0.50,
         max_turns: int = 20,
         model: str = MODEL,
+        max_tokens: int = 16000,
+        total_guard: Callable[[float], bool] | None = None,
     ):
         self.llm = llm
         self.max_tool_calls = max_tool_calls
         self.max_cost_usd = max_cost_usd
         self.max_turns = max_turns
         self.model = model
+        self.max_tokens = max_tokens
+        self.total_guard = total_guard
 
     def run(self, world: ObservedWorld, incident: Incident, keys: list[str]) -> InvestigationResult:
         tools = ToolBox(world, incident.first_hour + 1, self.max_tool_calls)
@@ -128,12 +152,24 @@ class Investigator:
         specs = [*TOOL_SPECS, SUBMIT_SPEC]
         messages: list[dict[str, Any]] = [{"role": "user", "content": brief(incident, keys, world)}]
         usage = {"input_tokens": 0, "output_tokens": 0}
-        cost, status, hypothesis, turns = 0.0, "max_turns", None, 0
+        cost, status, hypothesis, turns, calls = 0.0, "max_turns", None, 0, 0
+        models: list[str] = []
         for turns in range(1, self.max_turns + 1):  # noqa: B007 - turns is reported
+            worst = worst_case_call_usd(self.model, system, messages, specs, self.max_tokens)
+            if cost + worst > self.max_cost_usd:
+                status = "cost_cap"
+                break
+            if self.total_guard is not None and not self.total_guard(worst):
+                status = "total_cap"
+                break
             resp = self.llm.create(system=system, messages=messages, tools=specs)
+            calls += 1
             for k in usage:
                 usage[k] += int(resp.get("usage", {}).get(k, 0))
-            cost = cost_usd(resp.get("model", self.model), usage)
+            cost += response_cost(self.model, resp)
+            served = resp.get("model", self.model)
+            if served not in models:
+                models.append(served)
             messages.append({"role": "assistant", "content": resp["content"]})
             if cost > self.max_cost_usd:
                 status = "cost_cap"
@@ -176,5 +212,15 @@ class Investigator:
             else None
         )
         return InvestigationResult(
-            incident.id, status, hypothesis, verdict, report, len(tools.ledger), cost, turns, usage
+            incident.id,
+            status,
+            hypothesis,
+            verdict,
+            report,
+            len(tools.ledger),
+            cost,
+            turns,
+            usage,
+            calls,
+            models,
         )

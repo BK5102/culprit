@@ -52,6 +52,7 @@ uv run ruff check . && uv run ruff format --check .
 uv run culprit simulate configs/small.yaml     # generate a small simulated dataset
 uv run culprit detect configs/small.yaml       # run the detectors at an equal alert budget
 uv run culprit attribute configs/small.yaml    # the no-LLM control on the incidents
+uv run culprit agent configs/small.yaml --all  # the LLM investigator, replaying cassettes (no key, free)
 uv run culprit evaluate configs/small.yaml     # grade a development world against its answer key
 uv run python scripts/check_data_fit.py configs/small.yaml   # data-fit gate
 uv run python scripts/compare_budget_modes.py configs/small.yaml   # both budget counting units, development only
@@ -59,7 +60,7 @@ uv run culprit seal CONFIG; uv run culprit run CONFIG --sealed RUN_ID; uv run cu
 uv sync --extra tsfm                           # Chronos-Bolt-tiny for the TSFM detector (CPU)
 ```
 
-Not built yet: `culprit agent --incident N` (needs an API key and spend cap from the owner; the investigator loop exists in `agent/investigator.py` and is tested with cassettes).
+`uv run culprit agent CONFIG --incident N` (or `--all`) runs the LLM investigator from cassettes under `cassettes/`; `--record` makes live, billed calls and needs ANTHROPIC_API_KEY plus `agent.max_total_cost_usd` in the config. Tests never make live calls.
 
 If a command above does not exist yet, create it as part of the day's task and update this file.
 

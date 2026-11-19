@@ -90,7 +90,19 @@ DEFAULTS: dict[str, Any] = {
         "rest_min_z": 0.0,
         "rest_min_ratio": 0.5,
     },
-    "agent": {"max_tool_calls": 12, "max_cost_usd": 0.50},
+    "agent": {
+        # Methodology M35, M43, M44. The owner sets max_total_cost_usd (USD, all record
+        # runs together) and reviews max_cost_usd (USD per incident) before any live call;
+        # `culprit agent --record` refuses to start while the total is null.
+        "model": "claude-opus-5-5",
+        "effort": "high",
+        "max_tokens": 16000,
+        "max_tool_calls": 12,
+        "max_turns": 20,
+        "max_cost_usd": 0.50,
+        "max_total_cost_usd": None,
+        "cassette_dir": "cassettes",
+    },
     "evaluate": {"role": "dev", "match_grace_hours": 6, "average_ticket_usd": 50.0},
     "paths": {"data_dir": "data/worlds", "artifacts_dir": "artifacts", "lock_dir": "locks"},
 }

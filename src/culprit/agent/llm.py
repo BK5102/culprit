@@ -26,8 +26,19 @@ from typing import Any, Protocol
 MODEL = "claude-opus-5-5"
 EFFORT = "high"  # attribution is reasoning-heavy; this model's default effort is medium
 # USD per million tokens (input, output), from the claude-api skill's model table
-# (cached 2026-11-03). Re-check before any paid run.
-PRICES = {"claude-opus-5-5": (4.0, 20.0)}
+# (cached 2026-11-03, re-checked 2026-11-18). Re-check before any paid run. The
+# other rows are there because a server-side refusal fallback can answer with
+# another model; a model not listed is charged at the highest listed price.
+PRICES = {
+    "claude-opus-5-5": (4.0, 20.0),
+    "claude-opus-5": (5.0, 25.0),
+    "claude-opus-4-8": (5.0, 25.0),
+    "claude-sonnet-5-5": (2.0, 10.0),
+    "claude-fable-5-2": (8.0, 40.0),
+}
+# Upper bound used to estimate input tokens before a call: at most one token per
+# CHARS_PER_TOKEN_FLOOR characters of the JSON request (methodology M44).
+CHARS_PER_TOKEN_FLOOR = 2.0
 
 
 class AgentRefusedError(RuntimeError):
@@ -47,11 +58,40 @@ def request_digest(system: str, messages: list[dict[str, Any]], tools: list[dict
     return hashlib.sha256(payload.encode()).hexdigest()
 
 
+def price(model: str) -> tuple[float, float]:
+    """(input, output) USD per million tokens; the highest listed price for an unknown model."""
+    if model in PRICES:
+        return PRICES[model]
+    return max(p[0] for p in PRICES.values()), max(p[1] for p in PRICES.values())
+
+
 def cost_usd(model: str, usage: dict[str, Any]) -> float:
-    if model not in PRICES:
-        return float("nan")
-    p_in, p_out = PRICES[model]
+    p_in, p_out = price(model)
     return (usage.get("input_tokens", 0) * p_in + usage.get("output_tokens", 0) * p_out) / 1e6
+
+
+def response_cost(requested_model: str, response: dict[str, Any]) -> float:
+    """Cost of one response. If another model answered (a refusal fallback), the dearer price."""
+    usage = response.get("usage", {})
+    served = response.get("model", requested_model)
+    return max(cost_usd(requested_model, usage), cost_usd(served, usage))
+
+
+def worst_case_call_usd(
+    model: str,
+    system: str,
+    messages: list[dict[str, Any]],
+    tools: list[dict[str, Any]],
+    max_tokens: int,
+) -> float:
+    """An upper estimate of what the next call can cost, checked before it is sent.
+
+    Input tokens are bounded by the request's JSON length over
+    CHARS_PER_TOKEN_FLOOR; output tokens (thinking included) by max_tokens.
+    """
+    chars = len(json.dumps({"system": system, "messages": messages, "tools": tools}, default=str))
+    tokens = {"input_tokens": chars / CHARS_PER_TOKEN_FLOOR, "output_tokens": max_tokens}
+    return cost_usd(model, tokens)
 
 
 class AnthropicLLM:  # pragma: no cover - live calls are never made in tests

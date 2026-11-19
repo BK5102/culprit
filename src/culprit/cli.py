@@ -3,6 +3,8 @@
     culprit simulate CONFIG     build the world: data/worlds/<name>-seed<seed>/
     culprit detect CONFIG       detectors at an equal false-alarm budget -> artifacts/.../detect/
     culprit attribute CONFIG    the no-LLM control on the configured detector's incidents
+    culprit agent CONFIG --incident N | --all [--record]   the LLM investigator on the same
+                                incidents, replaying cassettes (default) or recording new ones
     culprit evaluate CONFIG     grade a development world against its answer key
     culprit seal CONFIG         test worlds: lock the config and seal the key (commit both)
     culprit run CONFIG --sealed RUN_ID   test worlds: detect + attribute as one sealed run
@@ -110,7 +112,8 @@ def _detect(config: dict[str, Any], world) -> dict[str, Any]:
     return summary
 
 
-def _attribute(config: dict[str, Any], world) -> list[dict[str, Any]]:
+def _incidents(config: dict[str, Any]) -> tuple[str, list[Incident], dict[int, str]]:
+    """The investigated detector's incidents, rebuilt from the detect step's files."""
     name = config["control"]["detector"]
     incidents = _read(artifacts_dir(config) / "detect" / "incidents.json").get(name)
     if incidents is None:
@@ -126,6 +129,11 @@ def _attribute(config: dict[str, Any], world) -> list[dict[str, Any]]:
         )
         for i in incidents
     ]
+    return name, objs, {v: k for k, v in series.items()}
+
+
+def _attribute(config: dict[str, Any], world) -> list[dict[str, Any]]:
+    name, objs, _ = _incidents(config)
     t0 = time.perf_counter()
     atts = [{**a.to_dict(), "source_detector": name} for a in run_control(world, objs, config)]
     _write(
@@ -150,6 +158,58 @@ def cmd_detect(config: dict[str, Any], args) -> int:
 
 def cmd_attribute(config: dict[str, Any], args) -> int:
     _attribute(config, load_observed(world_dir(config)))
+    return 0
+
+
+def _agent(config: dict[str, Any], world, which: str | None, record: bool) -> dict[str, Any]:
+    from culprit.agent.run import AgentSetupError, run_agent, select_incidents, summary
+
+    name, objs, keys = _incidents(config)
+    out_path = artifacts_dir(config) / "agent" / "agent.json"
+    try:
+        chosen = select_incidents(objs, which)
+        t0 = time.perf_counter()
+        rows, reports = run_agent(
+            world, chosen, keys, config, world_dir(config).name, record=record
+        )
+    except AgentSetupError as err:
+        raise SystemExit(str(err)) from err
+    # A single-incident run updates that incident's row and keeps the others.
+    previous = json.loads(out_path.read_text(encoding="utf-8")) if out_path.exists() else {}
+    by_id = {r["incident_id"]: r for r in previous.get("attributions", [])}
+    by_id.update({r["incident_id"]: r for r in rows})
+    all_rows = [by_id.get(i.id) for i in objs if i.id in by_id]
+    for inc_id, text in reports.items():
+        p = out_path.parent / "reports" / f"{inc_id}.md"
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(text, encoding="utf-8")
+    result = {
+        "provenance": _provenance(config, world),
+        "source_detector": name,
+        "summary": summary(all_rows, config),
+        "attributions": all_rows,
+        "seconds": round(time.perf_counter() - t0, 2),
+    }
+    _write(out_path, result)
+    for r in rows:
+        print(
+            f"{r['incident_id']}: {r['status']}  culprit {r['culprit']}  {r['fault_type']}  "
+            f"USD {r.get('cost_usd', 0.0):.4f}"
+        )
+    s = result["summary"]
+    print(
+        f"agent ({'record' if record else 'replay'}): {len(rows)} incidents, "
+        f"{s['accepted']} of {s['incidents']} accepted by the critic in {out_path}"
+    )
+    return result
+
+
+def cmd_agent(config: dict[str, Any], args) -> int:
+    if args.incident is None and not args.all:
+        raise SystemExit("agent needs --incident N (index or id) or --all")
+    _agent(
+        config, load_observed(world_dir(config)), None if args.all else args.incident, args.record
+    )
     return 0
 
 
@@ -193,12 +253,19 @@ def cmd_evaluate(config: dict[str, Any], args) -> int:
     alarms = _read(a_dir / "detect" / "alarms.json")
     incidents = _read(a_dir / "detect" / "incidents.json")
     control = _read(a_dir / "attribute" / "control.json")["attributions"]
+    investigators = {"control": control}
+    agent_path = a_dir / "agent" / "agent.json"
+    agent = json.loads(agent_path.read_text(encoding="utf-8")) if agent_path.exists() else None
+    if agent is not None:
+        investigators["agent"] = agent["attributions"]
     if args.run_id:
         key = sealed_answer_key(world_dir(config), config, args.run_id)
     else:
         key = dev_answer_key(world_dir(config), config)
     lo, hi = world.timeline.window_hours("evaluation")
-    result = grade(key, world.segments, hi - lo, alarms, incidents, {"control": control}, config)
+    result = grade(key, world.segments, hi - lo, alarms, incidents, investigators, config)
+    if agent is not None:
+        result["agent_cost"] = agent["summary"]
     result["provenance"] = _provenance(config, world)
     result["role"] = config["evaluate"]["role"]
     _write(a_dir / "evaluate" / "grade.json", result)
@@ -209,20 +276,33 @@ def cmd_evaluate(config: dict[str, Any], args) -> int:
             f"false alarms per week {m['false_alarms_per_week']:.2f}  "
             f"false incidents per week {m['false_incidents_per_week']:.2f}"
         )
-    att = result["attribution"]["control"]
-    print(
-        f"control top-1 {att['top1']}  top-3 {att['top3']}  "
-        f"fault type {att['fault_type_accuracy']}  ({att['investigated_faults']} faults)"
-    )
+    for who, att in result["attribution"].items():
+        print(
+            f"{who} top-1 {att['top1']}  top-3 {att['top3']}  "
+            f"fault type {att['fault_type_accuracy']}  ({att['investigated_faults']} faults)"
+        )
+    if agent is not None:
+        c = agent["summary"]
+        print(
+            f"agent cost: USD {c['total_cost_usd']:.4f}, median per incident {c['median_cost_usd']}"
+        )
     return 0
 
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="culprit", description=__doc__.splitlines()[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
-    for name in ("simulate", "detect", "attribute", "evaluate", "seal", "run"):
+    for name in ("simulate", "detect", "attribute", "agent", "evaluate", "seal", "run"):
         p = sub.add_parser(name)
         p.add_argument("config")
+        if name == "agent":
+            p.add_argument("--incident", default=None, help="index in the incident list, or an id")
+            p.add_argument("--all", action="store_true", help="every incident of the world")
+            p.add_argument(
+                "--record",
+                action="store_true",
+                help="live, billed calls where no cassette exists (needs ANTHROPIC_API_KEY)",
+            )
         if name == "evaluate":
             p.add_argument("--run-id", default=None)
         if name == "seal":
@@ -235,6 +315,7 @@ def main(argv: list[str] | None = None) -> int:
         "simulate": cmd_simulate,
         "detect": cmd_detect,
         "attribute": cmd_attribute,
+        "agent": cmd_agent,
         "evaluate": cmd_evaluate,
         "seal": cmd_seal,
         "run": cmd_run,
