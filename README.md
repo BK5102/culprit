@@ -69,7 +69,7 @@ uv run culprit detect configs/full.yaml
 ## Manual steps for the owner
 
 - **LLM API key and spend cap** for the agent (H2). Put `ANTHROPIC_API_KEY` in the environment (never in git) and decide a total cap and a per-incident cap. The investigator loop, critic and reporter exist and are tested with a hand-written cassette; no live call has been made.
-- **The false-alarm budget.** On the first development run, 2 alarms per week counted over all series caught few faults (see `docs/explain-the-project.md`, Step 8). Decide before the lock whether to keep it, raise it, or count it per incident.
+- **The false-alarm budget.** On the first development run, 2 alarms per week counted over all series caught few faults (see `docs/explain-the-project.md`, Steps 8 and 9). Both counting units are built: set `budget.mode` to `per_series` (the current default) or `per_incident` (alarms within 6 hours count as one; recommended) before the lock. `uv run python scripts/compare_budget_modes.py configs/small.yaml` prints both on a development world (methodology M42).
 - **The sealed test.** Choose test seeds, keep `extra_verification` in the test worlds' fault types, pick a second simulator regime, set `evaluate.role: test`, then `culprit seal`, commit, `culprit run --sealed RUN_ID`, `culprit evaluate --run-id RUN_ID`.
 
 ## What is in the repo

@@ -179,6 +179,74 @@ def test_alarm_rule_fires_once_per_run_and_incidents_group():
     assert [len(i.alarms) for i in inc] == [2, 1]
 
 
+def _random_scores(seed: int, n: int = 12, t: int = 336) -> np.ndarray:
+    rng = np.random.default_rng(seed)
+    s = rng.normal(size=(n, t))
+    # A few shared bursts, like a promotion that fires several related series at once.
+    for h in rng.integers(0, t - 6, size=5):
+        rows = rng.choice(n, size=4, replace=False)
+        s[np.ix_(rows, np.arange(h, h + 4))] += rng.uniform(2, 5)
+    return np.round(s, 3)  # ties, as in real scores
+
+
+@pytest.mark.parametrize("seed", [0, 1, 2])
+def test_incident_walk_with_no_grouping_reproduces_the_cleanroom_threshold(seed):
+    from cleanroom.events import threshold_for_alarm_rate
+
+    from culprit.detect.budget import _window, threshold_for_incident_rate
+
+    s = _random_scores(seed)
+    values, hours, groups = _window(s, 0, 336)
+    for k in (1, 2, 3):
+        for target in (0.5, 2.0, 8.0):
+            ref = threshold_for_alarm_rate(
+                values, hours, target, persistence_k=k, unit=168, groups=groups, total_time=336
+            ).threshold
+            got = threshold_for_incident_rate(values, hours, groups, target, k, -1, 336)
+            assert got == ref, (k, target)
+
+
+@pytest.mark.parametrize("seed", [0, 1, 2, 3])
+def test_per_incident_budget_holds_and_is_the_lowest_safe_threshold(seed):
+    s = _random_scores(seed)
+    window, target, k, gap = (0, 336), 2.0, 2, 6
+    thr = calibrate(s, window, target, k, mode="per_incident", gap=gap)
+    found = alarms(s, thr.threshold, k, window, 0)
+    n_inc = len(group_incidents(found, gap))
+    assert n_inc == thr.n_incidents and len(found) == thr.n_alarms
+    assert thr.budget_rate == thr.incident_rate <= target
+    # Every higher candidate also meets the target, and the next lower one does not.
+    values = np.unique(s)
+    higher = values[values >= thr.threshold]
+    for c in higher[:: max(1, len(higher) // 50)]:
+        assert len(group_incidents(alarms(s, c, k, window, 0), gap)) / 2 <= target
+    lower = values[values < thr.threshold]
+    if len(lower):
+        assert len(group_incidents(alarms(s, lower[-1], k, window, 0), gap)) / 2 > target
+
+
+def test_per_incident_counting_is_never_stricter_than_per_series():
+    for seed in range(4):
+        s = _random_scores(seed)
+        a = calibrate(s, (0, 336), 2.0, 2, mode="per_series")
+        b = calibrate(s, (0, 336), 2.0, 2, mode="per_incident", gap=6)
+        assert a.mode == "per_series" and a.budget_rate == a.alarm_rate <= 2.0
+        assert b.threshold <= a.threshold
+
+
+def test_budget_mode_is_validated_and_flows_from_the_config():
+    s = _random_scores(0)
+    with pytest.raises(ValueError, match="budget.mode"):
+        calibrate(s, (0, 336), 2.0, 2, mode="per_page")
+    cfg = tiny_config()
+    assert cfg["budget"]["mode"] == "per_series"  # the documented default until the owner decides
+    cfg["budget"]["mode"] = "per_incident"
+    world = simulate(cfg).observed
+    _, results, _ = run_detection(world, cfg)
+    for r in results.values():
+        assert r.threshold.mode == "per_incident" and r.threshold.incident_rate <= 2.0
+
+
 def test_tsfm_module_pins_chronos_bolt_and_imports_no_torch():
     assert MODEL_ID == "amazon/chronos-bolt-tiny"
     assert REVISION == "a0e552de83495b5c28c14c71c374f3e33280b340"

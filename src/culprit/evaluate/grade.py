@@ -22,7 +22,11 @@ from typing import Any
 from cleanroom.lock import require_lock
 from cleanroom.vault import VaultError, load_vault, release_answer_key
 
-from culprit.evaluate.metrics import attribution_metrics, detection_metrics
+from culprit.evaluate.metrics import (
+    attribution_metrics,
+    detection_metrics,
+    false_incident_metrics,
+)
 from culprit.segments import Segments
 from culprit.sim.build import ANSWER_KEY_FILE, SEALED_DIR
 
@@ -78,8 +82,14 @@ def grade(
         "world": key["world"],
         "world_hash": key["world_hash"],
         "holdout_fault_types": key["holdout_fault_types"],
+        "budget_mode": config["budget"]["mode"],
         "detection": {
-            name: detection_metrics(alarms, faults, surges, segments, eval_hours, tol)
+            name: {
+                **detection_metrics(alarms, faults, surges, segments, eval_hours, tol),
+                **false_incident_metrics(
+                    incidents.get(name, []), faults, segments, eval_hours, tol
+                ),
+            }
             for name, alarms in detection.items()
         },
         "attribution": {},

@@ -88,6 +88,34 @@ def detection_metrics(
     return out
 
 
+def false_incident_metrics(
+    incidents: list[dict[str, Any]],
+    faults: list[dict[str, Any]],
+    seg: Segments,
+    eval_hours: int,
+    tolerance: float,
+) -> dict[str, Any]:
+    """Incidents (grouped alarms, one page each) whose alarms match no fault.
+
+    Reported for both budget modes, so the evaluation false-alarm rate can be
+    read in the same unit the budget counted (methodology M42).
+    """
+
+    def matched(a: dict[str, Any]) -> bool:
+        return any(
+            f["start_hour"] <= a["hour"] <= f["end_hour"] - 1 + tolerance
+            and _touches(seg, a["node"], f["target"])
+            for f in faults
+        )
+
+    false = [i for i in incidents if not any(matched(a) for a in i["alarms"])]
+    return {
+        "incidents": len(incidents),
+        "false_incidents": len(false),
+        "false_incidents_per_week": false_alarms_per_unit(len(false), eval_hours, 168.0),
+    }
+
+
 def attribution_metrics(
     incidents: list[dict[str, Any]],
     attributions: list[dict[str, Any]],

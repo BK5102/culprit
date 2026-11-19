@@ -35,3 +35,9 @@ The agent can only call four read-only tools that see nothing after the alarm, e
 ### D8. One command per step, and a separate sealed path for test worlds
 
 `culprit simulate`, `detect`, `attribute` and `evaluate` run the small development world end to end on a laptop CPU in well under a minute, and every output file records the config hash, git commit and dataset hash. Test worlds take a different path: seal the config and the answer key, commit them, run detection and the control as one sealed run, and only then grade. Analogy: practice exams can be marked as often as you like; the real exam is sat once, in a sealed room, and the envelope is opened afterwards.
+
+## Build 2 (2026-11-18)
+
+### D9. The false-alarm budget can count incidents instead of series alarms
+
+`budget.mode` now chooses whether the 2-per-week allowance counts every series alarm or every incident (alarms within 6 hours grouped as one page), with the per-incident threshold found by the same rule as the Cleanroom's and checked to reproduce it exactly when nothing is grouped. On the small development world, counting incidents let A2 catch 10 of 14 faults instead of 1 (development only), at the cost of many more series alarms, so both units are graded. Analogy: a smoke alarm budget that counts fires the fire brigade is called to, not every detector that beeped during the same fire.

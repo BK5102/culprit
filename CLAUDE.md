@@ -54,6 +54,7 @@ uv run culprit detect configs/small.yaml       # run the detectors at an equal a
 uv run culprit attribute configs/small.yaml    # the no-LLM control on the incidents
 uv run culprit evaluate configs/small.yaml     # grade a development world against its answer key
 uv run python scripts/check_data_fit.py configs/small.yaml   # data-fit gate
+uv run python scripts/compare_budget_modes.py configs/small.yaml   # both budget counting units, development only
 uv run culprit seal CONFIG; uv run culprit run CONFIG --sealed RUN_ID; uv run culprit evaluate CONFIG --run-id RUN_ID   # test worlds only
 uv sync --extra tsfm                           # Chronos-Bolt-tiny for the TSFM detector (CPU)
 ```

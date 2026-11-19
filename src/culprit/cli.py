@@ -97,11 +97,13 @@ def _detect(config: dict[str, Any], world) -> dict[str, Any]:
         "seconds": round(time.perf_counter() - t0, 2),
     }
     _write(d / "summary.json", summary)
+    b = config["budget"]
+    print(f"budget: {b['false_alarms_per_week']} false alarms per week, counted {b['mode']}")
     for r in results.values():
         print(
             f"{r.name:5s} threshold {r.threshold.threshold:8.3f}  calibration alarms "
-            f"{r.threshold.n_alarms}  evaluation alarms {len(r.alarms):4d}  "
-            f"incidents {len(r.incidents):3d}  {r.seconds:.1f} s"
+            f"{r.threshold.n_alarms} ({r.threshold.n_incidents} incidents)  evaluation alarms "
+            f"{len(r.alarms):4d}  incidents {len(r.incidents):3d}  {r.seconds:.1f} s"
         )
     for s in skipped:
         print(f"skipped: {s}")
@@ -204,7 +206,8 @@ def cmd_evaluate(config: dict[str, Any], args) -> int:
     for name, m in result["detection"].items():
         print(
             f"{name:5s} detected {m['detection_rate']}  within 6h {m['caught_within_6h']}  "
-            f"false alarms per week {m['false_alarms_per_week']:.2f}"
+            f"false alarms per week {m['false_alarms_per_week']:.2f}  "
+            f"false incidents per week {m['false_incidents_per_week']:.2f}"
         )
     att = result["attribution"]["control"]
     print(

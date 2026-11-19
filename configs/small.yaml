@@ -22,5 +22,8 @@ detect:
   tsfm:
     adapter: null   # set to chronos_bolt after `uv sync --extra tsfm`
 budget:
+  # Owner decision before the lock (methodology M42): per_series (documented default)
+  # or per_incident (alarms within group_gap_hours = 6 count as one; recommended).
+  mode: per_series
   false_alarms_per_week: 2.0
   persistence_hours: 2

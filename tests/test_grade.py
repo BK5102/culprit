@@ -58,6 +58,22 @@ def test_detection_metrics_by_hand():
     assert m["caught_within_2h"] == 1.0 and m["detection_rate"] == 1.0
 
 
+def test_false_incidents_by_hand():
+    from culprit.evaluate.metrics import false_incident_metrics
+
+    incidents = [
+        {"id": "I0", "alarms": [{"node": "country=C1", "hour": 101}]},  # false
+        {
+            "id": "I1",
+            "alarms": [{"node": "country=C1", "hour": 101}, {"node": "country=C0", "hour": 102}],
+        },
+        {"id": "I2", "alarms": [{"node": "issuer=C0-I0", "hour": 120}]},  # after the grace: false
+    ]
+    m = false_incident_metrics(incidents, [FAULT], SEG, eval_hours=336, tolerance=6)
+    assert m["incidents"] == 3 and m["false_incidents"] == 2
+    assert m["false_incidents_per_week"] == pytest.approx(1.0)
+
+
 def test_attribution_metrics_by_hand():
     incidents = [
         {"id": "I0", "alarms": [{"node": "country=C0", "hour": 102}]},

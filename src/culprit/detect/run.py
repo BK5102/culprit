@@ -13,11 +13,17 @@ from dataclasses import dataclass, field
 from typing import Any
 
 import numpy as np
-from cleanroom.events import AlarmThreshold
 
 from culprit.detect.base import Detector
 from culprit.detect.binomial import BinomialCusum
-from culprit.detect.budget import Alarm, Incident, alarms, calibrate, group_incidents
+from culprit.detect.budget import (
+    Alarm,
+    BudgetThreshold,
+    Incident,
+    alarms,
+    calibrate,
+    group_incidents,
+)
 from culprit.detect.classical import MSTLDetector
 from culprit.detect.seasonal_naive import SeasonalNaive
 from culprit.detect.tsfm import QuantileForecaster, TSFMDetector, make_forecaster
@@ -30,7 +36,7 @@ class DetectionResult:
     name: str
     version: str
     scores: np.ndarray
-    threshold: AlarmThreshold
+    threshold: BudgetThreshold
     alarms: list[Alarm]
     incidents: list[Incident]
     seconds: float
@@ -115,6 +121,8 @@ def run_detection(
             (tl.context_end, tl.calibration_end),
             b["false_alarms_per_week"],
             b["persistence_hours"],
+            mode=b["mode"],
+            gap=b["group_gap_hours"],
         )
         found = alarms(s, thr.threshold, b["persistence_hours"], (start, end), tl.calibration_end)
         incidents = group_incidents(found, b["group_gap_hours"], prefix=f"{det.name}-")

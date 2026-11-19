@@ -74,6 +74,9 @@ DEFAULTS: dict[str, Any] = {
         },
     },
     "budget": {
+        # What counts against the false-alarm budget (methodology M42). The owner
+        # chooses per_series (the documented default) or per_incident before the lock.
+        "mode": "per_series",
         "false_alarms_per_week": 2.0,
         "persistence_hours": 2,
         "group_gap_hours": 6,

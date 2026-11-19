@@ -38,7 +38,7 @@ def test_small_config_end_to_end_under_a_minute(small_config, capsys):
     summary = json.loads((out / "detect" / "summary.json").read_text(encoding="utf-8"))
     assert {d["detector"] for d in summary["detectors"]} == {"A", "A2", "B"}
     for d in summary["detectors"]:
-        assert d["threshold"]["alarm_rate"] <= 2.0
+        assert d["threshold"]["budget_rate"] <= 2.0 and d["threshold"]["mode"] == "per_series"
     prov = summary["provenance"]
     assert prov["config_hash"] and prov["dataset_hash"] and "git" in prov
     assert "Simulated" in prov["note"]
