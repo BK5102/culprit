@@ -89,6 +89,7 @@ DEFAULTS: dict[str, Any] = {
         "history_days": 7,
         "rest_min_z": 0.0,
         "rest_min_ratio": 0.5,
+        "score": "exact_tail",  # methodology M48 (Variant 2); "normal" is the M31 score
     },
     "agent": {
         # Methodology M35, M43, M44. The owner sets max_total_cost_usd (USD, all record

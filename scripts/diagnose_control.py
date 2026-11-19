@@ -16,7 +16,7 @@ It also reports how many investigation windows the culprit segment had, since
 a culprit backed by one or two payments is the sign of the degenerate
 variance described in L27. Development numbers from one seed, never results.
 It refuses a config whose role is "test". Output also goes to
-artifacts/<name>-seed<seed>/control-diagnosis.json with provenance.
+artifacts/<name>-seed<seed>/control-diagnosis-<score>.json with provenance.
 
 All data is simulated.
 """
@@ -132,12 +132,19 @@ def table(result: dict) -> str:
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("config")
+    ap.add_argument(
+        "--score",
+        choices=("normal", "exact_tail"),
+        help="override control.score to measure a variant (methodology M48)",
+    )
     args = ap.parse_args(argv)
     config = load_config(args.config)
+    if args.score:
+        config["control"]["score"] = args.score
     result = diagnose(config)
     result["provenance"] = stamp(config, {}, packages=("culprit", "cleanroom", "numpy"))
     result["note"] = "Simulated data. Development numbers from one seed, not a result."
-    path = artifacts_dir(config) / "control-diagnosis.json"
+    path = artifacts_dir(config) / f"control-diagnosis-{config['control']['score']}.json"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(result, indent=2, default=float), encoding="utf-8")
     print(table(result))

@@ -10,7 +10,7 @@ from culprit.config import make_config
 from culprit.detect.budget import Alarm, Incident
 from culprit.investigate.contribution import leaf_window, node_stats
 from culprit.investigate.control import investigate_incident
-from culprit.investigate.drilldown import DrillSettings, drill_down
+from culprit.investigate.drilldown import DrillSettings, drill_down, exact_tail_z
 from culprit.investigate.fault_typing import classify, signals
 from culprit.segments import node_key
 from culprit.sim.build import simulate
@@ -167,3 +167,35 @@ def test_a_thin_leaf_does_not_hide_a_real_drop():
     lw = leaf_window(world, t0 - 2, t0 + 1)
     result = drill_down(world, lw, DrillSettings())
     assert result.culprit == {"issuer": "C0-I1"}, result.ranked(5)
+
+
+def test_exact_tail_score_is_modest_for_one_decline_and_matches_normal_z_when_large():
+    z = exact_tail_z(np.array([1.0, 100000.0]), np.array([0.0, 86000.0]), np.array([0.97, 87000.0]))
+    assert 1.8 < z[0] < 2.0  # P = 0.03, not the normal approximation's 5.7
+    normal = 1000.0 / np.sqrt(100000 * 0.87 * 0.13)
+    assert abs(z[1] - normal) < 0.2
+
+
+def test_exact_tail_scan_finds_the_injected_drop_past_a_thin_leaf():
+    world = quiet_world()
+    t0 = world.timeline.calibration_end + 30
+    inject(world, {"issuer": "C0-I1"}, t0 - 2, 3, 0.6)
+    thin_leaf_with_one_decline(world, t0)
+    lw = leaf_window(world, t0 - 2, t0 + 1)
+    result = drill_down(world, lw, DrillSettings(score="exact_tail"))
+    assert result.culprit == {"issuer": "C0-I1"}, result.ranked(5)
+
+
+def test_unknown_control_score_is_refused():
+    with pytest.raises(ValueError, match="score"):
+        DrillSettings(score="bogus")
+
+
+def test_exact_tail_score_stays_finite_and_ordered_for_huge_drops():
+    # Tails far below the smallest float: the score must stay finite and keep its order.
+    att = np.array([17315.0, 17315.0, 1000.0])
+    app = np.array([7905.0, 9000.0, 0.0])
+    exp = np.array([13231.0, 13231.0, 900.0])
+    z = exact_tail_z(att, app, exp)
+    assert np.isfinite(z).all(), z
+    assert z[0] > z[1] > 30
