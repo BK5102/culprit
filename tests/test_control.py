@@ -132,3 +132,38 @@ def test_investigation_uses_only_data_up_to_the_alarm():
     world.attempts[:, t0 + 3 :] = 1
     a2 = investigate_incident(world, inc, CONTROL)
     assert a1.to_dict() == a2.to_dict()
+
+
+def thin_leaf_with_one_decline(world, t0):
+    """Make one leaf thin (1 attempt an hour, all approved before t0), then decline once at t0.
+
+    This is the full world's L27 failure in miniature: a pooled rate of exactly 1
+    from a handful of past attempts (methodology M48).
+    """
+    leaf = int(np.flatnonzero(world.segments.mask({"country": "C1"}))[0])
+    world.attempts[leaf, :] = 1
+    world.approved[leaf, :] = 1
+    world.declines[leaf, :, :] = 0
+    world.approved[leaf, t0] = 0
+    world.declines[leaf, t0, 0] = 1
+    return leaf
+
+
+def test_a_thin_leaf_with_a_spotless_past_does_not_get_a_huge_z():
+    world = quiet_world()
+    t0 = world.timeline.calibration_end + 30
+    leaf = thin_leaf_with_one_decline(world, t0)
+    lw = leaf_window(world, t0 - 2, t0 + 1)
+    z = lw.missing[leaf] / np.sqrt(lw.variance[leaf])
+    # One decline in 3 attempts after 4 of 4 past approvals at each hour is not a 500-sigma event.
+    assert z < 4, z
+
+
+def test_a_thin_leaf_does_not_hide_a_real_drop():
+    world = quiet_world()
+    t0 = world.timeline.calibration_end + 30
+    inject(world, {"issuer": "C0-I1"}, t0 - 2, 3, 0.6)
+    thin_leaf_with_one_decline(world, t0)
+    lw = leaf_window(world, t0 - 2, t0 + 1)
+    result = drill_down(world, lw, DrillSettings())
+    assert result.culprit == {"issuer": "C0-I1"}, result.ranked(5)

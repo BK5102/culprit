@@ -28,7 +28,10 @@ import numpy as np
 from culprit.world import ObservedWorld
 
 
-def _pooled(att: np.ndarray, app: np.ndarray, hours: np.ndarray, weeks: int) -> np.ndarray:
+def _pooled(
+    att: np.ndarray, app: np.ndarray, hours: np.ndarray, weeks: int
+) -> tuple[np.ndarray, np.ndarray]:
+    """Pooled same-hour rate of the previous `weeks` weeks, and the attempts it rests on."""
     b_att = np.zeros((att.shape[0], len(hours)))
     b_app = np.zeros_like(b_att)
     for w in range(1, weeks + 1):
@@ -37,7 +40,18 @@ def _pooled(att: np.ndarray, app: np.ndarray, hours: np.ndarray, weeks: int) -> 
         b_att[:, ok] += att[:, lag[ok]]
         b_app[:, ok] += app[:, lag[ok]]
     with np.errstate(invalid="ignore", divide="ignore"):
-        return np.where(b_att > 0, b_app / np.maximum(b_att, 1), np.nan)
+        return np.where(b_att > 0, b_app / np.maximum(b_att, 1), np.nan), b_att
+
+
+def jeffreys_bound(n: np.ndarray) -> np.ndarray:
+    """How close to 0 or 1 a rate resting on n past attempts may be (methodology M48).
+
+    1 - 0.5 / (n + 1) is the Jeffreys estimate, (approvals + 0.5) / (n + 1), of a
+    segment that approved all n. Four approvals out of four is not evidence that
+    a leaf never declines; without this bound its variance n p (1 - p) collapses
+    and one decline looks like a 1,000-sigma drop.
+    """
+    return 0.5 / (np.asarray(n, dtype=float) + 1.0)
 
 
 def baseline_rates(
@@ -54,27 +68,32 @@ def baseline_rates(
     recent level: its approvals minus pooled-expected approvals, per attempt,
     over the `level_hours` hours that end `level_gap` hours before the window.
     The shift tracks day-to-day drift; the gap keeps a fault that started just
-    before the window out of the baseline.
+    before the window out of the baseline. The result is held away from 0 and 1
+    by `jeffreys_bound` of the past attempts it rests on (methodology M48).
     """
     att = world.attempts.astype(float)
     app = world.approved.astype(float)
     hours = np.arange(start, end)
-    pooled = _pooled(att, app, hours, weeks)
+    pooled, n_pooled = _pooled(att, app, hours, weeks)
     lo = max(0, start - 168 * weeks)
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", RuntimeWarning)
-        fallback = app[:, lo:start].sum(1) / np.maximum(att[:, lo:start].sum(1), 1)
-        pooled = np.where(np.isfinite(pooled), pooled, fallback[:, None])
+        n_fallback = att[:, lo:start].sum(1)
+        fallback = app[:, lo:start].sum(1) / np.maximum(n_fallback, 1)
+        has_pooled = np.isfinite(pooled)
+        pooled = np.where(has_pooled, pooled, fallback[:, None])
+        n_used = np.where(has_pooled, n_pooled, n_fallback[:, None])
         l1 = max(0, start - level_gap)
         l0 = max(0, l1 - level_hours)
         offset = np.zeros(att.shape[0])
         if l1 > l0:
             rh = np.arange(l0, l1)
-            pr = _pooled(att, app, rh, weeks)
+            pr, _ = _pooled(att, app, rh, weeks)
             pr = np.where(np.isfinite(pr), pr, fallback[:, None])
             a = att[:, rh]
             offset = (app[:, rh] - a * pr).sum(1) / np.maximum(a.sum(1), 1)
-    return np.clip(pooled + offset[:, None], 1e-6, 1 - 1e-6)
+    eps = jeffreys_bound(n_used)
+    return np.clip(pooled + offset[:, None], eps, 1 - eps)
 
 
 @dataclass
