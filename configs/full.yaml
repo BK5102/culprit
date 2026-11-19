@@ -1,6 +1,6 @@
 # Full development world: 1,440 leaf segments, 12 weeks hourly. Simulated data.
-# CPU only. The TSFM detector needs `uv sync --extra tsfm`; at the measured 5.07 ms per
-# series per origin it should take about 7 minutes here (docs/tsfm-notes.md). Not run yet.
+# CPU only. The TSFM detector needs `uv sync --extra tsfm`; measured 542.9 s here on a
+# laptop CPU (2026-11-18, docs/tsfm-notes.md).
 name: full
 seed: 17
 world:

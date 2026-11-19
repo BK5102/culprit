@@ -117,3 +117,11 @@ The technical detail behind each step is in `docs/methodology.md` (numbered M1, 
 - **What else I considered:** one config file per test world. Ten files can drift apart and need ten locks; one plan is one commitment.
 - **Cause and effect:** the detectors, the control and the agent now refuse to run on test worlds outside the sealed run, so nobody can peek at test alarms early. A test runs the entire sealed path (seal, commit, sealed run with the agent on a fake backend, grading) on four tiny worlds.
 - **How to say it:** "My test plan is one file that the code refuses to seal while any choice is still open, and once sealed, even editing the agent's prompt needs a new lock."
+
+### Step 12. Run the real TSFM once on the full development world
+
+- **What I did:** ran all four detectors, the control and grading on the full development world (1,440 leaf segments, 1,554 monitored series, seed 17) with the real Chronos-Bolt-tiny weights on a laptop CPU, from a clean checkout so the provenance names an exact commit.
+- **Why:** the TSFM detector had only been tested with a fake stand-in. Before sealing anything I needed to know it runs on a CPU in reasonable time and behaves like the others at the budget.
+- **What else I considered:** waiting for the sealed run. A crash or a ten-hour runtime discovered there would cost a counted attempt.
+- **Cause and effect:** the TSFM took 542.9 s (about 9 minutes) for 1,554 series at 42 daily forecast origins, so one full world takes about 15 minutes for every step together and ten test worlds about 2.5 hours, inside the plan's CPU budget. On this one development world (development only, not a result), at 2 false alarms per week counted per series, the TSFM caught 8 of 27 faults within 6 hours, against 19 for the binomial A2, 9 for A and 9 for B. The control named no culprit right on this world (top-1 0 of 20 faults), a negative result I kept and have not yet explained.
+- **How to say it:** "The foundation model runs a full world on a laptop CPU in about nine minutes; on my one development world it did not beat a simple binomial z-score, and the sealed test is where that question actually gets answered."

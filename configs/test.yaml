@@ -54,8 +54,8 @@ agent:
   max_tokens: 16000
 test:
   agent: true  # the sealed run includes the LLM investigator (H2)
-  # Recommended: 5 new seeds per regime (10 worlds; about 80 CPU minutes with the
-  # TSFM). Draw them once, for example with
+  # Recommended: 5 new seeds per regime (10 worlds; about 15 minutes each on a laptop
+  # CPU with the TSFM, measured on the full development world, so about 2.5 hours). Draw them once, for example with
   #   uv run python -c "import secrets; print([secrets.randbelow(10**6) for _ in range(5)])"
   # and paste the list here. They must not be development seeds (culprit/plan.py).
   seeds: "PLACEHOLDER: list of new integer seeds, for example 5 of them"
