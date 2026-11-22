@@ -31,3 +31,9 @@ budget:
   mode: per_incident
   false_alarms_per_week: 2.0
   persistence_hours: 2
+agent:
+  # Development spend caps, owner decision 2026-11-21 (runbook step 1, methodology M44);
+  # the development spend log is shared with configs/small.yaml.
+  max_total_cost_usd: 10
+  max_cost_usd: 1.00
+  max_tokens: 4000
