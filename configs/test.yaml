@@ -40,25 +40,26 @@ detect:
 budget:
   # per_series: every series alarm counts; per_incident: alarms within 6 hours count
   # as one page. Recommended: per_incident (development numbers in methodology M42).
-  mode: "PLACEHOLDER: per_series or per_incident (recommended: per_incident)"
+  mode: per_incident  # owner decision 2026-11-21 (docs/decisions.md, methodology M42)
   false_alarms_per_week: 2.0
   persistence_hours: 2
 agent:
   # Total USD for every live call of the sealed run. Estimate it as (incidents per
   # world) x (worlds) x (median cost per incident from the development recordings),
   # with room to spare: an incident the cap stops counts as a miss for the agent.
-  max_total_cost_usd: "PLACEHOLDER: total USD cap for the sealed agent run"
+  max_total_cost_usd: "PLACEHOLDER: set from the development recordings (runbook step 4)"
   # Per incident. Each call reserves its worst case first (max_tokens of output at
   # USD 20 per million), so set the two together (methodology M44).
-  max_cost_usd: 0.50
-  max_tokens: 16000
+  max_cost_usd: 1.00  # owner decision 2026-11-21: set together with max_tokens (M44)
+  max_tokens: 4000
 test:
   agent: true  # the sealed run includes the LLM investigator (H2)
   # Recommended: 5 new seeds per regime (10 worlds; about 15 minutes each on a laptop
   # CPU with the TSFM, measured on the full development world, so about 2.5 hours). Draw them once, for example with
   #   uv run python -c "import secrets; print([secrets.randbelow(10**6) for _ in range(5)])"
   # and paste the list here. They must not be development seeds (culprit/plan.py).
-  seeds: "PLACEHOLDER: list of new integer seeds, for example 5 of them"
+  # Drawn once on 2026-11-21 with secrets.randbelow(10**6), before any test world existed.
+  seeds: [607890, 906544, 232922, 667770, 96065]
   regimes:
     base: {}  # the development settings above
     # The held-out simulator regime (CLAUDE.md rule 9). Recommended: a noisier,
@@ -70,4 +71,9 @@ test:
     #       surges: {promotions_per_week: 3.0}
     # Check it first on development seeds:
     #   uv run python scripts/check_data_fit.py configs/test.yaml --regime second --seeds 301 302 303
-    second: "PLACEHOLDER: world overrides for the second simulator regime"
+    # Owner decision 2026-11-21: the recommended noisier, shiftier world above.
+    second:
+      world:
+        approval: {base_rate: 0.82, drift_sd: 0.10}
+        volume: {day_noise_sd: 0.12, leaf_day_noise_sd: 0.15}
+        surges: {promotions_per_week: 3.0}

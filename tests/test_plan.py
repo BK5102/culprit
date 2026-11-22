@@ -45,13 +45,16 @@ def filled_plan(**over) -> dict:
     return cfg
 
 
-def test_the_draft_lists_exactly_the_owner_choices():
+def test_the_plan_has_the_owner_choices_and_one_open_cap():
+    """Owner decisions of 2026-11-21 are in; the total cap waits for the dev recordings."""
     cfg = load_config(DRAFT)
-    assert sorted(placeholders(cfg)) == sorted(
-        ["budget.mode", "agent.max_total_cost_usd", "test.seeds", "test.regimes.second"]
-    )
+    assert placeholders(cfg) == ["agent.max_total_cost_usd"]
     found = problems(cfg)
-    assert len(found) == 4 and all("placeholder" in p for p in found)
+    assert len(found) == 1 and "placeholder" in found[0]
+    assert cfg["budget"]["mode"] == "per_incident"
+    assert cfg["agent"]["max_tokens"] == 4000 and cfg["agent"]["max_cost_usd"] == 1.0
+    assert len(cfg["test"]["seeds"]) == 5 and not set(cfg["test"]["seeds"]) & DEV_SEEDS
+    assert cfg["test"]["regimes"]["second"]["world"]["approval"]["drift_sd"] == 0.10
     # The held-out type is injected in the test worlds and only there.
     assert "extra_verification" in cfg["world"]["faults"]["types"]
     assert cfg["world"]["holdout_fault_types"] == ["extra_verification"]
@@ -60,13 +63,18 @@ def test_the_draft_lists_exactly_the_owner_choices():
         assert "extra_verification" not in dev_cfg["world"]["faults"]["types"]
 
 
-def test_the_draft_cannot_be_validated_simulated_or_sealed(capsys):
+def test_an_unfinished_plan_cannot_be_validated_simulated_or_sealed(capsys, tmp_path):
     assert main(["validate", str(DRAFT)]) == 1
-    assert "test.seeds is a placeholder" in capsys.readouterr().out
-    with pytest.raises(SystemExit, match="test.seeds is still a placeholder"):
-        main(["simulate", str(DRAFT)])
+    assert "agent.max_total_cost_usd is a placeholder" in capsys.readouterr().out
     with pytest.raises(SystemExit, match="not ready to seal"):
         main(["seal", str(DRAFT)])
+    # Placeholder seeds must still stop `simulate` before any test world is built.
+    raw = yaml.safe_load(DRAFT.read_text(encoding="utf-8"))
+    raw["test"]["seeds"] = "PLACEHOLDER: list of new integer seeds"
+    unseeded = tmp_path / "test.yaml"
+    unseeded.write_text(yaml.safe_dump(raw), encoding="utf-8")
+    with pytest.raises(SystemExit, match="test.seeds is still a placeholder"):
+        main(["simulate", str(unseeded)])
 
 
 def test_a_filled_plan_is_ready_and_expands_per_regime_and_seed():

@@ -27,7 +27,7 @@ Then set the caps in the configs (USD). `agent.max_total_cost_usd` is the total 
 
 `culprit agent --record` refuses to start without the key or the total cap.
 
-## 2. The false-alarm budget (owner choice b)
+## 2. The false-alarm budget (owner choice b; decided 2026-11-21: per_incident, D13)
 
 ```
 uv run python scripts/compare_budget_modes.py configs/small.yaml
@@ -35,7 +35,7 @@ uv run python scripts/compare_budget_modes.py configs/small.yaml
 
 Prints both counting units on the small development world (development only). Then set `budget.mode` in `configs/test.yaml` to `per_series` or `per_incident` (recommended). For development runs that match the test, set the same `budget.mode` in `configs/small.yaml` and `configs/full.yaml`.
 
-## 3. The test plan (owner choice c)
+## 3. The test plan (owner choice c; decided 2026-11-21: seeds drawn and second regime set, D13)
 
 Draw the seeds once and paste the list into `test.seeds` in `configs/test.yaml`:
 

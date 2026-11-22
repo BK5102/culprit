@@ -24,6 +24,12 @@ detect:
 budget:
   # Owner decision before the lock (methodology M42): per_series (documented default)
   # or per_incident (alarms within group_gap_hours = 6 count as one; recommended).
-  mode: per_series
+  # Owner decision 2026-11-21: per_incident, matching configs/test.yaml.
+  mode: per_incident
   false_alarms_per_week: 2.0
   persistence_hours: 2
+agent:
+  # Development spend caps, owner decision 2026-11-21 (runbook step 1, methodology M44).
+  max_total_cost_usd: 10
+  max_cost_usd: 1.00
+  max_tokens: 4000

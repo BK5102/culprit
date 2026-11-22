@@ -102,3 +102,14 @@ All gates pass on both configs in run 2 (run 1 would have failed the "detection 
 ## Limits of this check
 
 Signal-to-noise uses the simulator's true rates, which no real team has. The masking threshold (3 times the total's noise) and the naive detector (robust z above 3 for 2 hours) are simple fixed rules chosen for this check, not the calibrated detectors. Five small seeds give 45 faults, so the per-type shares rest on 12 to 21 faults each.
+
+## Test-plan regimes on development seeds (2026-11-21)
+
+Command: `uv run python scripts/check_data_fit.py configs/test.yaml --regime base --seeds 301 302 303`, and the same with `--regime second`, after the owner's choices (methodology M49) and the headroom fix (M50). Test seeds are never used here; the script refuses them.
+
+| Regime | Leaf headroom, oracle / naive | Leaf headroom, oracle / 4-week pooled | Leaves without a defined ratio, per seed | Gates |
+|---|---|---|---|---|
+| base | 0.72 | 0.89 | 0, 3, 21 of 1,440 | all 7 pass |
+| second | 0.69 | 0.84 | 1, 1, 19 of 1,440 | all 7 pass |
+
+Before the M50 fix both regimes failed `headroom_leaf_ratio_below_0.9` because the leaf median was undefined, not because headroom was missing.

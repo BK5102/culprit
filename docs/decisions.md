@@ -48,8 +48,24 @@ The LLM investigator now runs from the command line on the control's incidents, 
 
 ### D11. A test plan that cannot be sealed with open choices
 
-`configs/test.yaml` describes every sealed world through seeds and simulator regimes, and its four open owner choices are marked placeholders that `culprit validate` lists and `culprit seal` refuses. The lock covers the plan and the agent's prompt hash, the sealed run includes the agent, and pooled results resample whole worlds for their intervals. Analogy: an exam paper the printer will not print while any question still says "to be written".
+`configs/test.yaml` describes every sealed world through seeds and simulator regimes, and its owner choices were marked placeholders (decided 2026-11-21, D13) that `culprit validate` lists and `culprit seal` refuses. The lock covers the plan and the agent's prompt hash, the sealed run includes the agent, and pooled results resample whole worlds for their intervals. Analogy: an exam paper the printer will not print while any question still says "to be written".
 
 ### D12. The control's thin-segment defect (L27), found with oracle alerts and fixed
 
 Paging the control at each fault's true start showed its zero score on the full development world was an attribution failure: thin leaves with a spotless past had a baseline rate of 0.999999, so one decline scored as a 1,000-sigma drop. Baseline rates are now held off 0 and 1 by the Jeffreys bound, and segments are ranked by the exact binomial tail of their declines, a choice made by a rule committed before measuring; on that world top-1 went from 0.0 to 0.5 (development only). Analogy: a smoke detector that screamed at a single match in an empty closet, now told how big the closet is.
+
+## Owner decisions for the sealed test (2026-11-21)
+
+### D13. The four test-plan choices
+
+The test plan now counts false alarms per incident, caps each incident at 1 dollar with 4,000 output tokens, uses five seeds drawn at random once, and adds a noisier, shiftier second world. Each choice won over the alternative for a stated reason:
+- **Per incident rather than per series:** surges no longer eat the budget (1 of 14 faults caught against 10 of 14 on development), and a real team is paged once per incident.
+- **4,000 tokens with 1 dollar:** the old 16,000-token setting reserved 0.32 dollars per call, so the old 0.50 cap allowed one call.
+- **Random seeds:** nobody can pick convenient worlds.
+- **The second regime:** it changes several settings at once without new simulator code.
+
+The total test cap waits for the development recordings, so it is sized from a measured cost, not a guess (methodology M49). Analogy: fixing the exam's marking rules, time limit and question draw before anyone sits it.
+
+### D14. A data-fit gate that failed on arithmetic, not on the world
+
+The headroom gate reported "nan" on the test plan's worlds because a few tiny leaves had exactly last week's approval rate, so the baseline's error was zero and the ratio undefined. The median now skips those leaves and prints how many it skipped (at most 21 of 1,440). With that, every gate passes, and the development numbers are unchanged (methodology M50). Analogy: a class average that came out blank because one student's score was a division by zero. You report the average of the rest and say who was left out, rather than declaring the class failed.

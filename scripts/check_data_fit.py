@@ -221,13 +221,18 @@ def check_seed(config: dict, seed: int) -> dict:
         eo = np.nanmean(err_oracle[idx], axis=1)
         en = np.nanmean(err_naive[idx], axis=1)
         ep = np.nanmean(err_pool[idx], axis=1)
+        # A node with no attempts in the window, or zero naive error, has no defined ratio.
+        # Medians are over the nodes where it is defined, and the rest are counted (M20).
+        ratio, ratio_pool = eo / en, eo / ep
         headroom[level] = {
             "nodes": len(idx),
-            "median_oracle_mae": float(np.median(eo)),
-            "median_naive_mae": float(np.median(en)),
-            "median_pooled4_mae": float(np.median(ep)),
-            "median_ratio": float(np.median(eo / en)),
-            "median_ratio_vs_pooled4": float(np.median(eo / ep)),
+            "nodes_without_ratio": int((~np.isfinite(ratio)).sum()),
+            "nodes_without_attempts": int(np.isnan(eo).sum()),
+            "median_oracle_mae": float(np.nanmedian(eo)),
+            "median_naive_mae": float(np.nanmedian(en)),
+            "median_pooled4_mae": float(np.nanmedian(ep)),
+            "median_ratio": float(np.median(ratio[np.isfinite(ratio)])),
+            "median_ratio_vs_pooled4": float(np.median(ratio_pool[np.isfinite(ratio_pool)])),
         }
 
     # --- too easy: largest rate drop (and largest shortfall) versus the same hours last week

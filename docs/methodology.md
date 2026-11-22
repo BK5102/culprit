@@ -332,6 +332,28 @@ All data in this project is simulated. Numbers quoted below come from code run o
 - Considered: resampling single faults (narrower intervals that ignore the shared world); a significance test per comparison with a multiple-testing correction (the Cleanroom has Holm and Benjamini-Hochberg; left to the findings write-up, which must say how many comparisons were made).
 - Limitation: with 5 seeds per regime there are 10 clusters, so intervals are wide; with one world the bootstrap interval has no width, which the summary flags by recording the number of clusters.
 
+**M49. The four test-plan choices, made on 2026-11-21 before any test world existed.**
+- What: in `configs/test.yaml`:
+  - `budget.mode: per_incident`, also set in `configs/small.yaml` and `configs/full.yaml` so development runs match the test.
+  - `agent.max_tokens: 4000` and `agent.max_cost_usd: 1.00` per incident; `configs/small.yaml` gets a development total of 10 dollars.
+  - `test.seeds: [607890, 906544, 232922, 667770, 96065]`.
+  - `test.regimes.second`: the recommended noisier, shiftier world (`approval: {base_rate: 0.82, drift_sd: 0.10}`, `volume: {day_noise_sd: 0.12, leaf_day_noise_sd: 0.15}`, `surges: {promotions_per_week: 3.0}`).
+  - `agent.max_total_cost_usd` stays a placeholder until the development recordings measure the cost per incident (runbook step 4).
+- Why per incident: counting every series alarm let promotion surges, which fire many series at once, use up the weekly budget. On the development world the binomial detector caught 1 of 14 faults per series against 10 of 14 per incident (one seed, development only, M42). An on-call engineer is paged once per incident, not once per affected series, so the incident is the unit a real team budgets. Considered: per series, the documented default. It is simpler, but it measures how many series a surge touches more than whether a fault is caught.
+- Why these caps: each call first reserves its worst case, `max_tokens` of output at 20 dollars per million (M44). At 16,000 tokens that is 0.32 dollars, so a 0.50 per-incident cap stopped after one call. At 4,000 tokens a call reserves 0.08 dollars, so 1.00 per incident allows about a dozen calls in the worst case. Considered:
+  - Keeping 16,000 tokens with a larger per-incident cap: about four times the worst-case cost for reports that fit in far fewer tokens.
+  - 2,000 tokens: risks truncating a report mid-claim.
+- Why these seeds: drawn once with Python's `secrets.randbelow(10**6)` (an unpredictable generator), checked against every development seed (no overlap), and written down before any test world was simulated. Nobody chose them by looking at results. Considered: small round numbers (easy to mistake for development seeds) and hand-picked values (open to choosing "nice" worlds).
+- Why this second regime: it changes the approval level and its drift, the day-to-day volume noise, and the surge rate together. That is a world the detectors and the agent were not tuned on, built only from existing settings, so the simulator code is unchanged. It passed every data-fit gate on development seeds 301 to 303 (`docs/data-fit.md`; leaf headroom 0.69 against 0.72 for the base regime). Considered: changing one setting only (a weaker test of robustness), and a new kind of fault or seasonality (it would need new simulator code after the detectors were built).
+- Limitation: the second regime still changes parameter values, not the simulator's structure (L25). The caps bound spend from configured prices, not from the bill (L22).
+
+**M50. The data-fit headroom median ignores leaves whose ratio is undefined, and counts them.**
+- What: `scripts/check_data_fit.py` reports, for each level, the median of oracle error divided by naive error over the nodes where that ratio is defined. It also adds `nodes_without_ratio` and `nodes_without_attempts`. The error medians use `nanmedian`.
+- Why: on the test plan's worlds (development seeds 301 to 303) the leaf median came out as "nan", failing the `headroom_leaf_ratio_below_0.9` gate in both regimes. The cause was a handful of tiny leaves, 0 to 21 of 1,440 per seed, whose approval rate in the calibration window was exactly last week's. Seasonal naive's error was then 0 and the ratio was undefined, and one undefined value makes the plain median undefined. No leaf lacked attempts. An undefined median is a computation failure, not a measurement, so it should not decide a gate.
+- Effect: with those leaves excluded the leaf ratio is 0.72 (base) and 0.69 (second), and every gate passes. The development check on `configs/small.yaml` gives the same numbers as recorded before (leaf 0.69 against naive, 0.87 against pooled), so no earlier result changes.
+- Considered: setting the undefined ratios to 1 (it invents a value); lowering the gate (it changes the rule after seeing a failure); raising the leaf attempt floor (it changes which leaves exist).
+- Limitation: the gate now speaks for leaves with a defined ratio; the count of excluded leaves is printed next to it.
+
 ---
 
 ## Limitations register

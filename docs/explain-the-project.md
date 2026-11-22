@@ -133,3 +133,21 @@ The technical detail behind each step is in `docs/methodology.md` (numbered M1, 
 - **What else I considered:** dropping leaf segments from the search (no development fault targets a single leaf, so that would tune the control to my simulator's fault list); a minimum number of payments per candidate (a threshold with no natural value).
 - **Cause and effect:** on the full development world (seed 17, development only, not a result) the control went from top-1 0.0 to 0.5 and top-3 0.0 to 0.6 on A2's incidents, and from 0.0 to 0.444 with perfect pages. It stopped blaming promotions on a fault (0 of 2, was 2 of 2). On the small world the perfect-page top-1 went from 0.071 to 0.286. Writing the rule first mattered: the first measurement of the second step had a numerical underflow that an existing test caught, and both runs are recorded. What is left is a real limit, not a bug: with one culprit per 3-hour window, a mild fault loses to a stronger overlapping fault or a promotion.
 - **How to say it:** "My no-AI baseline scored zero on the big world, so I separated detection from attribution with perfect pages, found that a single declined payment on a tiny segment looked like a 1,000-sigma event, fixed the statistics, and the baseline went from 0% to 50% top-1, which makes it a real bar for the agent to beat."
+
+### Step 14. Make the test plan's choices, and fix a gate that failed on arithmetic
+
+- **What I did:** set the four open choices in the test plan:
+  - Count false alarms per incident.
+  - Cap each incident at 1 dollar with 4,000 output tokens.
+  - Draw five fresh seeds at random, once.
+  - Add a noisier, shiftier second world.
+
+  Then I checked the second world on development seeds. One gate came out "nan" in both worlds, and I traced it to a few tiny segments where the baseline's error was exactly zero.
+- **Why:** these choices must be fixed before sealing, and making them before any test world exists means they cannot be bent toward a result. The gate problem was a division by zero, not a property of the world, so the fix was to skip those segments and report how many were skipped.
+- **What else I considered:**
+  - Counting per series, which let surges use up the budget.
+  - A bigger token limit, which multiplied the worst-case cost of each call.
+  - Hand-picked seeds.
+  - For the gate, filling the undefined values with 1 or loosening the threshold. Both would have changed the rule after seeing it fail.
+- **Cause and effect:** every data-fit gate now passes for both test regimes on development seeds, and the development numbers did not change. One item stays open on purpose: the total spend cap for the sealed run, which the development recordings will size.
+- **How to say it:** "I fixed every test-plan choice before any test world existed, drew the seeds at random, and when a check failed I found it was a division by zero, fixed the arithmetic, and showed the earlier numbers did not move."
