@@ -40,7 +40,7 @@ from typing import Any
 from culprit.agent.investigator import InvestigationResult, Investigator, prompt_sha256
 from culprit.agent.llm import LLM, MODEL, AgentRefusedError, CassetteLLM, response_cost
 from culprit.detect.budget import Incident
-from culprit.segments import canonical, node_key
+from culprit.segments import from_arg, node_key
 from culprit.world import ObservedWorld
 
 PARTIAL = ".partial"
@@ -156,7 +156,7 @@ def attribution(
     hyp = result.hypothesis or {}
     culprit = None
     if accepted:
-        culprit = node_key(canonical({k: v for k, v in hyp["culprit"].items() if v is not None}))
+        culprit = node_key(from_arg(hyp["culprit"]))
     row.update(
         status=result.status,
         critic_ok=accepted,

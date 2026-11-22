@@ -1,0 +1,441 @@
+[
+  {
+    "request_digest": "e89587ea8802d68d426227bbb9f75a87132bedaff3bed7f91790822f6e1f9b6e",
+    "response": {
+      "stop_reason": "tool_use",
+      "content": [
+        {
+          "signature": "CAQSswUKEAgUGAI4AUIIdGhpbmtpbmcSDFkEIRnH4AuFBCp3HxoM55zlsavYQgY9rxF/IjDlzUNus9WSc6DEwlChz2LmzNTg6q7PS55IrenHWeusaBFI+LdmgxywSRh0t81GV3Mq0ATxejyNicS95N4AiVaNxPbSvuow8cNrffpgJoZiKzXcfHhpTZhMGWmWn+kQFgtUWKskGgu+T87gn7jL5tl8bdcVCnps9D0wET0Wrjkx21iK35UQtLVsHcJMnnIVqJ6pj6FyFehypqE+fEzms5PHzkQutuRLoj/ptT3NeS3j7BUr/8Yzq0Nh67h5zqT3H1P0DcQAiLlJaE4Oqdkh5J+loQKc/PJz1H7P82iFY/JV6TD6GwzCs+WmrV2zU3SVTNsDRM1jdywoWBBB/8PPkjT7Mzhh7dlYUvNr8o7uiGfGTQi7+phRSweVKQtf0A4/33jHV+WvX4eUmlQAFXyaHuxQbuxlQ/XeKxBitF3mhHAI4gUMiicIowLJgL36dqlccSdCR2bQU3mK+vS6VDUxrZVjoFqOBNY6QSTndMkIzuqMrnZbjCnRv0K7DvyffToQLvvK/sZg7uZYNqONmR3XgowIG8OC4/CrrffglWW2cFFKypjm/hAeKzpXTRu7rTaOBW7VrvzMG4I/skQjhfKwGzsj5euo3GB3lDx/bBDNiBqUlOxwKG+JGG5Cx0xQvB+LJKmdDA5N4qbs/cgI6hy10Lk0iuJjvQSP8FNudFlyuEEbW0wuUFDtet/KthYef1SOlWKxDDANZqcUDRpd5kydBn6KVA04sv/zwf8FQLxNRhv0ypUFmGJr6INIJ2bd8tFQJZG7lophbaSlt57R1pSoZDnVd4l+Rz30wZ47BFL9rNDnXNrC/75xroYhLTcZ2OvEy2knZ7wu/xYmmBAaKXLZeasNz8ykGAE=",
+          "thinking": "",
+          "type": "thinking"
+        },
+        {
+          "id": "toolu_019SVhPEi341JrYuRsQfxup7",
+          "input": {
+            "segment": "total",
+            "hours": 6,
+            "breakdown": "gateway"
+          },
+          "name": "query_slice",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "id": "toolu_01Ab9xg5ZC19zo4hCHQ2gkGe",
+          "input": {
+            "segment": "gateway=G2",
+            "hours": 6,
+            "breakdown": "issuer"
+          },
+          "name": "query_slice",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "model": "claude-opus-5-5",
+      "usage": {
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 0,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "inference_geo": "global",
+        "input_tokens": 2188,
+        "iterations": [
+          {
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 0,
+              "ephemeral_5m_input_tokens": 0
+            },
+            "cache_creation_input_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "input_tokens": 2188,
+            "model": null,
+            "output_tokens": 224,
+            "type": "message"
+          }
+        ],
+        "output_tokens": 224,
+        "output_tokens_details": {
+          "thinking_tokens": 27
+        },
+        "service_tier": "standard",
+        "speed": "standard"
+      }
+    }
+  },
+  {
+    "request_digest": "bc55afb8ac9ee337f06ff075d7abb7cc5e9dce0104769b5ec9c9cf8400ba4eee",
+    "response": {
+      "stop_reason": "tool_use",
+      "content": [
+        {
+          "signature": "CAQSkgYKEAgUGAI4AUIIdGhpbmtpbmcSDJ0cXu/nEFXCxPS0mxoMcAKhgvnN/TgCqDVoIjCVd1eVaK2qhSutyVgy4ywgiVSoHyrz+jOYxGRjKhKrz5Q01IeeyINiV6J73cWt5qwqrwWCLIVXAEH2MVm4ANjxsk29ardxIeFkN495npJDOINk3zsKwwpX4xTE2KDFUGbqBlnu3lDKc48ker4UP3fsUTD9Kh0GSeQ37Kk3tFaJie1DjChxVnWzkw5jHwB186yjFTxTGuAtQs2cAiRXUuH8kTD/RBwhunnrmK2yM4QK+Ix62AugHMIiFTmHTd8kUI3FzZY2NNHU6bK+mw/mz4ug0WBt0268Tj8o6sBkr+WSv1LoaKIfwF65UDi9RcrSnUsd/f3T6whAbyUn1+YXd9iVi4umbzC4kSg1l+3THARglLNbUQ+CCQFATD6i38GQ28b/n4KDkL5o/hoVMX+q9KI3WTzGiENO3VEKJETOrCHN7RTNhWZOC/q2JwJYPBh5+VsgCoIIEcVWdUrb5iSDjD8DmecMJJeNjC5QgZlDTSu4RLO9V6UU8dnxwrgX3HkaomNmXNw4nh7eCPntaoRy5ilMPOvy97tuZvA1dgqG8fMYIXW57QLHmwb3txI5Eqb+cXJghDWtQLxBce8wvqfZa0lN96OaMC0A+9pSdncTS5bU2g0GCcQ3hUe8ba5jVyYbBmowBMDFPxxjUgr1s7sNnvUaYgcNr64YF8X0VK1txfXP76Nl91GWELvdi4HKqQYqoawv1GDw+No4wrJbJgg+6KFPTem/kQ1UgVzjY6iRT1YMFTJz0G2X3pJq1sCQj0RaTssfLWf+wrkLOYTYqIApqS6nyHTyEaLsYThErpFsSAmBJX5Cp1cQluwcNAvUucoSF/6JuwbTFwtFtiOPWVHSeNrHYAGbN0pJ6nmjMJCRHQ0j54AdVc6QlEW8Q6KPjvzHvbHQqqgJpRrkJe1/DQkhLr9AhIJ154YfCrFcpukHu7gKdINSIPOfsAc673w57LjAWD/ch2DrEdnn28uphpVCI+Kj/zoYAQ==",
+          "thinking": "",
+          "type": "thinking"
+        },
+        {
+          "id": "toolu_01WK7z5qYYKknPKNwthXWmHT",
+          "input": {
+            "segment": "gateway=G2",
+            "hours": 8
+          },
+          "name": "forecast",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "id": "toolu_01UCfz268CzD3AR6QSwHzB4b",
+          "input": {
+            "segment": "gateway=G2",
+            "hours": 2,
+            "breakdown": "issuer"
+          },
+          "name": "query_slice",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "model": "claude-opus-5-5",
+      "usage": {
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 0,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "inference_geo": "global",
+        "input_tokens": 3526,
+        "iterations": [
+          {
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 0,
+              "ephemeral_5m_input_tokens": 0
+            },
+            "cache_creation_input_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "input_tokens": 3526,
+            "model": null,
+            "output_tokens": 211,
+            "type": "message"
+          }
+        ],
+        "output_tokens": 211,
+        "output_tokens_details": {
+          "thinking_tokens": 36
+        },
+        "service_tier": "standard",
+        "speed": "standard"
+      }
+    }
+  },
+  {
+    "request_digest": "e788f01e7cd08de5f6b2e0c013359a8252db356bdbc4fbee3a50cc47d0e4542b",
+    "response": {
+      "stop_reason": "tool_use",
+      "content": [
+        {
+          "signature": "CAQS7QYKEAgUGAI4AUIIdGhpbmtpbmcSDIVVD9YjwdEumKyaCxoMBJKZyZ7F8C1REOzWIjCGC/yJSCBtwO9mh4uKiLCRZMGetCwGZMxT7pATN5VxPWWpZTVFrhr8HQjyBa9byuAqigYYDWzzfx1rh9TxhmLlj5kN0ov4oCIvhnQR16/UueWZlfUiZKfSSTx8HYk70hXTXXHRivh2RWIdgNE2mEA+5349G2c4VdQK9LzcNK6z53wNibb86cCG4sisydW+SW9lwo+EGDMC6spNLBfvy31r7zk2H06Ms9devhC4tyBm61dX8xDJfsueC9bkoF0VchqZQF6JE2CebBsmu+5el6xmG8ElQwyirVwdvr8p6zJcR3otRJsaStIYZN/5hj2UES66w7Sr85GyauFgkf+MpN4Ri5Pakd8ywgaiSw+EoAzz9soWE9WvlKPl7P9XeRxYmldLPmDYdJxq+qxhu/Se4j82VkR2TxwFuTI2N/m5/CSnDohB94O3YZDY4K6KFet73ZmnYO7sJQYqHys5TL1ZLEWaTBkvbk7fHjrCmLvO+2/XfU3fMIs+hj8FV4pDo6TnG0KYIE+X1vigqNoIhgStP17EwgQAE3AobigUwHhjhZeHgEDCZxxP6E+ZpWn9dvLSlU2p6i8rv80JqO2Oe1Ikw+e3eI55Gq1kspjbK7kEf7JzAzYEn3U5E14ga2t/AeWkgGF+5WeCmWVS6Hd6O0vMxJv1ZHA8DwPfrvHLQB7HcBm0vq8OtJ/iUETCb1//eFHzmKXeGF0NhMMLp6iYsTzezHJEbEa0JY1GCy0dMreoVXu9vswSPXiVKOupgPDfyUNIaRnYkNHObKYwns0jbjpqvJ3gV0K8uvN1INL/2IxmfJMHZexc5f7v43NP6OPzgCKcHOjuLT2kuE6rswqRwGxMvTAaDi+/PKkK2gBn2dWMZjvEGrJ3KmYowpPUwZVrbjm1+G5JYKCO5gP7RkKKWzYCy2SVq4WxHjH7JSleSD5h1GHnhCQXVNpvNQzfafMJlGxbnSeQnWzT6zAf3lxx9ge8uqG7jA9wyT7agK8TPC4g9lt0fxFLjATGFTG1V2VLmpeiHHAWH41jisZtq5Yd7TeqpdiK6WK6YrjexE7Hd4WUePHg/W0Ykz7G5K2NiJrXLjmxGn53b3MHrXXdHg/cIRuzGAE=",
+          "thinking": "",
+          "type": "thinking"
+        },
+        {
+          "id": "toolu_016AgvXz1JEQ94AaThhmMqKS",
+          "input": {
+            "segment": "gateway=G2",
+            "hours": 2
+          },
+          "name": "latency",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "id": "toolu_012Zc2KhRkh6yDwPWHcv3vid",
+          "input": {
+            "segment": "gateway=G2",
+            "hours": 2
+          },
+          "name": "decline_reasons",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "id": "toolu_01HNaahWT4oqbW8kHFq4ReSK",
+          "input": {
+            "segment": "total",
+            "hours": 2,
+            "breakdown": "gateway"
+          },
+          "name": "query_slice",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "id": "toolu_019Z3Z4K36Wf7GLGDjMj2t73",
+          "input": {
+            "segment": "gateway=G2",
+            "hours": 2,
+            "breakdown": "method"
+          },
+          "name": "query_slice",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "model": "claude-opus-5-5",
+      "usage": {
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 0,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "inference_geo": "global",
+        "input_tokens": 5026,
+        "iterations": [
+          {
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 0,
+              "ephemeral_5m_input_tokens": 0
+            },
+            "cache_creation_input_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "input_tokens": 5026,
+            "model": null,
+            "output_tokens": 389,
+            "type": "message"
+          }
+        ],
+        "output_tokens": 389,
+        "output_tokens_details": {
+          "thinking_tokens": 48
+        },
+        "service_tier": "standard",
+        "speed": "standard"
+      }
+    }
+  },
+  {
+    "request_digest": "9697829ed77f44849f628845204fab6cd6708e53f819e1445cda320c9bc7b9a7",
+    "response": {
+      "stop_reason": "tool_use",
+      "content": [
+        {
+          "signature": "CAQSpAYKEAgUGAI4AUIIdGhpbmtpbmcSDFJcqVcDlvuaKy8BmxoMm2gtpfbnk9OrfptHIjBrhlZVSfzn5KGGtMxXeX7W8QTUYT0MVHSPRi9JYIpYWuFG0azsybb2eWgh5Y0YWD4qwQXKoijgNoxZjhr41irrblKYSodAXHbQ9/73YOXK36bE7aiqcR5eQ00OLDqTcWiiHCxjcUvysvozGg3BA6GWxjNVKJzYLke4fPM3NcuF2FsjjCxMHJ0GMrkHPMWOYCHyIOwSn1xCpCEVifdjW+M05ogiHL5D0vc5oMHuiLrvy0nkrODzIUAiwijM5Sysorbnfv8iBb7Pp/3uA+TvM6ppCpb3djvQAZ1EjuV8D7QbZNgZ7aOXZq28RPs3E6iEMBR23x5u1XZwtOb4n8iU3mUJenWuZkrCyXFcDhIp4Q/H/j0/ucJKXbIwIPekJWPeOaiQuSj/e1jhU/0F7fjbmSSqB0rJInzM67X+I2jfvQJNSpRhbmLo8HrUgPwz/2QtQPUwN8W1mdWkDrwgiNRgpLttHVSpjcVnGNB2fyHdr9Nqeo2O0kw4pyrS6ADcTaFQVOclCzTmJ/I4WcojXcy8wrXbbtX8Vh9FmxIRcNtJ4u6Ogkel7yIWSpR3FXJuyD92o6GpfSVx7h6zPwwxo6d0ft6mQjGYeahM1O01UCfLmQVkm/qDJuZoahVV8yE0z4SOhIW9RNn+0zIZyWYfjd0cZnw5AyTs7a9k9zi8Bj79fQcEDW+zRLfqnfLeRcGHMz7qr2w5nyNXCQkKuGwAJRm4PLuM+Rz+Eq/ykZ8DUF1P8YJyPJxR0+Qv+FXB82plSce+26ev3pD0xuVxFeKQayXLerAxH3SzJdecDyzEKKKDowDJKoZDeYTYiv6uS+H5jyErNaUZ3iobGpRzdCUVHTEzq5urNAuhXcuwYDmy276tgcznrPw2r+DmRZERe503BRyNV4EemcwjQKJ1FnG+Tz+C/YdPqvNZk6HdUNVFgPng3Lo2jeHk/2Jm4H1SOFfcRoe+VCaLMr0xrssaHDRAMy2rqmY2mikUtmQgmGn4y9adrKOOAa/7+B4YAQ==",
+          "thinking": "",
+          "type": "thinking"
+        },
+        {
+          "id": "toolu_0142anQVNaYFnMPtZ8uX5axB",
+          "input": {
+            "culprit": "gateway=G2",
+            "fault_type": "gateway_degradation",
+            "since_hour": 1130,
+            "confidence": "high",
+            "claims": [
+              {
+                "text": "G2's approval rate dropped below the band at hour {0}: actual {1} against expected {2}, with a band floor of {3}. It stayed below the band at hour {4}: actual {5} against a band floor of {6}. Earlier hours were inside or above the band.",
+                "cites": [
+                  {
+                    "call_id": "c3",
+                    "field": "rows[6].hour",
+                    "value": 1130
+                  },
+                  {
+                    "call_id": "c3",
+                    "field": "rows[6].actual_rate",
+                    "value": 0.7063
+                  },
+                  {
+                    "call_id": "c3",
+                    "field": "rows[6].expected_rate",
+                    "value": 0.7987
+                  },
+                  {
+                    "call_id": "c3",
+                    "field": "rows[6].low",
+                    "value": 0.7757
+                  },
+                  {
+                    "call_id": "c3",
+                    "field": "rows[7].hour",
+                    "value": 1131
+                  },
+                  {
+                    "call_id": "c3",
+                    "field": "rows[7].actual_rate",
+                    "value": 0.7398
+                  },
+                  {
+                    "call_id": "c3",
+                    "field": "rows[7].low",
+                    "value": 0.7812
+                  }
+                ]
+              },
+              {
+                "text": "In the recent window G2 accounts for most of the missing approvals platform-wide ({0} out of {1} total), with z {2}. The other gateways are much weaker: G3 z {3}, G1 z {4}, G0 z {5}.",
+                "cites": [
+                  {
+                    "call_id": "c7",
+                    "field": "children[0].missing_approvals",
+                    "value": 135.2875
+                  },
+                  {
+                    "call_id": "c7",
+                    "field": "missing_approvals",
+                    "value": 220.4684
+                  },
+                  {
+                    "call_id": "c7",
+                    "field": "children[0].z",
+                    "value": 8.1034
+                  },
+                  {
+                    "call_id": "c7",
+                    "field": "children[1].z",
+                    "value": 1.6612
+                  },
+                  {
+                    "call_id": "c7",
+                    "field": "children[2].z",
+                    "value": 1.8677
+                  },
+                  {
+                    "call_id": "c7",
+                    "field": "children[3].z",
+                    "value": -0.0254
+                  }
+                ]
+              },
+              {
+                "text": "The drop is spread across issuers in both countries and across both methods, which points to the gateway rather than a single issuer or BIN. C0-I0 z {0}, C1-I2 z {1}, C0-I1 z {2}, card_not_present z {3}, card_present z {4}.",
+                "cites": [
+                  {
+                    "call_id": "c4",
+                    "field": "children[0].z",
+                    "value": 5.2267
+                  },
+                  {
+                    "call_id": "c4",
+                    "field": "children[1].z",
+                    "value": 4.9397
+                  },
+                  {
+                    "call_id": "c4",
+                    "field": "children[3].z",
+                    "value": 3.0383
+                  },
+                  {
+                    "call_id": "c8",
+                    "field": "children[0].z",
+                    "value": 6.0592
+                  },
+                  {
+                    "call_id": "c8",
+                    "field": "children[1].z",
+                    "value": 5.382
+                  }
+                ]
+              },
+              {
+                "text": "The signs point to a technical fault at the gateway. G2's mean latency is {0} ms now versus {1} ms before (ratio {2}), and processing_error declines rose from {3} to {4} per attempt. Issuer-side reasons such as do_not_honor did not rise (change {5}).",
+                "cites": [
+                  {
+                    "call_id": "c5",
+                    "field": "latency_ms_now",
+                    "value": 1479.4752
+                  },
+                  {
+                    "call_id": "c5",
+                    "field": "latency_ms_before",
+                    "value": 378.5704
+                  },
+                  {
+                    "call_id": "c5",
+                    "field": "ratio",
+                    "value": 3.9081
+                  },
+                  {
+                    "call_id": "c6",
+                    "field": "reasons[4].rate_before",
+                    "value": 0.0096
+                  },
+                  {
+                    "call_id": "c6",
+                    "field": "reasons[4].rate_now",
+                    "value": 0.0831
+                  },
+                  {
+                    "call_id": "c6",
+                    "field": "reasons[1].change",
+                    "value": -0.0081
+                  }
+                ]
+              }
+            ],
+            "next_checks": [
+              "Check G2's latency and processing_error rate hour by hour to confirm the onset matches the rate drop at the first breached hour.",
+              "Check with the G2 provider for incidents, deploys or timeout config changes around the onset.",
+              "Check whether the smaller dips on G1 and G3 are traffic failing over from G2 or a separate issue (decline reasons and latency on G1/G3).",
+              "Consider routing traffic away from G2 until latency recovers, and watch whether issuer_unavailable keeps rising."
+            ]
+          },
+          "name": "submit_hypothesis",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "model": "claude-opus-5-5",
+      "usage": {
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 0,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "inference_geo": "global",
+        "input_tokens": 6600,
+        "iterations": [
+          {
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 0,
+              "ephemeral_5m_input_tokens": 0
+            },
+            "cache_creation_input_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "input_tokens": 6600,
+            "model": null,
+            "output_tokens": 1430,
+            "type": "message"
+          }
+        ],
+        "output_tokens": 1430,
+        "output_tokens_details": {
+          "thinking_tokens": 22
+        },
+        "service_tier": "standard",
+        "speed": "standard"
+      }
+    }
+  }
+]

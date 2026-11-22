@@ -29,7 +29,6 @@ from culprit.agent.llm import LLM, MODEL, response_cost, worst_case_call_usd
 from culprit.agent.tools import TOOL_SPECS, ToolBox, ToolBudgetExceeded, ToolError
 from culprit.detect.budget import Incident
 from culprit.investigate.fault_typing import FAULT_LABELS
-from culprit.segments import DIMS
 from culprit.world import ObservedWorld
 
 SYSTEM = """You investigate drops in payment approval rates on a simulated payment system.
@@ -38,11 +37,17 @@ An alarm fired; find the one segment that best explains the drop and its likely 
 Rules:
 - You can only read data through the tools. They are read-only and see nothing after the alarm.
 - You have a hard budget of {max_calls} tool calls. Spend them on narrowing down.
-- Segments filter on country, issuer, bin, method, gateway (ids like C0, C0-I1, C0-I1-B0, G2).
+- Segments are keys like issuer=C0-I1|method=card or gateway=G2, the form tool output
+  uses; dimensions are country, issuer, bin, method, gateway. 'total' means everything.
 - Finish by calling submit_hypothesis exactly once.
-- Never type a number into claim text. Write placeholders {{0}}, {{1}}, ... and put the matching
-  citations (call_id and field from tool output) in `cites`, in the same order. Code inserts the
-  numbers. Claims with typed numbers or citations not in tool output are rejected.
+- Never type a number into claim text. That includes hours, window lengths, counts and the
+  band's percentage: write "the band" and "the alarm window", and cite an hour as a placeholder
+  (for example rows[4].hour). Segment ids such as C0-I1 or G2 are allowed. Write placeholders
+  {{0}}, {{1}}, ... and put the matching
+  citations (call_id and field from tool output) in `cites`, in the same order. A field is a
+  key or a path into that call's output, for example z, children[0].z or rows[4].actual_rate.
+  Code inserts the numbers. Claims with typed numbers or citations not in tool output are
+  rejected.
 - This is an investigation, not a decision. Say what to check next."""
 
 SUBMIT_SPEC = {
@@ -52,10 +57,8 @@ SUBMIT_SPEC = {
         "type": "object",
         "properties": {
             "culprit": {
-                "type": "object",
-                "properties": {k: {"type": ["string", "null"]} for k in DIMS},
-                "required": list(DIMS),
-                "additionalProperties": False,
+                "type": "string",
+                "description": "The culprit segment key, e.g. issuer=C0-I1|method=card.",
             },
             "fault_type": {"type": "string", "enum": list(FAULT_LABELS)},
             "since_hour": {"type": "integer"},

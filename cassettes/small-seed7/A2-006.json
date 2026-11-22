@@ -1,0 +1,519 @@
+[
+  {
+    "request_digest": "bf6496a02bcf8929f63cacee625ca041229646f7d1f7b9bf3f84c3d5e8660248",
+    "response": {
+      "stop_reason": "tool_use",
+      "content": [
+        {
+          "signature": "CAQSqgUKEAgUGAI4AUIIdGhpbmtpbmcSDKLtx65ajbD0qiu42xoMCYNYVgZjqLoxpONJIjBpN4oUCXlqgGiNRsCN5Lr/XXKBzk2w55tjUZuXKt26xeFvwdKlPuzmnsPINYkC6Z4qxwQqvtqEBX8rMdRyhZ4dXYpGSb3zflu9//Ww5hGKlbh3QPBXO0H5ezunjvabFZ/cOrQO8JOCUTmBvFUCEKLB7h7UkDUHtsqwwXQbWIXc4wR5OoeMZyDB1y1TEaLFf4k5RndgCkRsMTft+7LboId02iz544Okifvy9nHP1ax2QU28eiEOK8Jm5s/F2Lu/EBLkO6VXlF36jqIyuJuu9tb0o6LeYJc/9m2hEuYp3DTdwt7wMTceIM4+s55NWH6lLo9P50pez+n1rXZND9lO7e9C0VrkGouvsLWKtn5C37jICiLsQIDHBhfUWta/OV0mRM36F3iw23v7PEb+JdEq/agRv0IPxUOChjYhvyerVAHxCOQdpohYz1TJ/RxSsaT1iwTPm3vc/LLCZv8sebPG0yynSW8FnvhAT22fh4yE4X7Xz5iS6CIabT2JkI33Mql9UjDTZmvxxwsy15emmKK3ffDGpKvO8MuHhMSU4OVSt8hUpo0Zi2Fxd4YzuU7VRBF3OPTPc2WHQAQk39lmq5RNgAWfD7c81cyqsDDDpRQC5VcGg4UoPogtTzZ3JjE7sNYv3jDFXcET0rpjXZF5/Hegab4ul/JVT+9vyxh2BC0o6d3QBHSL64yS8CAFSPPg1EKt10zkapWhNbj1fJiMRAImE+fbTg9HDTtR/QuTZLB5x7IagqoVt21Ko2DQ4lN7QdnOR841KpOMZJLQhF6IzaXLXfLqee6T1kqP7U/+r5EP54ht0nN8YQ3kHJjQkcnSnjHYajhC/oiFpew+4y7XGAE=",
+          "thinking": "",
+          "type": "thinking"
+        },
+        {
+          "id": "toolu_01Hi45qe4ma3cXxMtZjCKMDB",
+          "input": {
+            "segment": "issuer=C1-I1",
+            "hours": 12,
+            "breakdown": "bin"
+          },
+          "name": "query_slice",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "id": "toolu_01PLdhZgQhmMpi594whiuyuR",
+          "input": {
+            "segment": "bin=C1-I1-B1",
+            "hours": 12
+          },
+          "name": "decline_reasons",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "id": "toolu_01JgzayxxsoWAC8zNaru3fe8",
+          "input": {
+            "segment": "bin=C1-I1-B1",
+            "hours": 14
+          },
+          "name": "forecast",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "model": "claude-opus-5-5",
+      "usage": {
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 0,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "inference_geo": "global",
+        "input_tokens": 2461,
+        "iterations": [
+          {
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 0,
+              "ephemeral_5m_input_tokens": 0
+            },
+            "cache_creation_input_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "input_tokens": 2461,
+            "model": null,
+            "output_tokens": 289,
+            "type": "message"
+          }
+        ],
+        "output_tokens": 289,
+        "output_tokens_details": {
+          "thinking_tokens": 27
+        },
+        "service_tier": "standard",
+        "speed": "standard"
+      }
+    }
+  },
+  {
+    "request_digest": "24f46248a5a0478631d41c650b44827250bb17a5ee20328a7dc788b0b1f88e9f",
+    "response": {
+      "stop_reason": "tool_use",
+      "content": [
+        {
+          "signature": "CAQSwAgKEAgUGAI4AUIIdGhpbmtpbmcSDDSKkdnAzsR1tY8rnRoMWWsqpAxjCd0rC1PwIjBHN4IiPro67xZsoJZ9n0dFYEbQ8aJD+L6wuVvCDFaufTPu9e4Xzg2NGbVFNqx5Px0q3Qc1o0g09nIR++MVvm+FFELv1EWvbchVZgmM0uFy1oai0pUja7bF1nooslCQy7U7mxu6UeZoMOxSO7lq4kpGIe53ZqdW75IT5b1iVY4nNi301QS4Ox7KL6keTEE0XFkg8BUoZ88RX0zN0pzAexmwQ1pDrgO1Z6HOtJo8Iwss1aPp/0SVUqWTarHIgJ/wO3ZHl5824jNUcW0EhsPH+bmN9TwryEo7pEqeKACW49Lz5iZCndZ+QOSH9Gs7N2EsPHoGr7Gzipm0HBXIYkY+226cARtqN9QhZPU59xk7vzhioV0WvEgX8+tLtp2gMK3v1FTpMVdVZTpLWt9q0jYZZLvVx0LYiCpvgd8E9uDjDryTWgrBIJb765IiPVD4T6xqghZjSgIBq7ORgVajg69w1FltjdgsvtgqPwhNfZIBS1JAxGWbRmRmfxOuAkL3MKn4z+vmKIt95co5llGYX+x4qT+2Z9yXzi2+053cvCr+Ew71tefxjYKQv7GHJY8KZTuWZpH+kat5G1VgMYCLIY5LKSP5laiYQxZaoexZOAI/Leh+Hc6xSRfC385grvAQgsKJO4BkXQI3wwkm3G0Ytmz8dcSR5/0PPblUh4lBn+XfGjViDNbD3hU/W6/I5s0n2Xr8+jx8iBgRENyiqMjHqSoEDhA02N8RyVtPapZ3O2bONFV3aDnIsrljeco6g7pgaOu++uFs7mIUDMtzEYIKbZ2nnd4P9vncFJ5PgiFYI3MtdgVmDHUgVAbZ8aiGZQUueC16U1pZqPw7nEmoA3UNW38Gmy+Kl4JEf4eM1yP+6K8VYOlsTAS16KWumefinyZYlNtRtXc7NYqra2i5mGDrn2Mz7UTgb2p7WtZjTxtemE9NFIf1os97NjVbFw066qJWDYJPE3s35CjGs63WAZELHfxp0AaQPYzh/7WazXHVYeFpxHtQH+zwJTHtlB3pdkEQyO4tnep9SoRJOPCkEi0YJoQAdwFRMn/PUP45pdzhj+VZFMjnx+2dIQDcYy1QqfYKDX7ZGNYgORUubKIYFpcLYGQe+C+6vujbrws9VgvCFpfJo8vj1eO8gsTSjNbmPk6tRkRvK8DQBscOz8sscCuPbQZqCQBXRMMVO6a8+OPoEjwnStiQJ42ugX/fuN4b6WmRReMfCOYlDNdYQAvk8gLyVUTfCFeyAS2vfl0u2yvxXp4lttKaWJ/5xH//EvcytEvAUBnOFPVK0y5EJksbjDkF64F7HpYvgO17kSAkP+U22DvMrP/WL0/OeGknDugx6y/1RSniQ88e9VcrWYfvuU2ftUwn+5FDYFo+Cxn8PC5CHId8q3J+nxgB",
+          "thinking": "",
+          "type": "thinking"
+        },
+        {
+          "id": "toolu_014yEtCMcs1Rj2JRiWG6799Y",
+          "input": {
+            "segment": "total",
+            "hours": 12,
+            "breakdown": "country"
+          },
+          "name": "query_slice",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "id": "toolu_01YJkiaDMjAaEneegxKoijHJ",
+          "input": {
+            "segment": "bin=C1-I1-B1",
+            "hours": 12,
+            "breakdown": "gateway"
+          },
+          "name": "query_slice",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "id": "toolu_012vmfho71T2ydfCRXgxQUnz",
+          "input": {
+            "segment": "bin=C1-I1-B1",
+            "hours": 12,
+            "breakdown": "method"
+          },
+          "name": "query_slice",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "id": "toolu_01KKn3KGcrUSBCcJreBqAN2m",
+          "input": {
+            "segment": "bin=C1-I1-B1",
+            "hours": 12
+          },
+          "name": "latency",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "model": "claude-opus-5-5",
+      "usage": {
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 0,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "inference_geo": "global",
+        "input_tokens": 4459,
+        "iterations": [
+          {
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 0,
+              "ephemeral_5m_input_tokens": 0
+            },
+            "cache_creation_input_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "input_tokens": 4459,
+            "model": null,
+            "output_tokens": 521,
+            "type": "message"
+          }
+        ],
+        "output_tokens": 521,
+        "output_tokens_details": {
+          "thinking_tokens": 143
+        },
+        "service_tier": "standard",
+        "speed": "standard"
+      }
+    }
+  },
+  {
+    "request_digest": "2677c0a8762de470e2f2b1046bca4265fae6ff0908cd82fa6a863f90aa5e89d7",
+    "response": {
+      "stop_reason": "tool_use",
+      "content": [
+        {
+          "signature": "CAQS1AYKEAgUGAI4AUIIdGhpbmtpbmcSDC+NZd6vDjk54RZ6bRoM3RCV/peRb626wmVjIjA3NlInQzErfSfFMlmQzi97gqgNoxLAxbuGIrMOmSwSV89KRrhk+lynkHIYgMjD1ogq8QWHa13mZGtdER8ffRmj9XCTqYf0IlfLOK15ACg2eNMr+DyXi8hzr3diJNESbGHu3h5BCr1K5q37fpregJsAAwGV1MyaymkW8lObgWi7NTeaa9ZPjnwCDHttR4OAq225t24DRHd4tYPezLQX3Vbzx84OF3TqdOc44t4KulAqFSIEZecZekmpr5VlqJcLhF4iQ6bWN9yXBj2dZ885XPhoG0A+I2xWNmNNbuG4CvBJjhaXFiC2Q08EyyBjVcizxnrFUtscCvIl8X4LWqVWD+mdaTMbDd2Y18K9E79q21S5wrzkIn+HHIHlWrh+/fD6tRjFHXfrYQ9gw7NK4pTu/JnFrzMzswW4Xv2tkYfGUcVN/iADHKG6EoVD2PghbYhMJngE4z8DcISbAJ9SmzbVnJ7zOCyub5VR6tVI4z5HYT5px3fyqgqNc/PkH3DCl0QM97UPo+WIUAxiUPhaCqvpuzNJNuh7s66tW8PQ2LWADzswDJGkBmpzuSnlnD6l7udnQF93XTksF4V1BrOg46SBYzDKgMFwib9VBtzRbfUe2+Vp3OahziR/QHv+IV4rBNEdKuEFFrbVvHVDVj8gFL9wOVUSU4mF+qT58g8ixDkwCE3pQWgSZVQcwTZH/k6ryYT5VDKQ9GLvl23H3v55zpzcut8uP0EAe+KcfLNkVSuDBiW1mwYM8fEpQGy/Jf6E1ml3nd9iuw5ypWJDdXKtw57k7RQN7A9E2tyLtzMqccZ+BZG6vLEb7woyyzhiHVr94wmW+JVHmq/8Y5KDj9MfuNmhowdPugGFeISHD3w3v/XzQrfyzsSjeXEPGBio77HZbbjDfcAJXhjzYSMI5muHSDDuKLWuvCdx5kaXlU0Hkfs5ucncz1ULVgpmoUiuomB1fRhgHiqoSCk0D2AD9Y8iMv0rd8fQGiaxAm3cri9S6UYJY31Cqf1vn0QsPpSw47jj/7e6TWCvAkOpGJ6kHBe3A4BgKh9GIkwAB9pL6niDhxo6tLMsG74A6rIYAQ==",
+          "thinking": "",
+          "type": "thinking"
+        },
+        {
+          "id": "toolu_01529jzhCVMpS1Dtka8wS8rP",
+          "input": {
+            "segment": "country=C1",
+            "hours": 12,
+            "breakdown": "issuer"
+          },
+          "name": "query_slice",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "id": "toolu_01Ci7Jy2p8MuSBWdjuqWDnXY",
+          "input": {
+            "segment": "total",
+            "hours": 12,
+            "breakdown": "gateway"
+          },
+          "name": "query_slice",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "model": "claude-opus-5-5",
+      "usage": {
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 0,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "inference_geo": "global",
+        "input_tokens": 6184,
+        "iterations": [
+          {
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 0,
+              "ephemeral_5m_input_tokens": 0
+            },
+            "cache_creation_input_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "input_tokens": 6184,
+            "model": null,
+            "output_tokens": 246,
+            "type": "message"
+          }
+        ],
+        "output_tokens": 246,
+        "output_tokens_details": {
+          "thinking_tokens": 51
+        },
+        "service_tier": "standard",
+        "speed": "standard"
+      }
+    }
+  },
+  {
+    "request_digest": "a5cbf2186cc37f5d6456c9405383ddfaed1dcca28abef5e2b51dba5531a312c0",
+    "response": {
+      "stop_reason": "tool_use",
+      "content": [
+        {
+          "signature": "CAQSxAcKEAgUGAI4AUIIdGhpbmtpbmcSDAmh9WIqfNx9OzatYxoMWgxxQp8mCLeKFUVxIjAMvd69IRbtaV249fhMuX4YRYeWl2PFH618aehWUnB2gAyYaGzo61/y8MyoiaOSFMUq4QZeRAPa8P3dYyKvr+XLaABT5ilkQBwxBvb8Iv2WLv+3oMnFlp5cLKEfGfkbIEKh2JwKzFDuDgbmmm7Hv9nibVkzy60aZnRAwmL+iTLiD+e5YattvbAtMLDyx1LWfIubljaPvC54m79yk+/gszHZFxQh0RLudnjyjweB9+vGRUgYo4LlB5mrlxAPKnbqpvzqE2lNyevsREpI3kcFnfEFXw1DxklCrIeBj0U6vK7T/ZvlkIEgVbdb87x1+jcGEKHyPtvzcrXzJHwgV6NjSAmWdOQXyixvKiLYGVzNbLXJkiq0yzRAQfCYqDU+hUiMt+nOqfKGxAvUWAw40DvsBHJTPUZWnH6AZeLjNi9yMDlK8Fix7wggnXeBlWk1k8Sk9AepS4TWgZOlCsnESYly0SYeXQxfJTtXlM9fNVtxDqbZVqDKqjN5HWPecSM4EuERbbyZy7rwB1OizUS70eGY17jp4wQqm9x+SnUJtZ5mzGVIZp5+FwX4AY5HGivCB2VYAhcc/o7JVbxANZh7eZKOQKynNEVGlT0V43OhuDXhaL8X5TMh2BVrLAjDhMxOkH86wH2uju/UDelqoJjUdn6+GkRC0sIGzWoZy15hTwW9X3Qm37BWfeQzzUIbpGkvB2iNs0YuM/1LIJLVGf9DPHV7ZHho7M9aLjn+icj0p+8lzKJCmnPjVqRUcsPY26/xyJ16r7ewqopuHz0Sq9x/YLq5Y/mNiFHUk9VemcN5ZRsHlnJM8ZqsNnllpCyWS6NOaIeTvYnuN6NzwDEPWsWVflsu/Px8QrHra1kz9Yb5MZd1Ri2E7h3MxmOBmtzOfrYwNjfmy54634+AHC7OFDOU5Vs2zU+MdzrD0WeNtERCAW1EydSeS+Y5QsBxt+3AkEa0WZ9GjA483Q7qlz1MjA7KHyvd/UvhXC2wQRIGczeLDIJjUrSZSWsqfzG7y9prPQYAlr4/cWoOsisCJT9JoVdZKA+61d60sKJUUz6HKulLUVAFGUdGgFQmklRkHrD8vR1NyWTrIJdtDOTy5dmMuWEcaKH8TtJosNkW9lHzHaV2GWMZsRXalYS/VZNFj/gh15d/D8jPuFRZ17CLTPt6nEExEQ9NTvHXqCvR1VGGZcy//BeAjfImrbZ5/On8ObzEJTL5pqnexl39UBgYGAE=",
+          "thinking": "",
+          "type": "thinking"
+        },
+        {
+          "id": "toolu_01WoCsRSgj5LnNe3TeMyU5ne",
+          "input": {
+            "segment": "issuer=C1-I2",
+            "hours": 12,
+            "breakdown": "method"
+          },
+          "name": "query_slice",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "id": "toolu_0156Rcj5rkYSgMsgeE1TheNV",
+          "input": {
+            "segment": "issuer=C1-I2",
+            "hours": 12
+          },
+          "name": "decline_reasons",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "model": "claude-opus-5-5",
+      "usage": {
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 0,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "inference_geo": "global",
+        "input_tokens": 7257,
+        "iterations": [
+          {
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 0,
+              "ephemeral_5m_input_tokens": 0
+            },
+            "cache_creation_input_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "input_tokens": 7257,
+            "model": null,
+            "output_tokens": 273,
+            "type": "message"
+          }
+        ],
+        "output_tokens": 273,
+        "output_tokens_details": {
+          "thinking_tokens": 91
+        },
+        "service_tier": "standard",
+        "speed": "standard"
+      }
+    }
+  },
+  {
+    "request_digest": "a25b595cbcccba1db6f8e3924c536124fce0a97a22f74b488713fe37199d867d",
+    "response": {
+      "stop_reason": "tool_use",
+      "content": [
+        {
+          "signature": "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",
+          "thinking": "",
+          "type": "thinking"
+        },
+        {
+          "id": "toolu_01Daou1CK1kc9TB2UvW21out",
+          "input": {
+            "culprit": "country=C1",
+            "fault_type": "no_fault",
+            "since_hour": 1141,
+            "confidence": "low",
+            "claims": [
+              {
+                "text": "The alarmed issuer C1-I1 explains only part of the shortfall in its country: it misses {0} approvals while country C1 misses {1} and issuer C1-I2 misses {2}, so the drop is not concentrated in C1-I1.",
+                "cites": [
+                  {
+                    "call_id": "c8",
+                    "field": "children[1].missing_approvals",
+                    "value": 298.6416
+                  },
+                  {
+                    "call_id": "c4",
+                    "field": "children[0].missing_approvals",
+                    "value": 1055.7737
+                  },
+                  {
+                    "call_id": "c8",
+                    "field": "children[0].missing_approvals",
+                    "value": 731.8905
+                  }
+                ]
+              },
+              {
+                "text": "Country C1 carries most of the total shortfall: {0} of {1} missing approvals, with z {2} against {3} for C0.",
+                "cites": [
+                  {
+                    "call_id": "c4",
+                    "field": "children[0].missing_approvals",
+                    "value": 1055.7737
+                  },
+                  {
+                    "call_id": "c4",
+                    "field": "missing_approvals",
+                    "value": 1492.9032
+                  },
+                  {
+                    "call_id": "c4",
+                    "field": "children[0].z",
+                    "value": 7.6193
+                  },
+                  {
+                    "call_id": "c4",
+                    "field": "children[1].z",
+                    "value": 2.9517
+                  }
+                ]
+              },
+              {
+                "text": "The dip is small and spread out rather than a sharp break: C1-I1-B1 runs at {0} against an expected {1} at hour {2}, and earlier hours such as {3} were already a little below expected.",
+                "cites": [
+                  {
+                    "call_id": "c3",
+                    "field": "rows[13].actual_rate",
+                    "value": 0.8456
+                  },
+                  {
+                    "call_id": "c3",
+                    "field": "rows[13].expected_rate",
+                    "value": 0.8564
+                  },
+                  {
+                    "call_id": "c3",
+                    "field": "rows[13].hour",
+                    "value": 1141
+                  },
+                  {
+                    "call_id": "c3",
+                    "field": "rows[4].hour",
+                    "value": 1132
+                  }
+                ]
+              },
+              {
+                "text": "There is no fault signature in C1-I1-B1: issuer_unavailable moved by {0}, do_not_honor by {1}, and latency ratio is {2}.",
+                "cites": [
+                  {
+                    "call_id": "c2",
+                    "field": "reasons[3].change",
+                    "value": -0.0004
+                  },
+                  {
+                    "call_id": "c2",
+                    "field": "reasons[1].change",
+                    "value": -0.0031
+                  },
+                  {
+                    "call_id": "c7",
+                    "field": "ratio",
+                    "value": 1.0442
+                  }
+                ]
+              },
+              {
+                "text": "Gateways do not isolate it either: G3, G1 and G0 are all below expected (z {0}, {1}, {2}), with only G2 flat at {3}.",
+                "cites": [
+                  {
+                    "call_id": "c9",
+                    "field": "children[0].z",
+                    "value": 5.1468
+                  },
+                  {
+                    "call_id": "c9",
+                    "field": "children[1].z",
+                    "value": 5.8824
+                  },
+                  {
+                    "call_id": "c9",
+                    "field": "children[2].z",
+                    "value": 2.922
+                  },
+                  {
+                    "call_id": "c9",
+                    "field": "children[3].z",
+                    "value": -0.1588
+                  }
+                ]
+              },
+              {
+                "text": "In C1-I2 the increase comes from cardholder-side reasons, mainly insufficient_funds (change {0}) and do_not_honor (change {1}), while issuer_unavailable is flat ({2}). This looks more like a change in demand or customer mix than an issuer or gateway outage.",
+                "cites": [
+                  {
+                    "call_id": "c11",
+                    "field": "reasons[0].change",
+                    "value": 0.0127
+                  },
+                  {
+                    "call_id": "c11",
+                    "field": "reasons[1].change",
+                    "value": 0.005
+                  },
+                  {
+                    "call_id": "c11",
+                    "field": "reasons[3].change",
+                    "value": 0.0002
+                  }
+                ]
+              }
+            ],
+            "next_checks": [
+              "Re-query issuer=C1-I1 and bin=C1-I1-B1 once data past the first alarm is available: the alarmed series fired later than the data these tools could see, so a sharper fault may have started after the first alarm.",
+              "Break issuer=C1-I2 down by bin and by gateway to see whether its insufficient_funds increase is focused in one BIN.",
+              "Check card_not_present traffic in C1 for a change in merchant or customer mix, since card_not_present is where most of the shortfall is in both C1-I1-B1 and C1-I2.",
+              "Look at the C1-I1-B1|gateway=G3 forecast hour by hour, because G3 is the weakest gateway for that BIN.",
+              "Compare the same weekday or calendar point in earlier months, in case this is a seasonal or payday softening the weekly baseline misses."
+            ]
+          },
+          "name": "submit_hypothesis",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "model": "claude-opus-5-5",
+      "usage": {
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 0,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "inference_geo": "global",
+        "input_tokens": 8193,
+        "iterations": [
+          {
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 0,
+              "ephemeral_5m_input_tokens": 0
+            },
+            "cache_creation_input_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "input_tokens": 8193,
+            "model": null,
+            "output_tokens": 1889,
+            "type": "message"
+          }
+        ],
+        "output_tokens": 1889,
+        "output_tokens_details": {
+          "thinking_tokens": 380
+        },
+        "service_tier": "standard",
+        "speed": "standard"
+      }
+    }
+  }
+]

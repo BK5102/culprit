@@ -151,3 +151,18 @@ The technical detail behind each step is in `docs/methodology.md` (numbered M1, 
   - For the gate, filling the undefined values with 1 or loosening the threshold. Both would have changed the rule after seeing it fail.
 - **Cause and effect:** every data-fit gate now passes for both test regimes on development seeds, and the development numbers did not change. One item stays open on purpose: the total spend cap for the sealed run, which the development recordings will size.
 - **How to say it:** "I fixed every test-plan choice before any test world existed, drew the seeds at random, and when a check failed I found it was a division by zero, fixed the arithmetic, and showed the earlier numbers did not move."
+
+### Step 15. The first live agent runs
+
+- **What I did:** ran the LLM agent against Claude for the first time, on the small development world's 10 incidents.
+- **Why:** until now the agent had only replayed hand-written conversations. Only real calls show whether the tool definitions, the citations and the rules work together.
+- **What else I considered:**
+  - Loosening the critic, which would change the rule after seeing failures.
+  - Turning off strict tool checking, which would let malformed arguments reach the tools.
+- **Cause and effect:**
+  - **Tool format:** the API refused the first two requests for schema reasons. Both were free, and both are fixed by sending each segment as one key.
+  - **Citations:** the critic then rejected answers whose citations used the output's own positions, so it now accepts those.
+  - **Typed numbers:** the agent kept typing hours and window lengths into its sentences. A clearer instruction took critic acceptance from 1 of 10 to 9 of 10.
+  - **Accuracy:** on this one world the agent named the right culprit for 3 of 10 faults against 2 of 10 for the no-LLM control. That is a development number, not a result.
+  - **Cost:** about 16 cents per incident, and 3.27 dollars of live calls in total so far.
+- **How to say it:** "The first live run found three integration bugs that replayed tests could not, and I fixed the agent's instructions rather than weakening the checker, counting both prompt versions."

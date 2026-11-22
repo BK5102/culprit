@@ -354,6 +354,28 @@ All data in this project is simulated. Numbers quoted below come from code run o
 - Considered: setting the undefined ratios to 1 (it invents a value); lowering the gate (it changes the rule after seeing a failure); raising the leaf attempt floor (it changes which leaves exist).
 - Limitation: the gate now speaks for leaves with a defined ratio; the count of excluded leaves is printed next to it.
 
+**M51. What the first live agent calls changed: tool schemas the live API accepts, citations by output path, and a clearer number rule (prompt version 2).**
+- What changed:
+  - **Tool schemas:** the segment argument of every tool, and the culprit in `submit_hypothesis`, is now one key string such as `issuer=C0-I1|method=card` (the form tool output already used). It replaces five nullable fields. `breakdown` is `anyOf` a string enum or null.
+  - **Citations:** the critic accepts a cited field either as a ledger name (`z`, `h1042.actual_rate`) or as a path into that call's output (`children[0].z`, `rows[4].actual_rate`). The number is read from the same output either way.
+  - **Prompt:** the system prompt says what the field form is, and that "no typed numbers" includes hours, window lengths, counts and the band's percentage.
+  - **Compatibility:** recordings made before this change still replay, because the old forms are still accepted.
+- Why: the hand-written test recordings could not catch any of this; only live calls could, on 2026-11-21. Each live problem and its effect:
+  - **Enum under a type list:** the first call was refused (400) because strict tool schemas do not accept an enum under a type list.
+  - **Too many nullable parameters:** the next was refused because the tools had 27 nullable parameters against a strict-schema limit of 16. Neither refused call was charged.
+  - **Citation names:** the first answered incident was rejected for 12 citations, because the agent cited numbers by their position in the output (natural, and allowed by the prompt's wording "field from tool output") while the critic knew only its internal names.
+  - **Typed numbers:** with paths accepted, prompt version 1 got 1 of 10 development incidents past the critic. Every rejection included a number typed into claim text, such as an hour index, "6-hour" or "the 90% band". Prompt version 2 says so explicitly and got 9 of 10 past it.
+- Variants tried (CLAUDE.md rule 11): two prompt versions, both on the small development world (seed 7) only, with hashes `980fca43` (version 1) and `35841c3d` (version 2). The critic's rules were not loosened. It still rejects a whole hypothesis for one typed number or one wrong citation, and in version 2 it still rejected one incident.
+- Development numbers (one world, 10 faults; not a result):
+  - Version 2: agent top-1 0.3, control top-1 0.2.
+  - Cost: 1.57 dollars for 10 incidents, median 0.16 per incident.
+  - Total live spend so far, including the superseded version 1 recordings: 3.27 dollars (`cassettes/spend-dev.jsonl`).
+- Considered:
+  - Loosening the critic, for example allowing hour numbers in text: it changes the rule after seeing failures, and an hour typed by hand is exactly the kind of number that can be wrong.
+  - Listing every ledger name in the prompt: long, and the path form is what the model reads.
+  - Dropping strict tool use: malformed arguments would then reach the tools.
+- Limitation: the prompt was improved on one development world, so its acceptance rate on the test worlds is unknown until the sealed run (L29). The superseded version 1 recordings are not in the repo. Their cost is in the spend log, and their summary is in this entry.
+
 ---
 
 ## Limitations register
@@ -381,11 +403,12 @@ The honest list. Each item says what could be wrong and what was done about it.
 | L17 | The control's design was revised four times before grading existed, and once more after (M48: a bug fix and one design variant, three measured runs) | It is tuned to this simulator's development worlds to some degree; the M48 choice was made with development grades in view | Every revision is listed (M31, M48); the M48 decision rule was committed before measuring; held-out type and a second regime at test time (rule 9) |
 | L18 | No live LLM run and no recorded real cassette | The agent loop is tested only on a hand-written fixture and a fake backend | Stated (M38); `culprit agent --record` is built (M43) and needs the owner's API key and total cap |
 | L19 | The critic has no LLM review stage | A real but irrelevant number can be cited in support of a wrong claim | Stated (M36); planned for PLAN.md Day 25 |
-| L20 | Agent budgets (12 calls, USD 0.50) are unmeasured guesses | Too tight or too loose a budget changes H2 | Fix them from development runs before the lock (M35) |
+| L20 | Agent budgets were set before any live call | Measured 2026-11-21 on the small development world: median 0.16 dollars per incident at 4,000 tokens, all within the 1-dollar per-incident cap (M49, M51) | The test total is sized from these measurements |
 | L23 | The spend cap reserves the worst case of every call (2 characters per token, full `max_tokens`) | Investigations stop well before the cap is reached; if the token estimate is ever low, one call can pass the cap before the after-call check stops the loop | Stated (M44); owner sets `max_tokens` and the caps together |
 | L25 | The recommended second regime changes parameter values, not the structure of the simulator | It tests sensitivity to settings more than to a different kind of world | Stated (M45); a structural regime needs new simulator code and is the owner's choice |
 | L26 | Pooled intervals rest on few worlds (10 with the recommended seeds) | Intervals are wide; a single world gives no width at all | Paired world-level bootstrap with the number of clusters recorded (M46) |
 | L27 | On the full development world the control named no culprit right (top-1 and top-3 0.0 over 20 faults, seed 17, development only) | H2 would have compared the agent with a broken control | Diagnosed (M47, M48): thin leaves' baseline rate sat at 1 - 1e-6, so one decline scored z of up to 1,000; oracle alerts failed the same way, so detection was not the cause. Fixed by the Jeffreys bound and the exact tail score; same world now top-1 0.5, top-3 0.6 (development only). The control must not change after the lock |
+| L29 | The agent's prompt was improved on one development world (two versions, M51) | Its critic acceptance on test worlds (9 of 10 on development) may differ | The prompt hash is locked at sealing; the test reports acceptance and counts rejected incidents as misses |
 | L28 | The control names one segment per incident from a 3-hour window | When faults overlap, or a promotion is running, the strongest drop wins and a mild fault (median 3.4% of approvals among the misses, full world) is named wrong; 15 of 27 oracle-alert faults on the full development world | Stated (M48); top-3 is reported; the agent faces the same incidents |
 | L24 | An incident the agent does not run counts as a miss | A total cap that runs out lowers the agent's H2 score | Deliberate, so skipping cannot help the agent (M43); statuses are reported |
 | L21 | At 2 false alarms per week counted over all monitored series, development detection is low (small config, seed 7: A and A2 caught 1 of 14 faults, B 3 of 14) | H1 may have little to compare unless the budget or the alarm counting changes | Measured on a development world and reported in `docs/explain-the-project.md`; counting per incident is built (M42; same world: 1, 10 and 4 of 14); the owner decides before the lock |

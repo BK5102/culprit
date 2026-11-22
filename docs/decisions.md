@@ -69,3 +69,12 @@ The total test cap waits for the development recordings, so it is sized from a m
 ### D14. A data-fit gate that failed on arithmetic, not on the world
 
 The headroom gate reported "nan" on the test plan's worlds because a few tiny leaves had exactly last week's approval rate, so the baseline's error was zero and the ratio undefined. The median now skips those leaves and prints how many it skipped (at most 21 of 1,440). With that, every gate passes, and the development numbers are unchanged (methodology M50). Analogy: a class average that came out blank because one student's score was a division by zero. You report the average of the rest and say who was left out, rather than declaring the class failed.
+
+### D15. What the first live agent calls taught us
+
+The first real calls to Claude found three things the replayed test conversations could not:
+- **Tool format:** the API refused our tool definitions twice. Once for how "a dimension or nothing" was written, and once for having too many optional fields. Segments are now sent as one key such as `issuer=C0-I1|method=card`.
+- **Citation names:** the critic rejected sound citations because the agent pointed at numbers by their place in the output (`children[0].z`), not by internal names. It now accepts both.
+- **Typed numbers:** the agent kept typing hours and window lengths into its sentences, which the critic forbids. Stating that rule plainly raised critic acceptance from 1 of 10 to 9 of 10 on the development world.
+
+We fixed the agent's instructions rather than loosening the critic, because a hand-typed number is exactly what the critic exists to stop. Both prompt versions are counted and named (methodology M51, L29). Analogy: a new hire whose reports kept bouncing because nobody had told them the house style; you write the style guide down, you don't stop checking reports.

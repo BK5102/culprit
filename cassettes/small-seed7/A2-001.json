@@ -1,0 +1,456 @@
+[
+  {
+    "request_digest": "a526d596da863882ace69c84a4f6d8984de7bfd6896d94efa2ca257d1b1ab366",
+    "response": {
+      "stop_reason": "tool_use",
+      "content": [
+        {
+          "signature": "CAQS2wUKEAgUGAI4AUIIdGhpbmtpbmcSDLgSnj228pPHMQyoTRoMyJ3rfe1TILuZKodlIjBIlDIQvHdNMEjeuWB6EHiCKXTygJkZiphDhwYET09pmaPXIG19zttivw9LJ5a14NEq+ASVYrrI7Hlf3/VkeilwyL8KG/qfKz4PxA9wwOVKuzo2b+CvdeG4xAUbtTwOh1xVg8frBdufhMWnQfDq0bGNTlTjwgorM7FF2759WwUgMmdqAyXae6Vxgdgh59cF6pV27fP9gMaauEd9ZlXU/sN6Pk/OtZJKZkSZ4h14BwC+X+BeGKbyaBPTGGOXM3H8+MVidyUQZTOQtQdkA2A5Z6AiCym4/8kIgPb584hTSrcYFMBGjeR+AwZ7KR6HdgTEo3FdhWipqubD2meCHASnUCwkaztDOGL7wdw1tpw2D4lY2H4Es/K37KHxv+XGVP7tiDo3IBjS58tYQ3PE48gwQ88GZ17RTH44xjdg6cbK/5nv1HxEwbJNo33UFCwQHn3mGiJLGiITPIv7FAxlmU0jvQaKVomFgRBT6U3pVyjzU73EMvlNOsmzMRrSPaSQ8D2edjEvU/JILLBfOpe+89f/whVnmEllXlL2x/p5ZlRt0366Js6cw9VzT7r+JSY2CqjA+tVJgBwvq/VPt81suHZmOgT/dn4eWwBo0eTPFv87/vUbhy91pWBHCuzX4ux7kXkrMLqFujmUn0hHTBxxzGgsy52dlzzK9wZ6JGBnlXWzxoaNyeYT43qq81xnXJRVDwEegfsKRkefWeeny00KC9aWd+qMUt1u5mkLo/gKw+8X7galisHI2pul0x1JL0uG4Q5QD7LPHHquprwzJwk70GSPWz6zvwQXf/YrZkmul4iT8n4LoG1Yka9REGmnM14MebmzKuZ6JuBFXPOtr503B62INwXkxSdvY0MiQRakI78r/1t4TEOnerePYYNXRkBqo4DSEKYTRNW8UXYt4D8NkhgB",
+          "thinking": "",
+          "type": "thinking"
+        },
+        {
+          "id": "toolu_018fwvaZHHXBKYwLpkWdza5r",
+          "input": {
+            "segment": "country=C0",
+            "hours": 6,
+            "breakdown": "issuer"
+          },
+          "name": "query_slice",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "id": "toolu_01Fwc4o5udTgDoJSAWdSa2Pp",
+          "input": {
+            "segment": "country=C0",
+            "hours": 6,
+            "breakdown": "method"
+          },
+          "name": "query_slice",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "id": "toolu_01P2H9jFczewXdfveWwLdm5u",
+          "input": {
+            "segment": "country=C0",
+            "hours": 6,
+            "breakdown": "gateway"
+          },
+          "name": "query_slice",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "model": "claude-opus-5-5",
+      "usage": {
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 0,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "inference_geo": "global",
+        "input_tokens": 2341,
+        "iterations": [
+          {
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 0,
+              "ephemeral_5m_input_tokens": 0
+            },
+            "cache_creation_input_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "input_tokens": 2341,
+            "model": null,
+            "output_tokens": 333,
+            "type": "message"
+          }
+        ],
+        "output_tokens": 333,
+        "output_tokens_details": {
+          "thinking_tokens": 40
+        },
+        "service_tier": "standard",
+        "speed": "standard"
+      }
+    }
+  },
+  {
+    "request_digest": "85ec1a80f3104ac26f8d7e2d1958c231e235408c6733d98769ea8c7a9c426582",
+    "response": {
+      "stop_reason": "tool_use",
+      "content": [
+        {
+          "signature": "CAQSpgcKEAgUGAI4AUIIdGhpbmtpbmcSDM2fIPHvarQc5JbkZBoMR3DbS2eFRYm5ciHqIjCX3F5pyMt6C2GmN6KIKar/587JvQ/sNFBGMRCLH4TkdetrHCB0MXyg14+/9oan8LcqwwZ9K8WJmptJPIC6wkXphMknr8JXW6PJSvvXUKNq9TEfMrk/byS3pNp/W+ZFRhlSob2eNoh8Xk/RcbtFqx0iqzK19XS6XXjxbgIdAR9pb9BUwXQQpbrBnm3CO7wcdvnHmUI9LRgFFxTXRwQSrt0vxkDEULAMxWIfPR/igjbyS/0lsxsSAmhnST3s8sRrf1I+K/rmf9vf5PDAugvJ32FIb8C4vw+WQVty26U4w22Yk4OH0wd4D+rVitlYdh8OZqAI0vNryjn1/6xLtkvtA/0Tp1cf+y5esxinSUbAnf2wh9+SNtG22T2PZDEuNmQKjuRhDgcvRTYs2ww/icXLJPI2Pg7Z16Jj/Lbr2MIMj55ZPoLAfUaLe19sBcaBDx2RGlM6Im/zkzt5TOaZSXfAAMR20ZLTxFa4ig51ZqGbTfPlITFZDwyigYLZx7y/C9KB+NsYHgeElt1wNMhF+/TAep50kYbs1z/TD/2YzXBdIvhgD3fSMQi454MYpB1Hlf1EQQ19BBdu0SnY6tGM+GLiSchk0S0JkRUoLDrQpHaRDYL3K/sRaMSehWVn9VIGUxz8aqXlDsEyQRE60Sh1zpMXDKzwzlDQ9yl2zaJAd7ohx72J/iTxvlTfGCIVrFssm5wL3beHOa6nwACDoUD7JBq7BbfT4XKFVR06vYjXRc3JO8TiAHFwOsVcP/umdG0J1tXFUWWM/GXjOqFx4El2dg45XbVg4UbaNBL5oalertMpLa9uzZXKPgrsnFJqI9GEZzP5B4FiPL5d5I94c7yZxLlRdUYK9643DQOI4Yhgl4RyebJ+xUJvG5BgRRk+eR7UaW66fMgnVeFuyKNprna9ut7ot1AKQbHBBPiU6b4kK/WSkI0xNu+Yv5nMlxhIJdBHOEI33gcg3Xbut07YQLNdCUqHwrzrs6bq5dnfqtQq3WBM1xNwbdfuZlnZ+zSElrvHtsXFoXimKuPP59XbfIr6weerD4dwldnsQ7kUnre25XBvnFl20ZHlgECQiWIYXLPYQzxTs25y1LLNV2qPFdEAvFWxsjTodp2+eem1nPNIbQ6f9ASXKNUYTKPNRyx5rm2RUlO28Hg1I9cBGHG8kYDWbDmtjeElVdHdgfnJGAE=",
+          "thinking": "",
+          "type": "thinking"
+        },
+        {
+          "id": "toolu_01L7DdnNE9266oyHJZaAHuq1",
+          "input": {
+            "segment": "country=C0|method=card_not_present",
+            "hours": 6
+          },
+          "name": "decline_reasons",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "id": "toolu_019CbgE1dFndVuok1ERzHQzZ",
+          "input": {
+            "segment": "method=card_not_present",
+            "hours": 6,
+            "breakdown": "country"
+          },
+          "name": "query_slice",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "id": "toolu_01HDAWEHc9L9pGGMAAHpQfJd",
+          "input": {
+            "segment": "country=C0|method=card_not_present",
+            "hours": 10
+          },
+          "name": "forecast",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "model": "claude-opus-5-5",
+      "usage": {
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 0,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "inference_geo": "global",
+        "input_tokens": 3826,
+        "iterations": [
+          {
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 0,
+              "ephemeral_5m_input_tokens": 0
+            },
+            "cache_creation_input_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "input_tokens": 3826,
+            "model": null,
+            "output_tokens": 336,
+            "type": "message"
+          }
+        ],
+        "output_tokens": 336,
+        "output_tokens_details": {
+          "thinking_tokens": 75
+        },
+        "service_tier": "standard",
+        "speed": "standard"
+      }
+    }
+  },
+  {
+    "request_digest": "e27ae587a010ce6d21566714fe44a8acd9d48ec9dbf4ca14510f250d6ebd498d",
+    "response": {
+      "stop_reason": "tool_use",
+      "content": [
+        {
+          "signature": "CAQS6gkKEAgUGAI4AUIIdGhpbmtpbmcSDIgkZe54l2j9JD3YPhoMAB9HkGNTXebXx9T+IjBHC8aiNCvAab+F2JFy6Sm/nr0ldO8QfippOcd+KmRh/Rq1LrsYelFzXSDQv8cP9oEqhwlPRRsoaAH7o/7jUlmPz3rtTiegmza65Dr6XhSPzOLFxbs5K4PCdq1bwYWjDIMi1ITjJqjHypB3lUEYUEVYi6d5yMupBdugwZlFlT2qgRGntlJmT3s1rlBuZNFqomDn0QQuVLJwkLrqrUusCRdASXcy4mIYNB87lpBod6Lz410nMpDXwzUlhcfvfzNelxf06efXdl3btXDi4aIx8ZaQHOpJQbSfU9FaVGsWeq1xXfKxQvaDrdwqENrvP1xr0umNH65BeqP5cY75heUZxnI3ViMlURJc2c0n1Aercw4d2Ke94/IkQJ2X5+egJ89/5uXo4FbWkp+teYf2iCVMZtknVrO7oozG6fIZ+b7lm47hfbT/zEXcP4PkY9vSINeuwe4mVCgDyg6NvKRrQp6ljqg1sT2cImGjMGVNtd3UBR3aJl82QsroNQ59/WvDfnRKU9Tb9nI5G0qUDWc0CvhrkCXqOvTmfYTVWpRzFKV6BMGkJS0hWAhMBRTISieUX242ofMqxmtNxlG8j0/G0JbM/cRm5r17l2hwCfj4wvxcR8St4Mumjopix1WiRnPKQSBI981YTag+C8Vdihy7dLY5mnNzTcPbJbvqno2G6mGrftgITxR75UF92aTiGVjnoCnFRL67pa+yxha5TUJDexOwCFlPZs5EMweSyeTFme9XRPURRmfWU8di0TI19UMQiWm3h72B7HGjU++s2Qa3TqbLNMJgqSI6+Gr+dCGaZyfPFQglJcVum1ESsbCEfxf0YQSpRF9F2iX6RytqzTm3+vEP/n6q+dQUiSt+7MLXyewKAhLPYbgKfUiMScJwHRDSaCiQitdx3mYdFMDNFG4M2mOdS55QG+bTBLcsjbPUiVm2CZoCxURBlJAwelE8xyRV1ucjJ90ieSAUhv9U7z5/Ost6qvNxpML7dUusQuoKPQlDz11OegF2E/yrUhmmpFgD0ADIGB5d7M+5rWesphXZNAhHLW9e8Hkkih5rQYr62Avczyy2ejnugehYyj5Shuc8NCjYqrR2RMtxvFz4jTF1WUOrKAJlIDJIxuewlXaEkc/UFuPNuJQQe75KIWcGlATaiOgtM6IHrJi0NYzeTpqz5o6GKMvDwl9RmisU/1TKuqdVf0G37nPQ8Ww4Oknlif/nn4C4Wug0gyzJi5dd6F974V3GfI/TDNijuPWPRM0Cgp21OCwa2EKBhM0Gxa194VBi+pLuJmdvf0IKPJiMlpsJEa/P9JFp6MN/+Gkrb5jxqoN+SJk7P9eP3mZSv9lgCt+UbLEL/FEd/4XKDoNdWECgcZRS7Hp96nW0qT+qLNhV3fdkIV0xaD60nswcDVZcQ0QKOcLEBbX8PROy4TOgUiANKMbj/obWEBUM3x9y8qSNO/RxRFejfBuB7KUKk/Ib+B4F2yrjUueyE47+lE8nLc58mBBnDYTCnBbTaD0Q/j7WejyRpkIG6e6CMeGcrBjt9qZUXknmRlHOG06BobZeTmGtNjaYVDy9eHQ1787QRX3a7T13fDcbEC/tVgtTbP8ID7Eup0+KZFqo+oaExfUydgfwGAE=",
+          "thinking": "",
+          "type": "thinking"
+        },
+        {
+          "id": "toolu_018GFG3knMSdAcxgN1SaE1vW",
+          "input": {
+            "segment": "country=C0|method=card_not_present",
+            "hours": 3,
+            "breakdown": "bin"
+          },
+          "name": "query_slice",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "id": "toolu_019veGYrXLBASAK2JLJb5kmk",
+          "input": {
+            "segment": "country=C0|method=card_not_present",
+            "hours": 3
+          },
+          "name": "latency",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "model": "claude-opus-5-5",
+      "usage": {
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 0,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "inference_geo": "global",
+        "input_tokens": 5595,
+        "iterations": [
+          {
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 0,
+              "ephemeral_5m_input_tokens": 0
+            },
+            "cache_creation_input_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "input_tokens": 5595,
+            "model": null,
+            "output_tokens": 405,
+            "type": "message"
+          }
+        ],
+        "output_tokens": 405,
+        "output_tokens_details": {
+          "thinking_tokens": 220
+        },
+        "service_tier": "standard",
+        "speed": "standard"
+      }
+    }
+  },
+  {
+    "request_digest": "dfee603bc61d1d579f6d23a1dbdf11fb2619180fa9cca7246e49817d3ce8dcaa",
+    "response": {
+      "stop_reason": "tool_use",
+      "content": [
+        {
+          "signature": "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",
+          "thinking": "",
+          "type": "thinking"
+        },
+        {
+          "id": "toolu_01943Nbey9dZU2eEjnRcEuxr",
+          "input": {
+            "culprit": "country=C0|method=card_not_present",
+            "fault_type": "bin_decline_spike",
+            "since_hour": 1073,
+            "confidence": "medium",
+            "claims": [
+              {
+                "text": "Within C0 the drop is confined to card-not-present traffic: C0 card_not_present z is {0} while C0 card_present is flat or slightly up at z {1}.",
+                "cites": [
+                  {
+                    "call_id": "c2",
+                    "field": "children[0].z",
+                    "value": 17.0014
+                  },
+                  {
+                    "call_id": "c2",
+                    "field": "children[1].z",
+                    "value": -2.1168
+                  }
+                ]
+              },
+              {
+                "text": "Card-not-present in other countries is not affected: C1 card_not_present z is {0}, so the fault is specific to C0.",
+                "cites": [
+                  {
+                    "call_id": "c5",
+                    "field": "children[1].z",
+                    "value": -3.3109
+                  }
+                ]
+              },
+              {
+                "text": "All C0 issuers and all gateways degrade together (C0-I0 z {0}, C0-I1 z {1}, C0-I2 z {2}; G3 z {3}, G0 z {4}), which argues against a single issuer outage or gateway degradation.",
+                "cites": [
+                  {
+                    "call_id": "c1",
+                    "field": "children[0].z",
+                    "value": 10.1381
+                  },
+                  {
+                    "call_id": "c1",
+                    "field": "children[1].z",
+                    "value": 8.1812
+                  },
+                  {
+                    "call_id": "c1",
+                    "field": "children[2].z",
+                    "value": 3.9831
+                  },
+                  {
+                    "call_id": "c3",
+                    "field": "children[0].z",
+                    "value": 9.8197
+                  },
+                  {
+                    "call_id": "c3",
+                    "field": "children[1].z",
+                    "value": 8.0682
+                  }
+                ]
+              },
+              {
+                "text": "The drop starts at hour {0}, when the actual rate {1} falls below the band low {2}, and continues at hour {3} with actual {4} against expected {5}.",
+                "cites": [
+                  {
+                    "call_id": "c6",
+                    "field": "rows[8].hour",
+                    "value": 1073
+                  },
+                  {
+                    "call_id": "c6",
+                    "field": "rows[8].actual_rate",
+                    "value": 0.7753
+                  },
+                  {
+                    "call_id": "c6",
+                    "field": "rows[8].low",
+                    "value": 0.8148
+                  },
+                  {
+                    "call_id": "c6",
+                    "field": "rows[9].hour",
+                    "value": 1074
+                  },
+                  {
+                    "call_id": "c6",
+                    "field": "rows[9].actual_rate",
+                    "value": 0.7698
+                  },
+                  {
+                    "call_id": "c6",
+                    "field": "rows[9].expected_rate",
+                    "value": 0.82
+                  }
+                ]
+              },
+              {
+                "text": "The cause looks like a rise in insufficient_funds declines: the rate goes from {0} to {1}. issuer_unavailable ({2}), authentication_required ({3}) and processing_error ({4}) barely move, and latency ratio is {5}, so this does not look like an outage, extra verification or gateway latency.",
+                "cites": [
+                  {
+                    "call_id": "c4",
+                    "field": "reasons[0].rate_before",
+                    "value": 0.0743
+                  },
+                  {
+                    "call_id": "c4",
+                    "field": "reasons[0].rate_now",
+                    "value": 0.1048
+                  },
+                  {
+                    "call_id": "c4",
+                    "field": "reasons[3].change",
+                    "value": -0.0003
+                  },
+                  {
+                    "call_id": "c4",
+                    "field": "reasons[5].change",
+                    "value": 0.0001
+                  },
+                  {
+                    "call_id": "c4",
+                    "field": "reasons[4].change",
+                    "value": 0.0009
+                  },
+                  {
+                    "call_id": "c8",
+                    "field": "ratio",
+                    "value": 1.0059
+                  }
+                ]
+              },
+              {
+                "text": "The decline spike is spread across nearly every C0 card-not-present BIN (C0-I0-B1 z {0}, C0-I0-B0 z {1}, C0-I1-B0 z {2}, C0-I2-B0 z {3}), with only C0-I2-B1 unaffected (z {4}), so it sits at the country and method level rather than in one BIN.",
+                "cites": [
+                  {
+                    "call_id": "c7",
+                    "field": "children[0].z",
+                    "value": 14.5124
+                  },
+                  {
+                    "call_id": "c7",
+                    "field": "children[1].z",
+                    "value": 11.0192
+                  },
+                  {
+                    "call_id": "c7",
+                    "field": "children[2].z",
+                    "value": 10.0418
+                  },
+                  {
+                    "call_id": "c7",
+                    "field": "children[3].z",
+                    "value": 9.692
+                  },
+                  {
+                    "call_id": "c7",
+                    "field": "children[5].z",
+                    "value": 0.6415
+                  }
+                ]
+              }
+            ],
+            "next_checks": [
+              "Break down insufficient_funds by BIN within C0 card_not_present to confirm the spike is uniform and to see why C0-I2-B1 is spared.",
+              "Check whether a C0 CNP-specific change (merchant mix, a funding-source or wallet rail, a risk rule that remaps decline codes to insufficient_funds) went live around the onset hour.",
+              "Compare decline reasons for C0 card_present over the same window to confirm insufficient_funds is flat there.",
+              "Check whether a new merchant or a retry storm is inflating C0 CNP attempts (repeated attempts on the same low-balance cards)."
+            ]
+          },
+          "name": "submit_hypothesis",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "model": "claude-opus-5-5",
+      "usage": {
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 0,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "inference_geo": "global",
+        "input_tokens": 6802,
+        "iterations": [
+          {
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 0,
+              "ephemeral_5m_input_tokens": 0
+            },
+            "cache_creation_input_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "input_tokens": 6802,
+            "model": null,
+            "output_tokens": 1901,
+            "type": "message"
+          }
+        ],
+        "output_tokens": 1901,
+        "output_tokens_details": {
+          "thinking_tokens": 289
+        },
+        "service_tier": "standard",
+        "speed": "standard"
+      }
+    }
+  }
+]

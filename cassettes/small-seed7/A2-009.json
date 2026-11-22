@@ -1,0 +1,589 @@
+[
+  {
+    "request_digest": "4fe6da6bc45fcefdb6bc0e7239e0bba23cc430c7386e66b0719463900a7f5c4a",
+    "response": {
+      "stop_reason": "tool_use",
+      "content": [
+        {
+          "signature": "CAQSmgYKEAgUGAI4AUIIdGhpbmtpbmcSDMhIUbO3zLDGL/xEQhoM32if4xkYKK3SVEvHIjDuLrzF+CPTFN4XLhE9h+kGNb4SXpPtryzqgwpEkp9BK4aAt4QZ076GqyXtqyN0S3wqtwUFhRYQ6/UiANYFeBz5cw90MAAJ2iQbTSSWdZU0W7gQVVXvxagH2rnN5DasGPAIzoDRN0E2kg8KYWhSwCdFGgek7RsZeFl+3m5X6QteCyPHoo+qLgxYPlZDaxQ/YKSYrWBZ4PrSoPH48PPn2h4cOtvfxK0uvmurTXxnUm5+amY15FbkRdz2//ZNr5jtucbOFNHPBTpYILA/f488KVc8qYt0BUk8xQmzgAYZWQE/3dPc6MfNaDMqP3jmtZAaJPI3XXptA+bAJeJjZbXuJpvnk6MYKtYcpF1CWmrwpgCr88QwTGRxoGCPSIochKcI2AgQkuggjVpqSa94WOFG0nOevCBN+sn8OURVznLIkE9fWkBV1z4Qtq+RizQUs/r8IZBj+0WWt2q5ovzwIon68sDMevcyXFTOBl4dJWDhtdegBYS6CTcmWD0rltmlHPUZ6Aps+hrjqdMVrOh6Lh2sX9+P8A+wMe3liRFCv3j3TeKCEj+a5kBZHvQo9xbwn0npj0/FLZ1Y5Gc8k1MqLL3yQwrGfYzgdMAIiASOiGIIC9sEU9/BxbSTMR5sUL55F5oekPHKqT5kg9BZUBcNaSzohR+Qgt/6mHzZUiZKmj23gbt0MGH5ZNSjfklcUIVGfn+kUvp8zIRz5S4E9YtEVkak+56QkuskSePuiHiodiNG5rrSORZVl3Vqu/ULoj0E4wWscD+P7kAJxt1GxuXQ2BKpFVXrkL8WSV01APj6JvCk1KE6tuHc2vjMofTqPdxseVTir+1QSHxEJZrn8TGUdDK8UcHHmt7tLfAzQw9kdKvCe6iRzrgGG5acmZKVVhGWqv2IXVHsbdirsjDVbpmVZf/aE2kwQqh35J18/yDNuiR905yyz5i4MxAZs7gD+YJZkIneb3Fvo6Wk6ItM/N4voe2C7nVCrj1skwr4V/a5SBgB",
+          "thinking": "",
+          "type": "thinking"
+        },
+        {
+          "id": "toolu_01LqUxdDXHHH5cxu3HhxTeWz",
+          "input": {
+            "segment": "total",
+            "hours": 6,
+            "breakdown": "gateway"
+          },
+          "name": "query_slice",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "id": "toolu_01H1TWUTyUDpkCH5KsfA744A",
+          "input": {
+            "segment": "total",
+            "hours": 6,
+            "breakdown": "issuer"
+          },
+          "name": "query_slice",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "model": "claude-opus-5-5",
+      "usage": {
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 0,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "inference_geo": "global",
+        "input_tokens": 2241,
+        "iterations": [
+          {
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 0,
+              "ephemeral_5m_input_tokens": 0
+            },
+            "cache_creation_input_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "input_tokens": 2241,
+            "model": null,
+            "output_tokens": 252,
+            "type": "message"
+          }
+        ],
+        "output_tokens": 252,
+        "output_tokens_details": {
+          "thinking_tokens": 60
+        },
+        "service_tier": "standard",
+        "speed": "standard"
+      }
+    }
+  },
+  {
+    "request_digest": "1f78c2786507575a1c42fc8c16c2b2cc508e917244cec5f15adbe3b3821d9799",
+    "response": {
+      "stop_reason": "tool_use",
+      "content": [
+        {
+          "signature": "CAQSwgYKEAgUGAI4AUIIdGhpbmtpbmcSDChLAUyOZWbIhWkpEhoMy7nuVqwuGSmo47DCIjCcSC0VRsHU0XWdsQP1ToLZP6vDnARnVdKoW6XjfXqgc48bFtK1hsOYSswGPTNlUKEq3wU3pDMVyuvAVP1DbigKPFAU7O05MfPssPXSUvQ6SPX9xvHEu9eMRAeIXTQq6r8G6t7eNZ1cmlqKqbW82gZBY3TXIujCTebmYa8L6GCs4bofDrnvPQTS3YN/neU4BKK7YT8755o3HAXjrqz43J9pWN5TBki6111ULSpX/KiCnsiOqdrZdaWylyR1uFemQHgBBkJnbn+3XRJRMG1qJtzsu4c0CUGutFmRE1BBXPp6n8zbxDqDVX87/1Q/+4Ss0joI1bZMJH3p6g1c7rqC/JM1otxwDtm43XfSkFdTdcIsUeRPvUvZkqpS8vA8/xOIa8OiuglKqxWjS3fLjmHyTRFiBqGCVMtydVbS2ceBoYAIFnNHge52JYav4rrtmcdyXIrqKLMO78Vb+p9Kp+Pl2Wj0WTv6Om4HUZQNL6COm1Oauh/Wl8IzQxkrLSGLmGp3i32pbU/gEa8WQAf6g3ZUtgPBgKbBrr8ppF8l9fvuTM7fY7+mc/IVkduIideCYWvM35k65f4ZlmObj8Ab/gCZt7xYTkh0jnpWqY2PDHFT7u5C3fG6K46nD7PYuW1iDvxMRdRPH6DJ2faOXO6CcfKzVzbeu7EOEuBB+aN72eMQCbX6k+mNfZVWxTk6iVBTCoW0FYcaroXjNegFs9EA33h3gCi5rO9E3fr10lpG8Q510lMvcmoMEA8dlIx2040NKpUwkH0uYno9YbaZLThFfO2s5Uur2RZqSSuUDiNgnFkqNKz3+bI/lN5hCPZOYdfRa5EPsdh1AuO7uS57fd0ujRVVV+CYWKe0PrTUKlqH+Zmffgq6MbS1R0ik8EHRwZnR5r+xYelnuEtbhlQVx2iZjvZ9ieSKqf4uVIJWxfIqUebwWLoj9ZkDcY2FZUFXZoI/2xt9E3BbxB9RotjTEx6KGW94m0SbDjjvQUgc0isqz8M8S0JRsSqBqn7QNr8HMhJ8mPPUlVmVr2orPwrJphlR16e/7N/fTBMYAQ==",
+          "thinking": "",
+          "type": "thinking"
+        },
+        {
+          "id": "toolu_014ycHuvwQ7oCRnc4sp9weUY",
+          "input": {
+            "segment": "issuer=C1-I2",
+            "hours": 6,
+            "breakdown": "method"
+          },
+          "name": "query_slice",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "id": "toolu_016Rv9mAaVA2FNgxa7jFjZCp",
+          "input": {
+            "segment": "issuer=C1-I1",
+            "hours": 6,
+            "breakdown": "bin"
+          },
+          "name": "query_slice",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "id": "toolu_011qS2bTSJARQc4bsjKkvR8w",
+          "input": {
+            "segment": "method=card_not_present",
+            "hours": 6,
+            "breakdown": "issuer"
+          },
+          "name": "query_slice",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "model": "claude-opus-5-5",
+      "usage": {
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 0,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "inference_geo": "global",
+        "input_tokens": 3567,
+        "iterations": [
+          {
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 0,
+              "ephemeral_5m_input_tokens": 0
+            },
+            "cache_creation_input_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "input_tokens": 3567,
+            "model": null,
+            "output_tokens": 381,
+            "type": "message"
+          }
+        ],
+        "output_tokens": 381,
+        "output_tokens_details": {
+          "thinking_tokens": 76
+        },
+        "service_tier": "standard",
+        "speed": "standard"
+      }
+    }
+  },
+  {
+    "request_digest": "9ad0b5d6c483dd4640e320da241f859eb692378acfb58d6781fab1f11ae7cfb1",
+    "response": {
+      "stop_reason": "tool_use",
+      "content": [
+        {
+          "signature": "CAQSlQcKEAgUGAI4AUIIdGhpbmtpbmcSDMrwujQtewfH+CnXgxoMn7ldnmdOEqa07P9VIjB3JN8CGFTglRAh5SH/muFpBeBA1TevXKKLJ4qi4jRL5G1bRPKk4G51lShtdY+FWNoqsgY+08eJMUD7Skm3RWI3XMGHpCIZBY70zaFjzdK4vI3KqaomupyhlTTZMbOXC00oUeWbmIKoJ4e3pNqDjPbx8dkPd+xAyZ/qnn9dqr7/tZ/f45eKDRP/PIG1WJxfpL/+kD138UzHn7BeJnjrY+sKaqbbwiG2PfOB3Z6pYWCQN9dqxyQSgodPA90kyw72wwJE8yKUvLKyBLrHrwXPyaZfwxlfRFqruU9OuqfPDGxlrf0zV3dstoJcBhxwHiYuA51VW7IZiS5eTmsti/GrurqEfR84PiAOF9pZy74bYlSitxMvc3nX0yk31uPQtEC06xijwMwTF4hu+MHWKoq5yk9vwRFfwTF4UQWkTbzosY7nYw34sqIkn6nfe3mj4w2roSamrxH3C4vHJ8V5IjTjGG5VwkPEba/6e8nm9DjTIocRRyDz/tW56/LSU79160ght0TDYhccRqLmLKA4OYG43KwF6QhOGsuQfH89odvcB0TCGNuKUR9vEVVi19HJfqcFAjhItjioLhgiD/euCr/AldoF6qk5FnKAeSfhQJWTwpzwNaZb0Gvj28G2NpAEV9D4zmi95dnMI1j7bul5XMxg7dSPg0Tbt/3kGPO12I9G9n8udrP2HsJ5GWRsz35vicPTScjsWb9ATMKp4VfWptVCpV2X/HhR+0rs/V7TyLeq+L8jdPrYXLBzg5xA0YilIhZzln8v4CgkIvfxKIGMbIMqkOnWYiD323NEFehFvJJg+zmcB5kY9h2eOzQqPFq5/Eua0v8J4eWTsuhedxCJzZIGd7xnC6PGDbstN8CLMFGb0X7mg03tNB9jvxwSU2Pl+JIjbHGb5GmyisOKZNfgNCrQKjVrS5fPD1ytdePg8jwWhSCD9PeMdl+BuXNbNRRqarjwGzwZL5d+tAE/t3mJa0UOIMW6w+iqFNhXEzr+bIyEgww9gGNZKZvlD1UlAHEnyfmWKme7wh3vpq2pl3JH0dApGKlBWDgpmCPkjMgakCJs1QhVBaDM2z75sNNute/ggePEToWOsd6VMukw3s1ZP30COYG2p5KNr6sCww5kg+TLpJvZVldt+Raaj8fk1FRq9nU6k0HyLA8wvRgB",
+          "thinking": "",
+          "type": "thinking"
+        },
+        {
+          "id": "toolu_01DY9mVYwEkXKQpMWMRj3Uoi",
+          "input": {
+            "segment": "total",
+            "hours": 6,
+            "breakdown": "country"
+          },
+          "name": "query_slice",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "id": "toolu_012KycB2uZpRn2jb2HreEfDD",
+          "input": {
+            "segment": "total",
+            "hours": 12
+          },
+          "name": "forecast",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "model": "claude-opus-5-5",
+      "usage": {
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 0,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "inference_geo": "global",
+        "input_tokens": 5242,
+        "iterations": [
+          {
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 0,
+              "ephemeral_5m_input_tokens": 0
+            },
+            "cache_creation_input_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "input_tokens": 5242,
+            "model": null,
+            "output_tokens": 232,
+            "type": "message"
+          }
+        ],
+        "output_tokens": 232,
+        "output_tokens_details": {
+          "thinking_tokens": 69
+        },
+        "service_tier": "standard",
+        "speed": "standard"
+      }
+    }
+  },
+  {
+    "request_digest": "5ed27101b3436c18b4badc0f04ae570e2bf0edd968476b68095cf48a08362130",
+    "response": {
+      "stop_reason": "tool_use",
+      "content": [
+        {
+          "signature": "CAQSwQgKEAgUGAI4AUIIdGhpbmtpbmcSDAwYzpeBrphqCJ/mThoM6Vy2hhjh2gizAlyeIjA+MZzyVWjIsj5uOlLkOS/OitSBaDywjuxOOAkB6vBx016fl9NB5avHUeigarNZadYq3gfRFavwVE52wDkIfAoy7OUvKAxiG2rkhdikIbms/ZARWOggwNIcN/QANk9mC9cheR+OZ3o5Nj3BFTQO6hyi/6FWa4xNaeCQTLJSoAvXoNenJwhcU2MlaBkzuFN1kjD7py+ZBgbAQOgATm/wV6IPXO1IWtwDWLV1s/lma6/dOtMxMme4PJW0jAIMz+3suGLR7sOLJGfHI+PrkJ49nV8StaS1WqSwIyMX6UgeIiVPddugtKm1nj4NdJ0a9+fxqZBx4/9nlbV7OeqR0r/bQqQlWVattO8SYV3247DZHjd+kRayGVJOxVdE+23NC2co5HktgRh3/o10FaDaqkXfspX8wbsChw69lSyUBe/0h6pFWFTi6XNtgaWRJipgBcNtXlI78qtnm0D2NyPbpznpE32WrIcsNlGzO9SmLPh7Fr932RcDXInfmQX+ZP/jYRa7SvdAYWQVPV1CZ9n6bRtD0Exw7YN9EDNfKKx02+KD0HnXA8yPBqq/fddcxyRz6g6a+aaCQo+7bGD0duAHfhDet4DKZzhGeCyuTdG+msJYz4NKfT3PxmcApPoxmISk8x9OglEqZOipBfrvO4Ji1p5Wc8h3g59HD7fL/bsja6uQObRMRpNu3uV4ZxF6yXgVIdYy8qQ4POeD6l0bxzdL5HVP1qk+20amE6bNMfx25Car+t5/2B8vAjWC2I9y0PT/7kpBFs1ZE/+cZSswKH5bpcw8fj667IzezQyIrcGirStnTtSl2S4txHBb81/+ld/U2456iYQA1bijgesHmslUPGZNs/RAYDHj8/sxCHPB6jHn71FsKzzQyzPvC5fjxQMpc7BEUMEAcOj+Y97gPOQ/36Kcl82B3n8tap+yPyMNIbq7dHYqeNtmwm67JdVXAwbYr2vI1imth3NUuhAluxIV3wzKFhIbZWenL3vm/dNm1izCMhzrAQclNmkxtyglsTpdz0IAFQLT2uE8NyQ2ehnz20FPqOq/l9+t2LOldSsrUHQ+AO38/PHoDzj5ZNY93euwLMWEPFXbK9/iYN4gZn6zhQapIa5timuTSA4j3q/UEQJJCr+LpW6tPlHVy2O9abQsNZzu1N/2iT14+zfPDSKG9emReG+zN5ifqcQ3rv5zEaL53cn2YgTse1lTVA87Z/fHoy81wD/O1pWwPYXbtNYIhob+LdhbSBGroz250qoKSxa4R1gas92NIi52Z9t/ApQvrV6rLggaApAb+9ng20dH2OmbAhNZDnvXREi7iX6UdPJ8952mHMZqBmxDtyfHsyOQRlkOvOvMnjgseO7fEMbS3f64voQTq3g99Q5Kj0aPVfCMPchth3YYAQ==",
+          "thinking": "",
+          "type": "thinking"
+        },
+        {
+          "id": "toolu_01R5JdY6s2NBzQ9wcriXi9QM",
+          "input": {
+            "segment": "country=C1",
+            "hours": 6
+          },
+          "name": "decline_reasons",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "id": "toolu_01A1TLhq9AMYw7GGAUpY8pKf",
+          "input": {
+            "segment": "country=C1",
+            "hours": 12
+          },
+          "name": "forecast",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "id": "toolu_01LEEUZ9EbDYxqpxBNjXncYr",
+          "input": {
+            "segment": "country=C1",
+            "hours": 6
+          },
+          "name": "latency",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "model": "claude-opus-5-5",
+      "usage": {
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 0,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "inference_geo": "global",
+        "input_tokens": 6665,
+        "iterations": [
+          {
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 0,
+              "ephemeral_5m_input_tokens": 0
+            },
+            "cache_creation_input_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "input_tokens": 6665,
+            "model": null,
+            "output_tokens": 347,
+            "type": "message"
+          }
+        ],
+        "output_tokens": 347,
+        "output_tokens_details": {
+          "thinking_tokens": 131
+        },
+        "service_tier": "standard",
+        "speed": "standard"
+      }
+    }
+  },
+  {
+    "request_digest": "4907dba998930cefdc31b02aa7c76ae4cfda439d8da6615681a3cef26f574207",
+    "response": {
+      "stop_reason": "tool_use",
+      "content": [
+        {
+          "signature": "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",
+          "thinking": "",
+          "type": "thinking"
+        },
+        {
+          "id": "toolu_0152CZ8eoiQAiYWsoaNFgz7n",
+          "input": {
+            "segment": "country=C0",
+            "hours": 6
+          },
+          "name": "decline_reasons",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "id": "toolu_01QVRMeaFrY2sTpJmLeKM5LX",
+          "input": {
+            "segment": "issuer=C1-I1",
+            "hours": 6
+          },
+          "name": "decline_reasons",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "model": "claude-opus-5-5",
+      "usage": {
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 0,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "inference_geo": "global",
+        "input_tokens": 8360,
+        "iterations": [
+          {
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 0,
+              "ephemeral_5m_input_tokens": 0
+            },
+            "cache_creation_input_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "input_tokens": 8360,
+            "model": null,
+            "output_tokens": 710,
+            "type": "message"
+          }
+        ],
+        "output_tokens": 710,
+        "output_tokens_details": {
+          "thinking_tokens": 555
+        },
+        "service_tier": "standard",
+        "speed": "standard"
+      }
+    }
+  },
+  {
+    "request_digest": "33c12820678c61d2f21371c1f506eb951f55886829035a6f584d15118236e6fe",
+    "response": {
+      "stop_reason": "tool_use",
+      "content": [
+        {
+          "signature": "CAQSmwkKEAgUGAI4AUIIdGhpbmtpbmcSDEWzIjPs4lFNhfDWhRoMfllUjxrCDv+8jaUxIjAqNPn6Jd55aNASJmr2AYsYCXEA1/gkX31cQCgtfCMoR+LrE0l/Zeu8FgMsKH0x1u8quAgKk4uovDFaEZoksOURD/2ZaYErHJw8PmP5pVYdG6J4ouDIWtXua2Ywz1V2Ruu1iVl9aUBzfd0CQ8lAB0gB3lWGpkhyqxzdEW2fAwv0GotATYNCcuUVvHiw6XyeX9zlqBZVL6JP7j7ZINSj+pghGgwbbAMiqaqq5xeFC/MKv+yYp3aWHq8NVZbDO1nOs3tV8NApjLgt9fWk3nQ/OsLGfue5gdOUx6uik3XMTkTRBFoOEsl6HsR6nira1dafqhAbWUv3/c9RH5IlSjA4a3lp7WJFWeULqVa/gx3zltGrntrsDhhX5EU+HGJaWu0F7TFESjs28zH6ae0G+ikMpUQ8BzupPNVv30BrtenmPgmoNarZQF8EMKSVZRB42GC/bgKMuuUwbdpbKL3S3oUdF3f76IvSIg12Swnux7icaSbD0RoyDhJW3dF6M1Mvnbem82wef4IwGkKyLcuNOmPrwUSD0a6hR0RzYx4BAnRATRefbf31Qb3r+4VaGlHvQqJQp10hrUvpwJCTWyz+2kazeETiUSi2BGZXhH+5wriA3y8chggthuQw5cCpaIXsxllKnMDZ5EpRWtpEHYskI6L9PAySv4TQdPSsAqiP5n1GYiGNJuYkZoDaf6ifkURYJe3ZUdKMBGqZE7OJzcUvhZ6RKV34HpPkJbBRXb/b7MeXbKmZ4V+6EHj5DuG4OheChfynXXDTMXTp0xBptXoGBPuMOnubXniu03B4fmHDX2Mg5GbMWJWY8kMhqiKFykqH7w/hezsqhvOsO+Pil8d730rHnYmvHHa8iJP3cV7hsmeZuihwqGonIUyiRwTCDedqJVoxqygJ6NeiP52qbJqrSH6umi988XOBGyc6BpUg/m8URf8jNWwfoGdA6xhMsPuUj5UBKlOD4RCdleO1nDclxhrv66trb2KXKDsLKgw7RKeoRdIIHobXwagTR5fVOLOPPm0mKYW+u5ZbL02jbHwOEvwNET2iSxM6Dk5r09nsK6HtLK2oToRsNkG/vJkMl4gb3jbVwD5oUiYxPHecopqBvJGpZ2jIe+E5sUA0A1EVAxMalqa0OVssCX43wyT1cAXU7dvztShUtpt+bGncDWx7rNpWswtO4wAkyoV4x1hZ7J3rM/bfAupX+cLl1g/+mLSX1ZE9LZcC8BT72Mu2BRt3RyS/FqydX5hrNrvCcsWgWq2uv8J5DNBqLAmReC1482Nr/LNtK/WUUtj6dm0ekQY0LZTz79T2PPIT2A/758Ulzo6AkEVcW+15wnJqXDBgPTCNs+r8e28CmMWK/KXLuPIVNieRKOgo82WA6OC3sU99LP3sp9GjNSrCsPAKT2PzkAa26cz04TTMPAi34JrknswYsFTH6GpSa2a2ePjgdYff7XA7Mrzz7E6P9EPQnZoT0cF3tvSiLSB+vAGBzfKdvFRcsXm2p9BeA2D+1KBw20vqsRMYAQ==",
+          "thinking": "",
+          "type": "thinking"
+        },
+        {
+          "id": "toolu_01EyPUfzpyxe4cAgDhNVjtd3",
+          "input": {
+            "culprit": "country=C1",
+            "fault_type": "no_fault",
+            "since_hour": 1299,
+            "confidence": "medium",
+            "claims": [
+              {
+                "text": "The drop is concentrated in country C1: its z is {0} with {1} missing approvals, while country C0 sits at expectation (z {2}). C1 alone accounts for more than the total shortfall of {3}.",
+                "cites": [
+                  {
+                    "call_id": "c6",
+                    "field": "children[0].z",
+                    "value": null
+                  },
+                  {
+                    "call_id": "c6",
+                    "field": "children[0].missing_approvals",
+                    "value": null
+                  },
+                  {
+                    "call_id": "c6",
+                    "field": "children[1].z",
+                    "value": null
+                  },
+                  {
+                    "call_id": "c1",
+                    "field": "missing_approvals",
+                    "value": null
+                  }
+                ]
+              },
+              {
+                "text": "The shortfall is spread over C1 issuers and both methods instead of one BIN or gateway: C1-I2 z {0} (card_not_present z {1}, card_present z {2}) and C1-I1 z {3}. The alarmed BIN C1-I1-B0 itself is close to normal (z {4}).",
+                "cites": [
+                  {
+                    "call_id": "c2",
+                    "field": "children[0].z",
+                    "value": null
+                  },
+                  {
+                    "call_id": "c3",
+                    "field": "children[0].z",
+                    "value": null
+                  },
+                  {
+                    "call_id": "c3",
+                    "field": "children[1].z",
+                    "value": null
+                  },
+                  {
+                    "call_id": "c2",
+                    "field": "children[1].z",
+                    "value": null
+                  },
+                  {
+                    "call_id": "c4",
+                    "field": "children[1].z",
+                    "value": null
+                  }
+                ]
+              },
+              {
+                "text": "Gateways do not explain it: G3 and G0 are only slightly lower (z {0} and {1}), and they carry C1 traffic. C1 latency is flat (ratio {2}), which argues against gateway degradation.",
+                "cites": [
+                  {
+                    "call_id": "c1",
+                    "field": "children[0].z",
+                    "value": null
+                  },
+                  {
+                    "call_id": "c1",
+                    "field": "children[1].z",
+                    "value": null
+                  },
+                  {
+                    "call_id": "c10",
+                    "field": "ratio",
+                    "value": null
+                  }
+                ]
+              },
+              {
+                "text": "The decline mix points to customers rather than the system: in C1, insufficient_funds rose from {0} to {1} per attempt (change {2}), while issuer_unavailable ({3}), processing_error ({4}) and authentication_required ({5}) barely moved. In C0, insufficient_funds moved much less ({6}). This looks like a C1 cardholder funds shift, possibly an end-of-month or payday calendar effect, not an outage.",
+                "cites": [
+                  {
+                    "call_id": "c8",
+                    "field": "reasons[0].rate_before",
+                    "value": null
+                  },
+                  {
+                    "call_id": "c8",
+                    "field": "reasons[0].rate_now",
+                    "value": null
+                  },
+                  {
+                    "call_id": "c8",
+                    "field": "reasons[0].change",
+                    "value": null
+                  },
+                  {
+                    "call_id": "c8",
+                    "field": "reasons[3].change",
+                    "value": null
+                  },
+                  {
+                    "call_id": "c8",
+                    "field": "reasons[4].change",
+                    "value": null
+                  },
+                  {
+                    "call_id": "c8",
+                    "field": "reasons[5].change",
+                    "value": null
+                  },
+                  {
+                    "call_id": "c11",
+                    "field": "reasons[0].change",
+                    "value": null
+                  }
+                ]
+              },
+              {
+                "text": "The C1 gap is gradual and lasting: actual first drops below the band at {0} (actual {1} against low {2}) and stays below the expected rate through the alarm hour {3} (actual {4} against expected {5}).",
+                "cites": [
+                  {
+                    "call_id": "c9",
+                    "field": "rows[2].hour",
+                    "value": null
+                  },
+                  {
+                    "call_id": "c9",
+                    "field": "rows[2].actual_rate",
+                    "value": null
+                  },
+                  {
+                    "call_id": "c9",
+                    "field": "rows[2].low",
+                    "value": null
+                  },
+                  {
+                    "call_id": "c9",
+                    "field": "rows[11].hour",
+                    "value": null
+                  },
+                  {
+                    "call_id": "c9",
+                    "field": "rows[11].actual_rate",
+                    "value": null
+                  },
+                  {
+                    "call_id": "c9",
+                    "field": "rows[11].expected_rate",
+                    "value": null
+                  }
+                ]
+              }
+            ],
+            "next_checks": [
+              "Compare C1 insufficient_funds rates with the same calendar position in earlier months (end of month, before payday) to confirm a seasonal or calendar effect the weekly baseline misses.",
+              "Break down C1 insufficient_funds by issuer and BIN to confirm the rise is even across issuers and not driven by one issuer's risk or limit policy change.",
+              "Check whether C1 traffic mix shifted (ticket size, merchant category, new merchants) during the alarm window.",
+              "Keep watching C1 hourly against the band after the alarm. If the gap does not close after payday, escalate to the C1 issuers.",
+              "Treat the C0-I1-B0 alarm separately: issuer C0-I1 card_not_present is only mildly low, so confirm with a BIN-level forecast that it is noise."
+            ]
+          },
+          "name": "submit_hypothesis",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "model": "claude-opus-5-5",
+      "usage": {
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 0,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "inference_geo": "global",
+        "input_tokens": 9769,
+        "iterations": [
+          {
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 0,
+              "ephemeral_5m_input_tokens": 0
+            },
+            "cache_creation_input_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "input_tokens": 9769,
+            "model": null,
+            "output_tokens": 1747,
+            "type": "message"
+          }
+        ],
+        "output_tokens": 1747,
+        "output_tokens_details": {
+          "thinking_tokens": 165
+        },
+        "service_tier": "standard",
+        "speed": "standard"
+      }
+    }
+  }
+]

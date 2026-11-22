@@ -52,6 +52,22 @@ def parse_key(key: str) -> Filter:
     return canonical(dict(part.split("=", 1) for part in key.split("|")))
 
 
+def from_arg(raw: str | Mapping[str, str | None] | None) -> Filter:
+    """A segment from an agent argument: a key such as "issuer=C0-I1|method=card" or "total",
+    or (in recordings made before 2026-11-21) a mapping with None for unused dimensions.
+
+    Raises KeyError for an unknown dimension and ValueError for a malformed key.
+    """
+    if raw is None:
+        return {}
+    if isinstance(raw, str):
+        key = raw.strip() or TOTAL
+        if key != TOTAL and any("=" not in part for part in key.split("|")):
+            raise ValueError(f"malformed segment key {raw!r}; use e.g. issuer=C0-I1|method=card")
+        return parse_key(key)
+    return canonical({k: v for k, v in raw.items() if v is not None})
+
+
 def geo_level(f: Mapping[str, str]) -> int:
     """0 for no geography key, 1 country, 2 issuer, 3 bin."""
     for i, k in reversed(list(enumerate(GEO))):

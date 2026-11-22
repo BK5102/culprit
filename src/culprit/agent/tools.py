@@ -15,12 +15,13 @@ against this ledger, and the reporter copies values from it.
 from __future__ import annotations
 
 import math
+import re
 from dataclasses import dataclass, field
 from typing import Any
 
 from culprit.investigate.contribution import leaf_window, node_stats
 from culprit.investigate.fault_typing import signals
-from culprit.segments import DIMS, GEO, canonical, geo_level, node_key
+from culprit.segments import DIMS, GEO, canonical, from_arg, geo_level, node_key
 from culprit.world import REASONS, ObservedWorld
 
 TOOL_NAMES = ("query_slice", "forecast", "decline_reasons", "latency")
@@ -50,12 +51,12 @@ class ToolCall:
     numbers: dict[str, float] = field(default_factory=dict)
 
 
+# One key string, in the same form tool output uses. Five nullable fields per tool made 27
+# union-typed parameters, over the live API's strict-schema limit of 16 (methodology M51).
 SEGMENT_SCHEMA = {
-    "type": "object",
-    "description": "Segment filter. Use null for dimensions you do not filter on.",
-    "properties": {k: {"type": ["string", "null"]} for k in DIMS},
-    "required": list(DIMS),
-    "additionalProperties": False,
+    "type": "string",
+    "description": "Segment key as tool output writes it, e.g. issuer=C0-I1|method=card or "
+    "gateway=G2; 'total' for everything. Dimensions: " + ", ".join(DIMS) + ".",
 }
 
 
@@ -79,7 +80,9 @@ TOOL_SPECS = [
         "Attempts, approvals, approval rate, expected rate from the same hours of earlier weeks "
         "(drift adjusted), missing approvals and z over the last `hours` hours for a segment. "
         "With `breakdown` set to a dimension, also returns the same numbers for each child.",
-        {"breakdown": {"type": ["string", "null"], "enum": [*DIMS, None]}},
+        # A choice of dimension or null. Strict tool schemas reject an enum under a type list
+        # (live API 400, 2026-11-21), so the two options are separate anyOf branches.
+        {"breakdown": {"anyOf": [{"type": "string", "enum": list(DIMS)}, {"type": "null"}]}},
     ),
     _spec(
         "forecast",
@@ -123,7 +126,7 @@ class ToolBox:
             raise ToolError(f"unknown tool {name!r}; allowed: {', '.join(TOOL_NAMES)}")
         if len(self.ledger) >= self.max_calls:
             raise ToolBudgetExceeded(f"tool-call budget of {self.max_calls} reached")
-        segment = self._segment(args.get("segment") or {})
+        segment = self._segment(args.get("segment"))
         hours = int(args.get("hours") or 6)
         if not 1 <= hours <= MAX_HOURS:
             raise ToolError(f"hours must be between 1 and {MAX_HOURS}")
@@ -135,11 +138,10 @@ class ToolBox:
         self.ledger.append(ToolCall(call_id, name, dict(args), output, numbers))
         return output
 
-    def _segment(self, raw: dict[str, Any]) -> dict[str, str]:
-        f = {k: v for k, v in raw.items() if v is not None}
+    def _segment(self, raw: str | dict[str, Any]) -> dict[str, str]:
         try:
-            f = canonical(f)
-        except KeyError as err:
+            f = from_arg(raw)
+        except (KeyError, ValueError) as err:
             raise ToolError(str(err)) from err
         if f and not self._world.segments.exists(f):
             raise ToolError(f"no such segment {node_key(f)!r}")
@@ -234,11 +236,16 @@ class ToolBox:
 
     # --- helpers for the critic and reporter
     def lookup(self, call_id: str, field_name: str) -> float:
+        """A cited number: a ledger name (``z``, ``h1042.actual_rate``) or a path into the
+        call's output as the model sees it (``children[0].z``, ``rows[4].actual_rate``)."""
         for c in self.ledger:
             if c.call_id == call_id:
-                if field_name not in c.numbers:
+                if field_name in c.numbers:
+                    return c.numbers[field_name]
+                value = _resolve_path(c.output, field_name)
+                if value is None:
                     raise KeyError(f"{call_id} has no number {field_name!r}")
-                return c.numbers[field_name]
+                return value
         raise KeyError(f"no tool call {call_id!r}")
 
     def queried_segments(self, tool: str = "query_slice") -> set[str]:
@@ -248,3 +255,28 @@ class ToolBox:
                 out.add(c.output["segment"])
                 out |= {r["segment"] for r in c.output.get("children", [])}
         return out
+
+
+_PATH_PART = re.compile(r"^([A-Za-z_][A-Za-z0-9_]*)(?:\[(\d+)\])?$")
+
+
+def _resolve_path(output: Any, path: str) -> float | None:
+    """The number at a dotted path such as ``children[0].z`` in a tool output, or None.
+
+    Added 2026-11-21 (methodology M51): the first live run cited numbers this way, which the
+    prompt allowed ("field from tool output") but the ledger names did not cover.
+    """
+    node = output
+    for part in path.split("."):
+        m = _PATH_PART.match(part)
+        if m is None or not isinstance(node, dict) or m.group(1) not in node:
+            return None
+        node = node[m.group(1)]
+        if m.group(2) is not None:
+            i = int(m.group(2))
+            if not isinstance(node, list) or i >= len(node):
+                return None
+            node = node[i]
+    if isinstance(node, bool) or not isinstance(node, int | float):
+        return None
+    return float(node)

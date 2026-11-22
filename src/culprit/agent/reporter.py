@@ -13,7 +13,7 @@ from __future__ import annotations
 from typing import Any
 
 from culprit.agent.tools import ToolBox
-from culprit.segments import canonical, node_key
+from culprit.segments import from_arg, node_key
 
 HEADER = "**Investigation, not a decision.** Simulated data; no real payments."
 
@@ -41,7 +41,7 @@ def fill(text: str, cites: list[dict[str, Any]], tools: ToolBox) -> str:
 
 
 def render(hypothesis: dict[str, Any], tools: ToolBox, incident_id: str) -> str:
-    culprit = canonical({k: v for k, v in hypothesis["culprit"].items() if v is not None})
+    culprit = from_arg(hypothesis["culprit"])
     key = node_key(culprit)
     tl = tools.world.timeline
     lines = [f"# Incident {incident_id}: {key}", "", HEADER, ""]

@@ -1,0 +1,530 @@
+[
+  {
+    "request_digest": "55b2203345198b3b37d2d3161d4126c86e8cc4e6eefd7ff5e5c350cce8fc6be9",
+    "response": {
+      "stop_reason": "tool_use",
+      "content": [
+        {
+          "signature": "CAQSrAUKEAgUGAI4AUIIdGhpbmtpbmcSDKaObLqK+haMtKHfhBoMl/pm/SeVtmcwDO2YIjD1JEYChvtroTspV/5qrEjxwwS5lxRm2sdDGk+5e82EAfY8eR/oiuQXdLq2ex9/meIqyQSEpfk9nf+8aTtoxegmTgqzaAJrRiejC5XqaXsG6RHCrUVmD0az9w/XtqK0SowJOxzNmI4T8kSDK17M43N5gAsxW15pU8rP0B/4Rvi5OmmOvn8TDbv99lApZNRFZVzrI+jsYgUNi3L7/pOmeko8W2vKj5P8fh446RdOeD28idm8uJ4foU2hWp91lpTLAV59IgrP9tHu8SJNDixGLmKNFMkIr0dm7TGBIyls3LWwt/3vCwUdy1YqyDkbECS4TiatT3kjL+sQDVleajTj8FNZuPva7g1P0LD2bU06GN97/lhyhiEiiiajzEHPM00D7Mb/AT1WET57NjzjSCDi2JhlkXmYHL9/R6cAkP2tJp5bWw4m8QZ+qsbP+xN/7Gxm21YxEMIF85JM8ZAhUqexZ7mWWGgG5gWf8iiJ5gHccxCn7NCshXoGkN5xw08LdjSrNJ/3YekBFhO9awiACmVQngTxOIAmX81lcAP1Pc461PuuI6rCsbhCgRC+I/RGtfYDCzH0ZUURKis/nKAOGTO7gL9mE9XB90ByNHHY8CS4ifnCBx8M6HcOJBEYkjbTEsnmktSqW/N+Q8ezu17lrd8Hj5/DK8k/cG4eRbRvWcpIVeZU8VjywBoQWrXJDXCQ/LazPN3yXcgkV/3hbpkD9mg2mDb/OtEFHKzcA7e+NoGjc1NJ818t4w1JZz5tWHingjIdxi3wql7QUjDK1tpTn+yaFK6OObx0c9InBvfYX2Sk2PUEwKQQaq4Ae+PAy4YQ6v9/ggcci/miVFON4TiY1O8YAQ==",
+          "thinking": "",
+          "type": "thinking"
+        },
+        {
+          "id": "toolu_01L8tvykzr9BRNjaGuuJ4Jmc",
+          "input": {
+            "segment": "total",
+            "hours": 6,
+            "breakdown": "country"
+          },
+          "name": "query_slice",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "id": "toolu_01HHD5YHPEfnMVbuK7ueeyUU",
+          "input": {
+            "segment": "bin=C1-I1-B0",
+            "hours": 6,
+            "breakdown": "gateway"
+          },
+          "name": "query_slice",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "model": "claude-opus-5-5",
+      "usage": {
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 0,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "inference_geo": "global",
+        "input_tokens": 2208,
+        "iterations": [
+          {
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 0,
+              "ephemeral_5m_input_tokens": 0
+            },
+            "cache_creation_input_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "input_tokens": 2208,
+            "model": null,
+            "output_tokens": 220,
+            "type": "message"
+          }
+        ],
+        "output_tokens": 220,
+        "output_tokens_details": {
+          "thinking_tokens": 20
+        },
+        "service_tier": "standard",
+        "speed": "standard"
+      }
+    }
+  },
+  {
+    "request_digest": "e3e38191fe81433056758af4cb1d65fecb94807b4f0eff2b1405daa0c0d909f9",
+    "response": {
+      "stop_reason": "tool_use",
+      "content": [
+        {
+          "signature": "CAQSnQYKEAgUGAI4AUIIdGhpbmtpbmcSDFlXeriCeNLQL2caXBoMRP3jIbJZEwz6OS7WIjDdCjEukGxSOjdDkJupmyJm8p1n+bU+q6SBzOpsv8mwpbW6iVH10kSe/gctVd/Oa74qugWi3jfOOnPxoofnnjBJ3nnwfAgMAu43R63cZVAn1dJt6dfG69c7SDB3hQeoDtBh+DWWiA4kYEgXKeBrvaEEIGksm5iImUgj5cmTe5UbHPKYdzuFdbdy+jZ2JVupIKkn61nSwpgww7JDt8M2A5HqJMXDcH8/TSn883wDLuXg3KDFBK3UD1Y5rQPR+lNLmoQ72J9LAAG/JL9XGubBBqiVGE4FQ9/ophezo0RT3EwIgLz2my8JZk1yRdbj3grRHqVgEU0Z81IqgmO611jca3r5bSUTlInVU2LHdvcEkjvGHRQgKqcScpzYviyrcd7PKEDRv1by4SEDvD1w5wrkg0L0oS7spKSBoE1mK7NXe0oqzQun8bPlPZFybFtgoLWgb4fE/44CTIKs/3n2m7cDLC/RvnKGN46kJIVbVbA0Za+Rpqw2iDdkp0V5Ioy7NN3mgQO9zZMwJ9ZEigMjD0V0lJNvYEr/6N1eZPtpByh9vrcHoNqgwe9pjGmjcvNkvxOvV71PkUxnnEeHlMRv+L52G0LSld5/YGTUqTUxA8Sci8NRFHSytmFfOGq4T9R5tDwQ2j5XDOhJp+PF6mUMv5YmL9BvSkI3nXkPcfKCt07rMnOU3/l0QNHnKeMvmfHvvxdw7tb0yC++8TZE3O4C4/KDTiSjo+aqpw6ZqtqWn67eb40YeTCC31x8qMS6wuisrDjrkUdGenZh5qXIGqxBEx9S138jfN6Rs277wHOPzeyoSCZHgWU6LpM6QCwBFf/dU7BM1N6l04zc8VttdTex8rUWD9LijuCt6+EF7Cqs8btrffDnMDOxeD7HwDz8qivc7fQGipn44bMdpVyJ3tXiVIc058xx1JFrKkJupLh8y9e85F06R9HcFssIhJP36uzyZv+iuTwekM27ka08G0+yq82le1QVeKbDWiRHeqnpkInwABgB",
+          "thinking": "",
+          "type": "thinking"
+        },
+        {
+          "id": "toolu_01HWL2dsbNe8dQiZnwMbUFZ7",
+          "input": {
+            "segment": "bin=C1-I1-B0|method=card_not_present|gateway=G0",
+            "hours": 8
+          },
+          "name": "forecast",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "id": "toolu_01Ej5iTzhX1CTaxTeCapSwdo",
+          "input": {
+            "segment": "total",
+            "hours": 6,
+            "breakdown": "gateway"
+          },
+          "name": "query_slice",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "model": "claude-opus-5-5",
+      "usage": {
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 0,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "inference_geo": "global",
+        "input_tokens": 3203,
+        "iterations": [
+          {
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 0,
+              "ephemeral_5m_input_tokens": 0
+            },
+            "cache_creation_input_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "input_tokens": 3203,
+            "model": null,
+            "output_tokens": 221,
+            "type": "message"
+          }
+        ],
+        "output_tokens": 221,
+        "output_tokens_details": {
+          "thinking_tokens": 31
+        },
+        "service_tier": "standard",
+        "speed": "standard"
+      }
+    }
+  },
+  {
+    "request_digest": "d5cd8b858a7eb9f2634221fb2540f2435c1a0119204c44c428f4978e47ddaa52",
+    "response": {
+      "stop_reason": "tool_use",
+      "content": [
+        {
+          "signature": "CAQS8QYKEAgUGAI4AUIIdGhpbmtpbmcSDCWeLB2/td6cAeZR9RoM5ybaIhY0USl8IQDZIjAS59h/PHbbKHBYK4VYdTtbIDiX41XMzaqVp5xHkb8UUdELKgnogUVCiaO2OMZ2TrAqjgbhSXrLrsAdoDaI5+n1QNzDzYlPOkmI80SmHkcFX9QMyJWbynZROEDFaLA8h68ILcFb0KKv4LlxdgdmytRP3764JH9gTf90Tcu5jqCsOpYvPwRtY8nLt5nRrMl8wDpUTz//Oktm/W6VauE0QojVDxvUx/sWOkkKAwg8XJxYM5iIA/11/Z/z7VAXpIz3k/tzfrt7Ue/aTogV3T/2xAXmctHjncZYicuWMadxpoJGl+ZMam/GF72oIYRBUSTs4tJrhWVlRaaG/MYAOhbs4rftL0B8xDGqw9Qd2muvfWphw/m3BYRCV+qIQKw8gHWFgOC+MgfZ0S9zP/mnUuSBkK6E6COeruXE7B+uhhkeoP8wfV3GQoT3OOUNMAmhbq3UhNkjlFCDSOZy8aylRrFZNZXkqB5VYAF64PPNZYW1etX9MdQ1g1nenRa3RvCCpjfJMFQZFtudUS/HJxWPfPGfz/pYwqAKR2tpTkt65XfTPXIwKFlgUtiPiSTy9xGb+K/e/hO/FIYBtH1pR8s88RhKk9NYuNry4aXp19CgtK067eDtZIN3OPGUyi79sftS12DXlELdbnpQM2q1YBi0LpnLIBvPOzN27W13jUQUoAX/GxaIP+QP0RpbEIQHgoD1cUaGMjvWUO62QSKMZ/AQEY7F7UFepCUuBtSERI48ZjArNnPXx8NssKftO0aufw7zUXv+oMq93dyH9VkB2714Xp8tkr2tZ+DQataYYa8AV+6NKENefVGOClzh7DZQwyFUNiNplJNi/gg2idP8TmMWzAAbzkVTufS7vMO7ySFtYhpc90LlZzawire0hQ0hSxAP5JCqvjGpOX121cyDW6hplA72XjuOfOe8UwQu64kT+rjF4zRpLa133ywi25eJoxPvqhkMapc9I7Coa2pekcJuSv54RnH4Fpo7atY6KXhIfIiQ93cJG4XZvuqPqh55S1dOt+yYFBtrY3DxmSfhw5AfpqLaRzDh1ArKl57y5a/rh8+P9MjyX9NkrvsXqY6WbqzWKkE9IBbDVXfeNY3mL0cvjWod0vIJwBgB",
+          "thinking": "",
+          "type": "thinking"
+        },
+        {
+          "id": "toolu_01CnoeH9QfgqZZNxrbLftPLx",
+          "input": {
+            "segment": "gateway=G0",
+            "hours": 2,
+            "breakdown": "issuer"
+          },
+          "name": "query_slice",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "id": "toolu_01YNbF16WG4G4cSwVRh6xxFN",
+          "input": {
+            "segment": "issuer=C1-I1",
+            "hours": 2,
+            "breakdown": "method"
+          },
+          "name": "query_slice",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "id": "toolu_01MWjwDVwndS5hYutY63PrYv",
+          "input": {
+            "segment": "bin=C1-I1-B0|method=card_not_present|gateway=G0",
+            "hours": 2,
+            "breakdown": null
+          },
+          "name": "query_slice",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "model": "claude-opus-5-5",
+      "usage": {
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 0,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "inference_geo": "global",
+        "input_tokens": 4519,
+        "iterations": [
+          {
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 0,
+              "ephemeral_5m_input_tokens": 0
+            },
+            "cache_creation_input_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "input_tokens": 4519,
+            "model": null,
+            "output_tokens": 391,
+            "type": "message"
+          }
+        ],
+        "output_tokens": 391,
+        "output_tokens_details": {
+          "thinking_tokens": 71
+        },
+        "service_tier": "standard",
+        "speed": "standard"
+      }
+    }
+  },
+  {
+    "request_digest": "4ab4f73177cc23cd5ef2b6ffb1c7b056cfc38a32cd9663f071f65147e80c0d9c",
+    "response": {
+      "stop_reason": "tool_use",
+      "content": [
+        {
+          "signature": "CAQSygcKEAgUGAI4AUIIdGhpbmtpbmcSDIpgFyfQCnowZiyNwRoMWHzi1xNaRUQjCcf/IjBVWdJ9GWZejZzrEONG9QJJ5UIPMca78UHSu2j2EknLrDGUnYwhJhHNMA3KW90j6Gwq5wZFT3pEZwC0lMcXxF3wl+Fy/FQmqmqGeOPeN8iJc6igPS699dCpq5/Dl8NMU2UmSyjVWOD5jCzX5HhdXaE5hwBKhK7kfHsqbGGH6qjSFh9AvwPI9BLE0NmkFcrRzT6mCmnqvIAFHuaL2tw1yRq3lxw6vvshQ4mSsELpcYLwDedsImOqnAouKdA59GcgCcH4WKuu/WCCPYAFkW4+hAkTDDss3+aIIMkx6g9huv4Eft696YYMtn9f+8hnaD5i914g+d5bHPx9uUXgOTYcN2Y0vxlxa8lQ7/LOZVoj3jeTPemszGco915caLbGw+avDLWh7JJ3d7Q/+O1nSlNwoF+EXeyFAluwGsbKD4hORDJW4OEVzLHaLxwSWyMZqetan88TEM1sTVHQSqEve+LBmN6GKiEZX6i5q/+ERe/0EyYBsPTAyre66rBSEYhsIL0OOkTzzt9hNMKsvqARpvEDENsTXNqH70JU7CI1RGdiA5chLj6oGISquIQleIuDbDuLoKEaowgKlzX5O/2oEfa9Iwo8nym9u1ygVT796qwZ5OqxCD+cbhzDO4L6zWtfKaAkJ0704km3g5+dp6FiBbtwKRDUXwjTf4IzEfJzK6zda3BgvQ+kZM+FPhzHB8lzOXWATQhsgJ90e4sLG4ihmf5QS3y8vBdxvnuoRwJbRXeMBdPYsMcp4SK1vFJcRI9DjowDTWxAAb7qHmwbHFNgGnLP46HMdU4TChdJ1npVPTQOnhQzSCc5X2tSdQ3VkckGcMo1Zgmf1VG6S0bATeavCRxLWKt8zXxlev1GDoKp3zTQnzLn/FgYWn56ZqK7mufUw+4XzlwoTaGBBeYssd9jsL2Opo6rpNRNa1UgadKWrGqS8Bbes2/FwqXUFBgHGsf7dYFXqDpOax169zNZegGpKuFNpTapgPN/9k7dRFq38HFeGo3Tw+v+fEOB3BXhjTbbLZzahoh7RbMnzQB1GLQ6Wu5g29cKsE6KbfNo+GIlF/m28zLhZECjqtJ8RL7UGDMlZQ8RFiumj8upynyd94LUKBckZ/1978IrDCBwkafY+1rBxrPX1rqZOjy2zogwBUWN5tSRaWm+QgL6bAec5vKc/+j5Ll1Bozei8x/3D6ZWNziZIBUYxMMER1YBEuJQiT5aGdg5uoeDPwXFQcXovut3GAE=",
+          "thinking": "",
+          "type": "thinking"
+        },
+        {
+          "id": "toolu_01F6xun9CfoPYfuAGnFe9nwU",
+          "input": {
+            "segment": "bin=C1-I1-B0|method=card_not_present|gateway=G0",
+            "hours": 2
+          },
+          "name": "decline_reasons",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "id": "toolu_01H9Fa25ANsAZ5H6LupTeXJ2",
+          "input": {
+            "segment": "bin=C1-I1-B0|method=card_not_present",
+            "hours": 2,
+            "breakdown": "gateway"
+          },
+          "name": "query_slice",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "id": "toolu_01LWmYiseHFnV6FeLBWJBjdD",
+          "input": {
+            "segment": "gateway=G0",
+            "hours": 2
+          },
+          "name": "latency",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "model": "claude-opus-5-5",
+      "usage": {
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 0,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "inference_geo": "global",
+        "input_tokens": 6019,
+        "iterations": [
+          {
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 0,
+              "ephemeral_5m_input_tokens": 0
+            },
+            "cache_creation_input_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "input_tokens": 6019,
+            "model": null,
+            "output_tokens": 372,
+            "type": "message"
+          }
+        ],
+        "output_tokens": 372,
+        "output_tokens_details": {
+          "thinking_tokens": 90
+        },
+        "service_tier": "standard",
+        "speed": "standard"
+      }
+    }
+  },
+  {
+    "request_digest": "ce8a3345864b16691a76fb7ea999ceb4c48d20ec1df01cbf549ad0b8c128f805",
+    "response": {
+      "stop_reason": "tool_use",
+      "content": [
+        {
+          "signature": "CAQS7QcKEAgUGAI4AUIIdGhpbmtpbmcSDC4PM6pHIMEnes3AoBoMrYrQySv4zgtTNd+8IjBmHnrRaFyGU5x0LRgQvcW08FOWvD4PVktOKFkX6PRsoo0ClBK5ZwyFcwl90XZU64gqigcrcSTbrDVOqJpv4LdzhDC+m1UC1tPFJDZMoEBZAcFWataUphvVYj1sKKnrNCGvJ+/I5S1gwJQNaQ7A9/GGoVNxmR5dVFyTewkoY8CFhzHJ76UqVZ10VpioWiaYHhPdNvxRRoD0BsudUOwSFffjEYpNpgj61b0GaOUDXXBg0PK+EjvoVmSK/KToqDxZeqkN6GuyDI3oxUPgpynD6LVkH6flGOGquqBbzS36rDjA9VyKhV7pbwM+jfp4ZgmhjkBuZl7KRJiGXf5QTrepkiuYsh4y8/PoaWp1OTnUFFpBUmXQxCgUwFwfsLHlcie5E9T9UxnsfDNQ8rwaaf/cf0+k47kCnjcT9b22R7wUVWcSY0+d+jMzOFid27THvjSUOeSoIafF0SKGhKuacFTnMtXWguH2hFDjHrOPeeNzNKW/ZBCf3ooozyO77u2/WXJVUKlmMy38rRlPcV8zdSI9CiNbFu6cvQNwK4xowKNSFXBxJrRcssuqs47aFxBYml8NBNPQq45VtVrC/weEkO2MIs3OwHdOVFUdtknm1JChFQgS5V0dv1IrfcECaYV7O2/qjipNoOA2t9DBWFAS2wKcDLrtQTbogyrS6iktn2zwjf9TBIF/jr/6/imMHaTe03TIYcxNNL0r/AIBd04AawD3lJl8xqtjOchpO++jR0BcrZ9IFd8SEtD7UUaGEOe1ZqKez1pW8vqW+oH8Qhp6n2pj+r3Vhpi8BG+51c3as3lDT6rog/bJ2/5r4BFLgKDF8bX/0ZQfLVTwHfYlYn/2e/5/a5w1rz5Y46p8kN5CsOUtkPwdkS4uEnY4agHMD77hRqKEzTH7UkJF7gBfoBcMo3V00NOqAWvWFggw/AMIRz/9vi08OXPuBwxrRQH8cpOWycKdXW3RIqJbUZ5FC/M3OkF8U4m0jl70eeQp1Pfc+bTNjaB6FbURcOzcqLck/xfBlmgYe8WbnULbyv0Nveom9N38CUeYOTvJugw5lYrNo89E5yspPtK1BE+czH4MQMg78xBKvVvQDoHakzN7UXTNAlUzbE0+hgsaJ/rSFdIYkm+aOLV2ssGr9/il+p29LVqhsW023OibOtcIU5IMFsIPB8jEXji6eNB5JpRImdOb/oqnGiB8gTTzEblZEoUGA1X6XrXlZKxd8k+TGG5rdQczsuTrbH+huNbEi2yedVUL41kagKRwwyLQalTEsdNbW3Pk44UYAQ==",
+          "thinking": "",
+          "type": "thinking"
+        },
+        {
+          "id": "toolu_01EP5ZqzFUrGTNYN5zTksz8d",
+          "input": {
+            "culprit": "bin=C1-I1-B0|method=card_not_present|gateway=G0",
+            "fault_type": "no_fault",
+            "since_hour": 1083,
+            "confidence": "medium",
+            "claims": [
+              {
+                "text": "The alarmed segment's rate fell to {0} against an expected {1} in the alarm window. That gives a large z of {2}, but it rests on only {3} attempts and {4} missing approvals.",
+                "cites": [
+                  {
+                    "call_id": "c7",
+                    "field": "rate",
+                    "value": 0.25
+                  },
+                  {
+                    "call_id": "c7",
+                    "field": "expected_rate",
+                    "value": 0.93
+                  },
+                  {
+                    "call_id": "c7",
+                    "field": "z",
+                    "value": 5.3291
+                  },
+                  {
+                    "call_id": "c7",
+                    "field": "attempts",
+                    "value": 4.0
+                  },
+                  {
+                    "call_id": "c7",
+                    "field": "missing_approvals",
+                    "value": 2.7198
+                  }
+                ]
+              },
+              {
+                "text": "Hour by hour, the segment had a rate of {0} at {1}, which is still inside the band. At {2} the rate was {3}, below the band's low of {4}. Earlier hours were in line with expectation.",
+                "cites": [
+                  {
+                    "call_id": "c3",
+                    "field": "rows[6].actual_rate",
+                    "value": 0.0
+                  },
+                  {
+                    "call_id": "c3",
+                    "field": "rows[6].hour",
+                    "value": 1083
+                  },
+                  {
+                    "call_id": "c3",
+                    "field": "rows[7].hour",
+                    "value": 1084
+                  },
+                  {
+                    "call_id": "c3",
+                    "field": "rows[7].actual_rate",
+                    "value": 0.3333
+                  },
+                  {
+                    "call_id": "c3",
+                    "field": "rows[7].low",
+                    "value": 0.6895
+                  }
+                ]
+              },
+              {
+                "text": "The parent segments show no matching drop. Total approval is {0} against an expected {1}, and gateway G0 is {2} against {3}. Issuer C1-I1 card_not_present is {4} against {5}, and issuer C1-I1 on G0 is {6} against {7}.",
+                "cites": [
+                  {
+                    "call_id": "c1",
+                    "field": "rate",
+                    "value": 0.7826
+                  },
+                  {
+                    "call_id": "c1",
+                    "field": "expected_rate",
+                    "value": 0.7766
+                  },
+                  {
+                    "call_id": "c5",
+                    "field": "rate",
+                    "value": 0.7948
+                  },
+                  {
+                    "call_id": "c5",
+                    "field": "expected_rate",
+                    "value": 0.778
+                  },
+                  {
+                    "call_id": "c6",
+                    "field": "children[1].rate",
+                    "value": 0.7949
+                  },
+                  {
+                    "call_id": "c6",
+                    "field": "children[1].expected_rate",
+                    "value": 0.7639
+                  },
+                  {
+                    "call_id": "c5",
+                    "field": "children[0].rate",
+                    "value": 0.8125
+                  },
+                  {
+                    "call_id": "c5",
+                    "field": "children[0].expected_rate",
+                    "value": 0.821
+                  }
+                ]
+              },
+              {
+                "text": "Across all gateways, BIN C1-I1-B0 card_not_present lost only {0} approvals out of {1} attempts. On G2 and G3 it is at or above expectation, with rates of {2} and {3}. That points away from a BIN-wide decline spike.",
+                "cites": [
+                  {
+                    "call_id": "c9",
+                    "field": "missing_approvals",
+                    "value": 4.8013
+                  },
+                  {
+                    "call_id": "c9",
+                    "field": "attempts",
+                    "value": 30.0
+                  },
+                  {
+                    "call_id": "c9",
+                    "field": "children[2].rate",
+                    "value": 0.75
+                  },
+                  {
+                    "call_id": "c9",
+                    "field": "children[3].rate",
+                    "value": 0.8571
+                  }
+                ]
+              },
+              {
+                "text": "The declines are ordinary issuer responses: do_not_honor at {0} and insufficient_funds at {1}. Technical reasons are absent (issuer_unavailable {2}, processing_error {3}). G0 latency is flat, with a ratio of {4}, so there is no sign of gateway degradation.",
+                "cites": [
+                  {
+                    "call_id": "c8",
+                    "field": "reasons[1].rate_now",
+                    "value": 0.5
+                  },
+                  {
+                    "call_id": "c8",
+                    "field": "reasons[0].rate_now",
+                    "value": 0.25
+                  },
+                  {
+                    "call_id": "c8",
+                    "field": "reasons[3].rate_now",
+                    "value": 0.0
+                  },
+                  {
+                    "call_id": "c8",
+                    "field": "reasons[4].rate_now",
+                    "value": 0.0
+                  },
+                  {
+                    "call_id": "c10",
+                    "field": "ratio",
+                    "value": 0.9998
+                  }
+                ]
+              }
+            ],
+            "next_checks": [
+              "Keep watching bin=C1-I1-B0|method=card_not_present over the next few hours; if the shortfall persists or spreads to G1/G2/G3 with do_not_honor rising, reopen as a bin_decline_spike.",
+              "Check bin=C1-I1-B0|method=card_not_present|gateway=G1, which also dipped on very few attempts, to see whether a pattern builds as volume grows.",
+              "Consider a minimum-volume or minimum-missing-approvals threshold for alarms on very sparse leaf segments to reduce small-sample false positives."
+            ]
+          },
+          "name": "submit_hypothesis",
+          "type": "tool_use",
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "model": "claude-opus-5-5",
+      "usage": {
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 0,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "inference_geo": "global",
+        "input_tokens": 7374,
+        "iterations": [
+          {
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 0,
+              "ephemeral_5m_input_tokens": 0
+            },
+            "cache_creation_input_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "input_tokens": 7374,
+            "model": null,
+            "output_tokens": 1674,
+            "type": "message"
+          }
+        ],
+        "output_tokens": 1674,
+        "output_tokens_details": {
+          "thinking_tokens": 98
+        },
+        "service_tier": "standard",
+        "speed": "standard"
+      }
+    }
+  }
+]

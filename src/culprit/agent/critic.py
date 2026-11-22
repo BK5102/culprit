@@ -33,7 +33,7 @@ from typing import Any
 
 from culprit.agent.tools import ToolBox
 from culprit.investigate.fault_typing import FAULT_LABELS
-from culprit.segments import canonical, node_key
+from culprit.segments import from_arg, node_key
 
 CONFIDENCE = ("low", "medium", "high")
 PLACEHOLDER = re.compile(r"\{(\d+)\}")
@@ -55,15 +55,14 @@ def _same(a: float, b: float) -> bool:
 def check(hypothesis: dict[str, Any], tools: ToolBox) -> Verdict:
     problems: list[str] = []
     seg = tools.world.segments
-    raw = {k: v for k, v in (hypothesis.get("culprit") or {}).items() if v is not None}
     try:
-        culprit = canonical(raw)
-    except KeyError as err:
+        culprit = from_arg(hypothesis.get("culprit"))
+    except (KeyError, ValueError) as err:
         culprit = None
-        problems.append(f"culprit has unknown dimensions: {err}")
+        problems.append(f"culprit is not a valid segment: {err}")
     if culprit is not None:
         if not culprit or not seg.exists(culprit):
-            problems.append(f"culprit segment {node_key(raw) if raw else 'total'} does not exist")
+            problems.append(f"culprit segment {node_key(culprit)} does not exist")
         elif node_key(culprit) not in tools.queried_segments():
             problems.append(f"culprit {node_key(culprit)} was never examined with query_slice")
     if hypothesis.get("fault_type") not in FAULT_LABELS:
