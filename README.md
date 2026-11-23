@@ -12,7 +12,9 @@ Two questions, both scored only after the test plan is locked:
 - **H2a.** How often does a deterministic, no-LLM pipeline name the culprit segment on worlds it has never seen?
 - **H2b (development only).** Does an LLM agent name the culprit more often than that pipeline, and at what cost per incident? The sealed test leaves the agent out to avoid about 33 dollars of API calls, so H2b rests on development recordings and is not a sealed result (`docs/decisions.md` D16, methodology M52, L30).
 
-No result exists yet. See `docs/findings.md`.
+**Sealed result (run `test-1`, 2026-11-23, simulated data), in [`docs/findings.md`](docs/findings.md):**
+- **H1, mixed:** the TSFM caught more faults within 6 hours than the seasonal-naive and MSTL detectors, but fewer than the binomial z-score detector (0.388 against 0.505, paired difference -0.117, 95% interval -0.211 to -0.039).
+- **H2a:** the no-LLM pipeline named the right culprit for 0.574 of investigated faults (0.485 to 0.658).
 
 ## Diagram 1. The ladder of ideas
 

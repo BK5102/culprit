@@ -86,3 +86,7 @@ Running the agent on all 10 sealed test worlds would have cost about 33 dollars 
 - **H2a:** how often the no-LLM pipeline names the culprit on worlds it has never seen.
 
 Whether the agent beats that pipeline (H2b) is answered only on development data, which is too small to settle it, and the write-up says so. Deciding this before the lock means no agent result can be picked after seeing it (methodology M52, L30). Analogy: a trial whose budget covers testing the standard treatment properly but not the new drug, so it publishes a solid benchmark for the standard and labels the new drug's numbers as a small pilot.
+
+### D17. The sealed result (2026-11-23)
+
+The sealed test ran once on 10 simulated worlds (run `test-1`). The foundation model beat two simple detectors, but the simplest statistical one, a binomial z-score that knows how noisy a small segment's approval rate should be, beat it, including on the held-out fault type. The no-LLM investigator named the right culprit for 57% of the faults it saw on unseen worlds, but only 27% of the held-out type. Both negative results lead the write-up in `docs/findings.md`. Analogy: the expensive new smoke detector beat the old ones but not the cheap one wired to know how much smoke a kitchen normally makes.

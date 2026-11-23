@@ -182,3 +182,14 @@ The technical detail behind each step is in `docs/methodology.md` (numbered M1, 
   - **What stays:** the agent, its critic and its recordings. Anyone can replay them for free.
 - **Limitation (L30):** the LLM question stays open. Testing it later needs new seeds, because the test seeds will have been seen.
 - **How to say it:** "I sealed the test without the LLM agent to avoid about 33 dollars of API calls, and decided that before the lock. The sealed result is how well a deterministic pipeline finds the culprit, which is the bar any agent has to clear, and the agent's numbers are labelled as a small development pilot."
+
+### Step 17. The sealed test, once
+
+- **What I did:** built the 10 test worlds, sealed the plan, committed the lock, ran every detector and the no-LLM control once (run `test-1`), and only then opened the answer keys.
+- **Why:** a result counts only if the plan existed before it, and one run means no choosing the best of several tries.
+- **What else I considered:** running the LLM agent too, which I left out on cost (Step 16).
+- **Cause and effect:**
+  - **Detection:** the TSFM caught 39% of faults within 6 hours, against 18% and 24% for two simple detectors. The binomial z-score caught 50%. A model that knows how noisy a small segment is beat the big pretrained forecaster.
+  - **The noisier regime:** the TSFM held steady while the two stronger simple detectors fell, so its strength here is robustness rather than sensitivity.
+  - **Attribution:** the no-LLM investigator found the culprit 57% of the time, but only 27% for the fault type it had never seen. That is the bar any future agent has to beat.
+- **How to say it:** "I pre-registered the test and ran it once. The foundation model beat two classic detectors but lost to a simple binomial test that models count noise, and I report that loss first, along with the investigator's weak spot on a held-out fault type."
