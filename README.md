@@ -9,7 +9,8 @@ When you tap a card, your bank says yes or no. The share of yeses is the approva
 Two questions, both scored only after the test plan is locked:
 
 - **H1.** Does a time series foundation model (TSFM) catch drops sooner than simple detectors when every detector is allowed the same number of false alarms per week?
-- **H2.** Does an LLM agent name the culprit segment more often than a deterministic, no-LLM pipeline, and at what cost per incident?
+- **H2a.** How often does a deterministic, no-LLM pipeline name the culprit segment on worlds it has never seen?
+- **H2b (development only).** Does an LLM agent name the culprit more often than that pipeline, and at what cost per incident? The sealed test leaves the agent out to avoid about 33 dollars of API calls, so H2b rests on development recordings and is not a sealed result (`docs/decisions.md` D16, methodology M52, L30).
 
 No result exists yet. See `docs/findings.md`.
 
@@ -72,9 +73,9 @@ uv run culprit detect configs/full.yaml
 
 The exact commands, in order, from these choices to a written-up sealed result are in [`docs/runbook.md`](docs/runbook.md).
 
-- **LLM API key and spend cap** for the agent (H2). Put `ANTHROPIC_API_KEY` in the environment (never in git), set `agent.max_total_cost_usd` and review `agent.max_cost_usd` and `agent.max_tokens` in the config, then `uv run culprit agent CONFIG --all --record`. Without both the key and the total cap, recording refuses to start. No live call has been made; tests use cassettes only (methodology M43, M44). Done 2026-11-21: the key is set in the environment, and the per-incident caps are in the configs; the total for the sealed run is set after the development recordings.
+- **LLM API key and spend cap** for the agent (H2). Put `ANTHROPIC_API_KEY` in the environment (never in git), set `agent.max_total_cost_usd` and review `agent.max_cost_usd` and `agent.max_tokens` in the config, then `uv run culprit agent CONFIG --all --record`. Without both the key and the total cap, recording refuses to start. No live call has been made; tests use cassettes only (methodology M43, M44). Done 2026-11-21: the key is set in the environment, and the per-incident caps are in the configs. Decided 2026-11-22: the sealed run leaves the agent out (`test.agent: false`, D16), so it needs no key and spends nothing.
 - **The false-alarm budget.** On the first development run, 2 alarms per week counted over all series caught few faults (see `docs/explain-the-project.md`, Steps 8 and 9). Both counting units are built: set `budget.mode` to `per_series` (the current default) or `per_incident` (alarms within 6 hours count as one; recommended) before the lock. `uv run python scripts/compare_budget_modes.py configs/small.yaml` prints both on a development world (methodology M42). Decided 2026-11-21: `per_incident` in the test plan and both development configs (`docs/decisions.md` D13).
-- **The sealed test.** Decided 2026-11-21 (`docs/decisions.md` D13): per-incident budget, caps of 1 dollar and 4,000 tokens per incident, five random test seeds, and the recommended second regime. Only `agent.max_total_cost_usd` stays open until the development recordings measure the cost per incident. Then run `uv run culprit validate configs/test.yaml` until it reports ready, then seal, commit, run and evaluate.
+- **The sealed test.** Decided 2026-11-21 (`docs/decisions.md` D13): per-incident budget, caps of 1 dollar and 4,000 tokens per incident, five random test seeds, and the recommended second regime. Decided 2026-11-22: no LLM agent in the sealed run (D16). Nothing is open: `uv run culprit validate configs/test.yaml` reports ready, so the next steps are seal, commit, run and evaluate.
 
 ## What is in the repo
 

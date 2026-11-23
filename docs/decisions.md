@@ -78,3 +78,11 @@ The first real calls to Claude found three things the replayed test conversation
 - **Typed numbers:** the agent kept typing hours and window lengths into its sentences, which the critic forbids. Stating that rule plainly raised critic acceptance from 1 of 10 to 9 of 10 on the development world.
 
 We fixed the agent's instructions rather than loosening the critic, because a hand-typed number is exactly what the critic exists to stop. Both prompt versions are counted and named (methodology M51, L29). Analogy: a new hire whose reports kept bouncing because nobody had told them the house style; you write the style guide down, you don't stop checking reports.
+
+### D16. The sealed test runs without the LLM agent (2026-11-22)
+
+Running the agent on all 10 sealed test worlds would have cost about 33 dollars of live calls, so the sealed test leaves it out. The sealed test still covers two questions:
+- **H1:** every detector.
+- **H2a:** how often the no-LLM pipeline names the culprit on worlds it has never seen.
+
+Whether the agent beats that pipeline (H2b) is answered only on development data, which is too small to settle it, and the write-up says so. Deciding this before the lock means no agent result can be picked after seeing it (methodology M52, L30). Analogy: a trial whose budget covers testing the standard treatment properly but not the new drug, so it publishes a solid benchmark for the standard and labels the new drug's numbers as a small pilot.

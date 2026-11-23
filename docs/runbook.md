@@ -23,7 +23,7 @@ $env:ANTHROPIC_API_KEY = "<your key>"     # this shell only; never in a file in 
 Then set the caps in the configs (USD). `agent.max_total_cost_usd` is the total for all live calls in that scope (development worlds share one spend log, `cassettes/spend-dev.jsonl`; the sealed plan has its own, `cassettes/spend-test.jsonl`). `agent.max_cost_usd` is per incident. Each call first reserves its worst case, `max_tokens` of output at USD 20 per million (USD 0.32 at 16,000), so set `max_tokens` and `max_cost_usd` together (methodology M44).
 
 - `configs/small.yaml`: add `agent: {max_total_cost_usd: <dev budget>}` (and `max_cost_usd`, `max_tokens` if you change them).
-- `configs/test.yaml`: replace the `agent.max_total_cost_usd` placeholder after step 4, once you know the cost per incident.
+- `configs/test.yaml`: decided 2026-11-22, the sealed run leaves the agent out (`test.agent: false`, `max_total_cost_usd: null`; D16, M52). No key is needed for the sealed run.
 
 `culprit agent --record` refuses to start without the key or the total cap.
 
@@ -115,7 +115,7 @@ git push
 uv run culprit run configs/test.yaml --sealed test-1
 ```
 
-Runs the detectors, the no-LLM control and the agent (live, under the plan's caps) on every test world, as one sealed run. Expect about 2.5 hours of CPU for 10 worlds, plus the agent's time. If it crashes, the attempt stays recorded as started; do not edit the plan, commit the uses file and start a new run id (`test-2`). Recordings already saved are replayed for free, so a second attempt reuses them.
+Runs the detectors and the no-LLM control on every test world, as one sealed run. The agent is left out (`test.agent: false`, D16), so it makes no live call and needs no key. Expect about 2.5 hours of CPU for 10 worlds, plus the agent's time. If it crashes, the attempt stays recorded as started; do not edit the plan, commit the uses file and start a new run id (`test-2`). Recordings already saved are replayed for free, so a second attempt reuses them.
 
 ## 10. Commit the run record
 

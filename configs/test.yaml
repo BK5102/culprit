@@ -1,4 +1,4 @@
-# DRAFT of the sealed test plan. Simulated data. NOT SEALED.
+# The sealed test plan, every owner choice made. Simulated data. NOT SEALED yet.
 #
 # Every value that starts with PLACEHOLDER is the owner's choice. Replace each one,
 # then run `uv run culprit validate configs/test.yaml`; `culprit seal` refuses while
@@ -47,13 +47,18 @@ agent:
   # Total USD for every live call of the sealed run. Estimate it as (incidents per
   # world) x (worlds) x (median cost per incident from the development recordings),
   # with room to spare: an incident the cap stops counts as a miss for the agent.
-  max_total_cost_usd: "PLACEHOLDER: set from the development recordings (runbook step 4)"
+  # Owner decision 2026-11-22 (docs/decisions.md D16, methodology M52): the sealed run
+  # makes no live call (test.agent is false), so there is no total to spend.
+  max_total_cost_usd: null
   # Per incident. Each call reserves its worst case first (max_tokens of output at
   # USD 20 per million), so set the two together (methodology M44).
   max_cost_usd: 1.00  # owner decision 2026-11-21: set together with max_tokens (M44)
   max_tokens: 4000
 test:
-  agent: true  # the sealed run includes the LLM investigator (H2)
+  # Owner decision 2026-11-22 (D16, M52): the sealed run leaves out the LLM investigator to
+  # avoid about USD 33 of live calls. It answers H2a (the no-LLM control's accuracy on
+  # unseen worlds); H2b (agent against control) stays development only.
+  agent: false
   # Recommended: 5 new seeds per regime (10 worlds; about 15 minutes each on a laptop
   # CPU with the TSFM, measured on the full development world, so about 2.5 hours). Draw them once, for example with
   #   uv run python -c "import secrets; print([secrets.randbelow(10**6) for _ in range(5)])"

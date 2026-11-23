@@ -166,3 +166,19 @@ The technical detail behind each step is in `docs/methodology.md` (numbered M1, 
   - **Accuracy:** on this one world the agent named the right culprit for 3 of 10 faults against 2 of 10 for the no-LLM control. That is a development number, not a result.
   - **Cost:** about 16 cents per incident, and 3.27 dollars of live calls in total so far.
 - **How to say it:** "The first live run found three integration bugs that replayed tests could not, and I fixed the agent's instructions rather than weakening the checker, counting both prompt versions."
+
+### Step 16. Sealing without the LLM agent
+
+- **What I did:** set the test plan to run every detector and the no-LLM control on the 10 sealed worlds, with no live calls. I split H2 into H2a (sealed: how often the control names the culprit) and H2b (development only: the agent against the control, and its cost).
+- **Why:** the sealed run with the agent would have cost about 33 dollars (about 210 incidents at about 16 cents each), and I chose not to spend that on a portfolio project. Everything else runs free on a laptop.
+- **What else I considered:**
+  - Paying, with a 60-dollar cap.
+  - A cheaper Claude model: about half the price, but I would have had to redo the development checks.
+  - The agent on a small sample of sealed incidents: too few faults to tell a difference.
+  - A local open model: a different agent from the one I built and checked.
+- **Cause and effect:**
+  - **What the sealed result says:** how good the no-LLM pipeline is on unseen worlds, the held-out fault type and the noisier regime. That is the benchmark any agent has to beat.
+  - **The agent's evidence:** one development world. It named the right culprit for 3 of 10 faults against 2 of 10 for the control, on the world its prompt was tuned on. Ten faults cannot tell those apart, so I do not claim the agent is better.
+  - **What stays:** the agent, its critic and its recordings. Anyone can replay them for free.
+- **Limitation (L30):** the LLM question stays open. Testing it later needs new seeds, because the test seeds will have been seen.
+- **How to say it:** "I sealed the test without the LLM agent to avoid about 33 dollars of API calls, and decided that before the lock. The sealed result is how well a deterministic pipeline finds the culprit, which is the bar any agent has to clear, and the agent's numbers are labelled as a small development pilot."

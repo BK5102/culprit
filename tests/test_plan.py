@@ -1,5 +1,5 @@
 """Test plans: placeholders block sealing, worlds expand per regime and seed, and the full
-sealed path (seal, commit, sealed run with the agent, evaluate) works on tiny worlds.
+sealed path (seal, commit, sealed run with or without the agent, evaluate) works on tiny worlds.
 
 The agent in the sealed run uses the fake backend from test_agent_cli (no live call).
 """
@@ -45,12 +45,12 @@ def filled_plan(**over) -> dict:
     return cfg
 
 
-def test_the_plan_has_the_owner_choices_and_one_open_cap():
-    """Owner decisions of 2026-11-21 are in; the total cap waits for the dev recordings."""
+def test_the_plan_has_every_owner_choice_and_no_live_agent():
+    """Owner decisions of 2026-11-21 and 2026-11-22 (D13, D16): nothing open, no agent."""
     cfg = load_config(DRAFT)
-    assert placeholders(cfg) == ["agent.max_total_cost_usd"]
-    found = problems(cfg)
-    assert len(found) == 1 and "placeholder" in found[0]
+    assert placeholders(cfg) == []
+    assert problems(cfg) == []
+    assert cfg["test"]["agent"] is False and cfg["agent"]["max_total_cost_usd"] is None
     assert cfg["budget"]["mode"] == "per_incident"
     assert cfg["agent"]["max_tokens"] == 4000 and cfg["agent"]["max_cost_usd"] == 1.0
     assert len(cfg["test"]["seeds"]) == 5 and not set(cfg["test"]["seeds"]) & DEV_SEEDS
@@ -64,10 +64,15 @@ def test_the_plan_has_the_owner_choices_and_one_open_cap():
 
 
 def test_an_unfinished_plan_cannot_be_validated_simulated_or_sealed(capsys, tmp_path):
-    assert main(["validate", str(DRAFT)]) == 1
+    raw = yaml.safe_load(DRAFT.read_text(encoding="utf-8"))
+    raw["test"]["agent"] = True
+    raw["agent"]["max_total_cost_usd"] = "PLACEHOLDER: total USD"
+    unfinished = tmp_path / "unfinished.yaml"
+    unfinished.write_text(yaml.safe_dump(raw), encoding="utf-8")
+    assert main(["validate", str(unfinished)]) == 1
     assert "agent.max_total_cost_usd is a placeholder" in capsys.readouterr().out
     with pytest.raises(SystemExit, match="not ready to seal"):
-        main(["seal", str(DRAFT)])
+        main(["seal", str(unfinished)])
     # Placeholder seeds must still stop `simulate` before any test world is built.
     raw = yaml.safe_load(DRAFT.read_text(encoding="utf-8"))
     raw["test"]["seeds"] = "PLACEHOLDER: list of new integer seeds"
@@ -105,6 +110,7 @@ def test_a_filled_plan_is_ready_and_expands_per_regime_and_seed():
         (lambda c: c["world"]["faults"].update(types=["issuer_outage"]), "not injected"),
         (lambda c: c["budget"].update(mode="per_page"), "budget.mode"),
         (lambda c: c["agent"].update(max_total_cost_usd=None), "max_total_cost_usd"),
+        (lambda c: c["agent"].update(max_total_cost_usd=0), "max_total_cost_usd"),
         (lambda c: c["evaluate"].update(role="dev"), "role"),
         (
             lambda c: c["test"]["regimes"].update(
@@ -185,6 +191,33 @@ def test_full_sealed_path_on_a_tiny_plan(sealed_repo, capsys):
     assert "H1 TSFM" in text and "H2 agent minus control" in text
     uses = list((repo / "locks").glob("*.uses.jsonl"))[0].read_text(encoding="utf-8")
     assert '"started"' in uses and '"finished"' in uses
+
+
+def test_a_sealed_run_without_the_agent_makes_no_call_and_reports_the_control_only(
+    sealed_repo, monkeypatch, capsys
+):
+    """The owner's plan (D16): no key needed, no spend log, H2a only."""
+    repo, path, fake = sealed_repo
+    cfg = yaml.safe_load(path.read_text(encoding="utf-8"))
+    cfg["test"]["agent"] = False
+    cfg["agent"]["max_total_cost_usd"] = None
+    path.write_text(yaml.safe_dump(cfg), encoding="utf-8")
+    git(repo, "commit", "-q", "-am", "no agent")
+    monkeypatch.delenv("ANTHROPIC_API_KEY")
+    assert main(["validate", str(path)]) == 0
+    assert main(["simulate", str(path)]) == 0
+    assert main(["seal", str(path)]) == 0
+    git(repo, "add", "locks")
+    git(repo, "commit", "-q", "-m", "lock")
+    assert main(["run", str(path), "--sealed", "r4"]) == 0
+    assert fake.calls == 0
+    assert not (repo / "cassettes").exists()
+    assert main(["evaluate", str(path), "--run-id", "r4"]) == 0
+    summary = json.loads((repo / "artifacts" / "plan" / "summary.json").read_text("utf-8"))
+    assert set(summary["attribution"]) == {"control"}
+    assert summary["h2_agent_minus_control_top1"] is None
+    assert summary["agent_cost"] is None
+    assert "H2 control: top-1" in capsys.readouterr().out
 
 
 def test_a_changed_agent_prompt_needs_a_new_lock(sealed_repo, monkeypatch):

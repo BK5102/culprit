@@ -15,6 +15,7 @@ All data in this project is simulated. Numbers quoted below come from code run o
 - Why: operations teams feel two things, how fast a problem is noticed and how fast its cause is found. A detector that alarms all the time catches everything, so speed only means something at a fixed false-alarm rate. An agent only earns its cost if it beats a script.
 - Considered: one combined score. Rejected: it would hide whether a gain came from detection or from investigation.
 - Limitation: both answers hold only for this simulator and its settings.
+- Update 2026-11-22 (M52): H2 is split. H2a, the no-LLM control's culprit accuracy on the test worlds, is scored once after the lock. H2b, the LLM agent against the control, is answered on development worlds only, because the sealed run leaves the agent out.
 
 **M2. Simulated data only.**
 - What: every payment count comes from Culprit's own simulator (`src/culprit/sim/`).
@@ -376,6 +377,25 @@ All data in this project is simulated. Numbers quoted below come from code run o
   - Dropping strict tool use: malformed arguments would then reach the tools.
 - Limitation: the prompt was improved on one development world, so its acceptance rate on the test worlds is unknown until the sealed run (L29). The superseded version 1 recordings are not in the repo. Their cost is in the spend log, and their summary is in this entry.
 
+**M52. The sealed test leaves out the LLM agent, and H2 is split into H2a (sealed) and H2b (development only).**
+- What: `configs/test.yaml` sets `test.agent: false` and `agent.max_total_cost_usd: null`. The sealed run runs every detector and the no-LLM control on all 10 test worlds and makes no live call. H2 becomes two questions:
+  - **H2a (sealed):** how often does the deterministic no-LLM control name the culprit segment on worlds it has never seen, including the held-out fault type and the second regime? Reported as top-1, top-3 and fault-type accuracy, each with a 95% Wilson interval (M46, `artifacts/test/summary.json`).
+  - **H2b (development only, exploratory):** does the LLM agent name the culprit more often than the control, and at what cost per incident? Answered only from the recordings already made: `cassettes/small-seed7` (graded) and three incidents in `cassettes/full-seed17` (cost only). Anyone can replay them for free.
+- Why: the owner chose on 2026-11-22 not to spend more on live calls for this project.
+  - **The estimate:** about 210 sealed incidents (about 21 per world on the full development world with detector A2, times 10 worlds) at the median 0.16 dollars per incident measured in M51. That is about 33 dollars, plus room in the cap.
+  - **Spend so far:** 3.70 dollars of live calls, all development (`cassettes/spend-dev.jsonl`). Everything else in the project runs free on a laptop CPU.
+  - **Timing:** deciding before the lock means the lock records that the agent was never in the sealed test, so no agent result can be kept or dropped after seeing it.
+- Considered:
+  - **Running the agent, total cap about 60 dollars (expected about 33):** the direct test of the original H2. Declined on cost.
+  - **A cheaper Claude model** (Sonnet 5.5, about half the per-token price of Opus 5.5): still about 17 dollars. The model would also change after development, so the prompt checks and recordings of M51 would need redoing.
+  - **The agent on a small random sample of sealed incidents** (a few dollars): with a few dozen faults, the paired interval for agent minus control would be far too wide to tell a 0.1 difference from zero. It would spend money without answering the question.
+  - **A local open-weights model:** a different agent from the one developed and checked, slow on a laptop CPU, and the agent is built on the Claude API's tool-use interface.
+  - **Keeping H2 as written and marking it "not measured":** true, but it hides why. The split says exactly what the sealed test can and cannot answer.
+- Limitation:
+  - **Thin evidence:** the agent's only accuracy evidence is one development world with 10 faults (agent top-1 0.3, control 0.2, M51). Ten faults cannot tell those apart, and the prompt was tuned on that world (L29).
+  - **What stays:** the agent, the critic, the budgets and the recordings stay in the repo and in CI.
+  - **Testing later:** a later version could test H2b, but only on new seeds, because the test seeds will have been seen (L30).
+
 ---
 
 ## Limitations register
@@ -408,6 +428,7 @@ The honest list. Each item says what could be wrong and what was done about it.
 | L25 | The recommended second regime changes parameter values, not the structure of the simulator | It tests sensitivity to settings more than to a different kind of world | Stated (M45); a structural regime needs new simulator code and is the owner's choice |
 | L26 | Pooled intervals rest on few worlds (10 with the recommended seeds) | Intervals are wide; a single world gives no width at all | Paired world-level bootstrap with the number of clusters recorded (M46) |
 | L27 | On the full development world the control named no culprit right (top-1 and top-3 0.0 over 20 faults, seed 17, development only) | H2 would have compared the agent with a broken control | Diagnosed (M47, M48): thin leaves' baseline rate sat at 1 - 1e-6, so one decline scored z of up to 1,000; oracle alerts failed the same way, so detection was not the cause. Fixed by the Jeffreys bound and the exact tail score; same world now top-1 0.5, top-3 0.6 (development only). The control must not change after the lock |
+| L30 | The sealed test leaves out the LLM agent (owner decision on cost, M52) | Whether the agent beats the no-LLM control (H2b) has development evidence only: one world, 10 faults, the world its prompt was tuned on | The sealed run measures the control (H2a), the bar any agent must clear; the recordings replay free; a later agent test must use new seeds |
 | L29 | The agent's prompt was improved on one development world (two versions, M51) | Its critic acceptance on test worlds (9 of 10 on development) may differ | The prompt hash is locked at sealing; the test reports acceptance and counts rejected incidents as misses |
 | L28 | The control names one segment per incident from a 3-hour window | When faults overlap, or a promotion is running, the strongest drop wins and a mild fault (median 3.4% of approvals among the misses, full world) is named wrong; 15 of 27 oracle-alert faults on the full development world | Stated (M48); top-3 is reported; the agent faces the same incidents |
 | L24 | An incident the agent does not run counts as a miss | A total cap that runs out lowers the agent's H2 score | Deliberate, so skipping cannot help the agent (M43); statuses are reported |
