@@ -10,9 +10,9 @@ This is the guide to read before talking about Culprit with a recruiter, a hirin
 
 The technical detail behind each step is in `docs/methodology.md` (numbered M1, M2, ...), and the dated diary is in `docs/decisions.md`. All data is simulated; say so every time.
 
-## Elevator pitch (draft, no results yet)
+## Elevator pitch
 
-"When approval rates drop, the cause usually hides in one small segment among thousands. I built a simulated payment world with injected faults whose true causes are sealed away, detectors compared at the same false-alarm rate, and a no-AI drill-down that an LLM agent will have to beat. No result exists yet; the fit checks say the simulated world can answer the question."
+"When approval rates drop, the cause usually hides in one small segment among thousands. I built a simulated payment world with injected faults whose true causes are sealed away, and compared detectors at the same false-alarm budget in a test I pre-registered and ran once. A pretrained forecasting model beat two classic detectors but lost to a simple binomial test that models count noise. My no-AI investigator found the culprit for 57% of the faults it saw on unseen worlds, which is the bar an LLM agent would have to beat; I tested the agent only on development data, to avoid paying for a sealed run."
 
 ---
 

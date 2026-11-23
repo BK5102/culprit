@@ -310,7 +310,7 @@ All data in this project is simulated. Numbers quoted below come from code run o
 - What: for a config with `evaluate.role: test` (since build 2 a test plan with several worlds, M45), `culprit seal` writes the lock (config hash, with the dataset hash pinned) and a vault record for each world's key under `locks/`; all must be committed. `culprit run CONFIG --sealed RUN_ID` runs detection, the control and (for a plan with `test.agent`) the agent inside `cleanroom.guard.sealed_run`, which refuses a dirty git tree or an uncommitted lock and writes "started" and "finished" records. Only then does `culprit evaluate CONFIG --run-id RUN_ID` open the key through the vault. Development configs (`role: dev`, the default) cannot use `seal` or `run`.
 - Why: CLAUDE.md rule 4 and the plan's "one lock covering detectors, control, agent prompt hash, test seeds". Every attempt is counted, including crashed ones.
 - Considered: one combined command. Kept separate so the commit of the lock and vault record visibly happens between sealing and running.
-- Limitation: the test plan (`configs/test.yaml`, M45) is a draft until the owner fills its placeholders and seals it. Since build 2 the lock also covers the agent prompt hash (M45).
+- Limitation: the test plan (`configs/test.yaml`, M45) was a draft until the owner filled its placeholders; it was sealed on 2026-11-22 (commit `1567368`) and run once as `test-1`. Since build 2 the lock also covers the agent prompt hash (M45).
 
 ## 9. Configs and the command line
 
@@ -339,7 +339,7 @@ All data in this project is simulated. Numbers quoted below come from code run o
   - `agent.max_tokens: 4000` and `agent.max_cost_usd: 1.00` per incident; `configs/small.yaml` gets a development total of 10 dollars.
   - `test.seeds: [607890, 906544, 232922, 667770, 96065]`.
   - `test.regimes.second`: the recommended noisier, shiftier world (`approval: {base_rate: 0.82, drift_sd: 0.10}`, `volume: {day_noise_sd: 0.12, leaf_day_noise_sd: 0.15}`, `surges: {promotions_per_week: 3.0}`).
-  - `agent.max_total_cost_usd` stays a placeholder until the development recordings measure the cost per incident (runbook step 4).
+  - `agent.max_total_cost_usd` was a placeholder until the development recordings measured the cost per incident. On 2026-11-22 it was set to null, because the sealed run leaves the agent out (M52).
 - Why per incident: counting every series alarm let promotion surges, which fire many series at once, use up the weekly budget. On the development world the binomial detector caught 1 of 14 faults per series against 10 of 14 per incident (one seed, development only, M42). An on-call engineer is paged once per incident, not once per affected series, so the incident is the unit a real team budgets. Considered: per series, the documented default. It is simpler, but it measures how many series a surge touches more than whether a fault is caught.
 - Why these caps: each call first reserves its worst case, `max_tokens` of output at 20 dollars per million (M44). At 16,000 tokens that is 0.32 dollars, so a 0.50 per-incident cap stopped after one call. At 4,000 tokens a call reserves 0.08 dollars, so 1.00 per incident allows about a dozen calls in the worst case. Considered:
   - Keeping 16,000 tokens with a larger per-incident cap: about four times the worst-case cost for reports that fit in far fewer tokens.
