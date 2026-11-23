@@ -1,0 +1,11 @@
+{
+  "file": "../../data/worlds/test-second-seed232922/sealed/answer_key.json",
+  "sha256": "f09a051b8d3a5951432ab46d04d159f3f66217d2f397200a8ad0865b79a049cd",
+  "size_bytes": 45849,
+  "sealed_utc": "2026-11-23T02:24:16.879129+00:00",
+  "git": {
+    "commit": "798454831cf3cfa8372cba3f0753a53f93397fcc",
+    "dirty": false
+  },
+  "note": "sealed test plan: no LLM agent (D16), owner approval 2026-11-22"
+}

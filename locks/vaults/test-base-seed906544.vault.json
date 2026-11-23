@@ -1,0 +1,11 @@
+{
+  "file": "../../data/worlds/test-base-seed906544/sealed/answer_key.json",
+  "sha256": "e0dcc6078de2a81fb984c1a408fcc8ccfe9bb65153a5198a53a1eb2ad73b6e12",
+  "size_bytes": 33876,
+  "sealed_utc": "2026-11-23T02:24:15.620278+00:00",
+  "git": {
+    "commit": "798454831cf3cfa8372cba3f0753a53f93397fcc",
+    "dirty": false
+  },
+  "note": "sealed test plan: no LLM agent (D16), owner approval 2026-11-22"
+}
