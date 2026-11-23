@@ -6,7 +6,7 @@
 
 When you tap a card, your bank says yes or no. The share of yeses is the approval rate. When it drops, the cause usually hides in one small segment (one bank, one card range, one gateway) among thousands. Culprit learns what "normal" looks like for every segment, flags segments that fall outside it, and works out which segment and cause explain the drop. It grades itself on a simulated payment world where faults are injected and their true causes are sealed in an answer key that the detectors and the investigator cannot read.
 
-Two questions, both scored only after the test plan is locked:
+Three questions. H1 and H2a were scored once, after the test plan was locked; H2b is development only:
 
 - **H1.** Does a time series foundation model (TSFM) catch drops sooner than simple detectors when every detector is allowed the same number of false alarms per week?
 - **H2a.** How often does a deterministic, no-LLM pipeline name the culprit segment on worlds it has never seen?
@@ -52,12 +52,12 @@ Needs [uv](https://docs.astral.sh/uv/) and a laptop CPU. No GPU, no API key, and
 
 ```
 uv sync
-uv run pytest -q                              # 214 tests, about a minute
+uv run pytest -q                              # 220 tests, about a minute
 uv run python scripts/check_data_fit.py configs/small.yaml   # is the simulated world a fair test?
 uv run culprit simulate configs/small.yaml    # build the small world (96 leaf segments, 8 weeks hourly)
 uv run culprit detect configs/small.yaml      # detectors A, A2, B at 2 false alarms per week
 uv run culprit attribute configs/small.yaml   # the no-LLM control names a culprit per incident
-uv run culprit agent configs/small.yaml --all # the LLM investigator from saved cassettes (none recorded yet)
+uv run culprit agent configs/small.yaml --all # the LLM investigator, replaying the saved development recordings (free, no key)
 uv run culprit evaluate configs/small.yaml    # grade this development world (not a result)
 uv run python scripts/diagnose_control.py configs/small.yaml   # the control with detector and oracle alerts (development only)
 ```
@@ -75,7 +75,7 @@ uv run culprit detect configs/full.yaml
 
 The exact commands, in order, from these choices to a written-up sealed result are in [`docs/runbook.md`](docs/runbook.md).
 
-- **LLM API key and spend cap** for the agent (H2). Put `ANTHROPIC_API_KEY` in the environment (never in git), set `agent.max_total_cost_usd` and review `agent.max_cost_usd` and `agent.max_tokens` in the config, then `uv run culprit agent CONFIG --all --record`. Without both the key and the total cap, recording refuses to start. No live call has been made; tests use cassettes only (methodology M43, M44). Done 2026-11-21: the key is set in the environment, and the per-incident caps are in the configs. Decided 2026-11-22: the sealed run leaves the agent out (`test.agent: false`, D16), so it needs no key and spends nothing.
+- **LLM API key and spend cap** for the agent (H2). Put `ANTHROPIC_API_KEY` in the environment (never in git), set `agent.max_total_cost_usd` and review `agent.max_cost_usd` and `agent.max_tokens` in the config, then `uv run culprit agent CONFIG --all --record`. Without both the key and the total cap, recording refuses to start. Tests use cassettes only (methodology M43, M44). The development recordings were made live on 2026-11-21 and 2026-11-22 (3.70 dollars in all, `cassettes/`, M51). Done 2026-11-21: the key is set in the environment, and the per-incident caps are in the configs. Decided 2026-11-22: the sealed run leaves the agent out (`test.agent: false`, D16), so it needs no key and spends nothing.
 - **The false-alarm budget.** On the first development run, 2 alarms per week counted over all series caught few faults (see `docs/explain-the-project.md`, Steps 8 and 9). Both counting units are built: set `budget.mode` to `per_series` (the current default) or `per_incident` (alarms within 6 hours count as one; recommended) before the lock. `uv run python scripts/compare_budget_modes.py configs/small.yaml` prints both on a development world (methodology M42). Decided 2026-11-21: `per_incident` in the test plan and both development configs (`docs/decisions.md` D13).
 - **The sealed test.** Decided 2026-11-21 (`docs/decisions.md` D13): per-incident budget, caps of 1 dollar and 4,000 tokens per incident, five random test seeds, and the recommended second regime. Decided 2026-11-22: no LLM agent in the sealed run (D16). Sealed on 2026-11-22 and run once as `test-1` on 2026-11-23; the result is in `docs/findings.md`.
 
@@ -91,7 +91,7 @@ The exact commands, in order, from these choices to a written-up sealed result a
 | Every choice and its reasoning | `docs/methodology.md` |
 | The story step by step | `docs/explain-the-project.md` |
 | Measured fit of the simulated world | `docs/data-fit.md` |
-| The sealed test plan (owner choices made; total cap set after development recordings) | `configs/test.yaml` |
+| The sealed test plan (sealed 2026-11-22, run once as `test-1`; no LLM agent, D16) | `configs/test.yaml` |
 | Commands from the owner's choices to a sealed result | `docs/runbook.md` |
 | TSFM capabilities and the full development run | `docs/tsfm-notes.md` |
 
